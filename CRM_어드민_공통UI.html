@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ENTWIZ CRM Admin</title>
+<style>
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   DESIGN TOKENS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+:root {
+  --primary:       #2563EB;
+  --primary-dark:  #1D4ED8;
+  --primary-light: #EFF6FF;
+  --sidebar-bg:    #0F172A;
+  --sidebar-hover: #1E293B;
+  --bg:            #F8FAFC;
+  --surface:       #FFFFFF;
+  --border:        #E2E8F0;
+  --text:          #0F172A;
+  --text-sub:      #475569;
+  --text-muted:    #94A3B8;
+  --success:       #059669;
+  --success-bg:    #ECFDF5;
+  --warning:       #D97706;
+  --warning-bg:    #FFFBEB;
+  --danger:        #DC2626;
+  --danger-bg:     #FEF2F2;
+  --info:          #2563EB;
+  --info-bg:       #EFF6FF;
+  --radius:        8px;
+  --radius-sm:     5px;
+  --shadow:        0 1px 3px rgba(0,0,0,.08);
+  --shadow-md:     0 4px 16px rgba(0,0,0,.10);
+  --sidebar-w:     240px;
+  --header-h:      60px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Pretendard','Malgun Gothic','맑은 고딕',-apple-system,sans-serif; font-size: 14px; color: var(--text); background: var(--bg); }
+a { text-decoration: none; }
+button { font-family: inherit; cursor: pointer; }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   HEADER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  height: var(--header-h); background: var(--surface);
+  border-bottom: 1px solid var(--border); box-shadow: var(--shadow);
+  display: flex; align-items: center; justify-content: space-between; padding-right: 20px;
+}
+.header-brand {
+  width: var(--sidebar-w); height: 100%;
+  background: var(--sidebar-bg);
+  display: flex; align-items: center; gap: 10px; padding: 0 20px;
+  flex-shrink: 0; overflow: hidden; transition: width .2s;
+}
+.brand-icon {
+  width: 30px; height: 30px; border-radius: 7px; flex-shrink: 0;
+  background: var(--primary);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 13px; font-weight: 900;
+}
+.brand-text { overflow: hidden; }
+.brand-name { color: #fff; font-size: 15px; font-weight: 700; letter-spacing: -.3px; white-space: nowrap; }
+.brand-version { color: rgba(255,255,255,.35); font-size: 10px; margin-top: 1px; white-space: nowrap; }
+.header-toggle {
+  margin-left: auto; background: none; border: none; cursor: pointer;
+  color: rgba(255,255,255,.4); font-size: 18px; padding: 4px; display: flex; flex-shrink: 0;
+}
+.header-right { display: flex; align-items: center; gap: 8px; }
+.icon-btn {
+  position: relative; background: none; border: none; cursor: pointer;
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-sub); font-size: 18px; transition: background .15s;
+}
+.icon-btn:hover { background: var(--bg); }
+.icon-btn .dot { position: absolute; top: 7px; right: 7px; width: 7px; height: 7px; border-radius: 50%; background: var(--danger); border: 2px solid #fff; }
+.header-user {
+  display: flex; align-items: center; gap: 9px;
+  padding: 5px 10px; border-radius: var(--radius); cursor: pointer;
+  transition: background .15s; margin-left: 4px;
+}
+.header-user:hover { background: var(--bg); }
+.avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+.user-name  { font-size: 13px; font-weight: 600; line-height: 1.3; }
+.user-role  { font-size: 11px; color: var(--text-muted); }
+.user-arrow { font-size: 10px; color: var(--text-muted); transition: transform .2s; margin-left: 2px; }
+.user-arrow.open { transform: rotate(180deg); }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   SIDEBAR / GNB / LNB
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.sidebar {
+  position: fixed; top: var(--header-h); left: 0; bottom: 0; z-index: 90;
+  width: var(--sidebar-w); background: var(--sidebar-bg);
+  display: flex; flex-direction: column; overflow: hidden; transition: width .2s;
+}
+.sidebar > nav { flex: 1; overflow-y: auto; overflow-x: hidden; }
+.sidebar > nav::-webkit-scrollbar { width: 4px; }
+.sidebar > nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,.08); border-radius: 2px; }
+.sidebar.collapsed { width: 60px; }
+
+.sidebar.collapsed .gnb-label2,
+.sidebar.collapsed .gnb-arrow,
+.sidebar.collapsed .gnb-badge,
+.sidebar.collapsed .gnb-label { display: none; }
+.sidebar.collapsed .gnb-item { justify-content: center; padding: 10px 0; border-left-width: 0; gap: 0; }
+.sidebar.collapsed .gnb-item.active { border-left-width: 0; background: rgba(37,99,235,.22); }
+.sidebar.collapsed .lnb { display: none !important; }
+.sidebar.collapsed .sidebar-bottom { border-top-color: transparent; }
+
+body.sidebar-collapsed .header-brand { width: 60px; padding: 0; justify-content: center; gap: 0; }
+body.sidebar-collapsed .brand-icon,
+body.sidebar-collapsed .brand-text { display: none; }
+body.sidebar-collapsed .header-toggle { margin-left: 0; }
+
+.gnb-group { padding: 10px 0; }
+.gnb-label {
+  font-size: 10px; font-weight: 700; letter-spacing: .09em;
+  color: rgba(255,255,255,.42); text-transform: uppercase;
+  padding: 10px 20px 4px; white-space: nowrap; overflow: hidden;
+}
+.gnb-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 20px; cursor: pointer;
+  color: rgba(255,255,255,.75); font-size: 13px; font-weight: 500;
+  border-left: 3px solid transparent; transition: all .15s; white-space: nowrap;
+}
+.gnb-item:hover  { background: var(--sidebar-hover); color: #fff; }
+.gnb-item.active { background: rgba(37,99,235,.22); color: #fff; border-left-color: #93C5FD; font-weight: 700; }
+.gnb-icon   { font-size: 16px; width: 20px; text-align: center; flex-shrink: 0; }
+.gnb-label2 { flex: 1; }
+.gnb-badge  { font-size: 10px; background: var(--danger); color: #fff; border-radius: 10px; padding: 1px 6px; }
+.gnb-arrow  { font-size: 10px; color: rgba(255,255,255,.4); transition: transform .2s; }
+.gnb-item.open .gnb-arrow { transform: rotate(90deg); }
+
+.lnb { display: none; padding-bottom: 6px; }
+.lnb.open { display: block; }
+.lnb-item {
+  display: flex; align-items: center;
+  padding: 7px 20px 7px 50px; font-size: 12px;
+  color: rgba(255,255,255,.58); cursor: pointer;
+  border-left: 1px solid rgba(255,255,255,.12); margin-left: 30px;
+  transition: all .15s;
+}
+.lnb-item:hover  { color: rgba(255,255,255,.9); background: rgba(255,255,255,.04); border-left-color: rgba(255,255,255,.3); }
+.lnb-item.active { color: #BFDBFE; border-left-color: #93C5FD; background: rgba(37,99,235,.10); font-weight: 700; }
+
+.sidebar-bottom { padding: 10px 0; border-top: 1px solid rgba(255,255,255,.07); }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   CONTENT IFRAME
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.content-frame {
+  position: fixed;
+  top: var(--header-h);
+  left: var(--sidebar-w);
+  right: 0;
+  bottom: 0;
+  border: none;
+  background: var(--bg);
+  transition: left .2s;
+}
+.sidebar.collapsed ~ .content-frame { left: 60px; }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   헤더 패널 공통
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.header-panel {
+  position: fixed; top: calc(var(--header-h) + 6px); right: 14px; z-index: 150;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: 0 8px 24px rgba(0,0,0,.13); display: none;
+}
+.header-panel.open { display: block; animation: panelIn .16s ease; }
+@keyframes panelIn { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:none; } }
+
+/* 알림 패널 */
+#notiPanel { width: 340px; }
+.panel-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px 12px; border-bottom: 1px solid var(--border); }
+.panel-title { font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+.panel-unread-count { font-size: 11px; font-weight: 700; color: #fff; background: var(--danger); border-radius: 10px; padding: 1px 6px; }
+.panel-read-all { font-size: 12px; color: var(--text-muted); background: none; border: none; cursor: pointer; font-family: inherit; }
+.panel-read-all:hover { color: var(--primary); }
+.noti-list { max-height: 360px; overflow-y: auto; }
+.noti-item { display: flex; align-items: flex-start; gap: 10px; padding: 12px 16px; cursor: pointer; transition: background .12s; border-bottom: 1px solid var(--border); }
+.noti-item:last-child { border-bottom: none; }
+.noti-item:hover { background: var(--bg); }
+.noti-item.unread { background: #F5F8FF; }
+.noti-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.noti-body { flex: 1; min-width: 0; }
+.noti-title { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.4; }
+.noti-item:not(.unread) .noti-title { font-weight: 500; color: var(--text-sub); }
+.noti-desc { font-size: 12px; color: var(--text-sub); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.noti-time { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+.noti-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--primary); flex-shrink: 0; margin-top: 6px; }
+.noti-item:not(.unread) .noti-dot { visibility: hidden; }
+.panel-footer { padding: 10px 16px; border-top: 1px solid var(--border); text-align: center; }
+.panel-footer a { font-size: 12px; color: var(--primary); }
+
+/* 유저 패널 */
+#userPanel { width: 220px; }
+
+/* 설정 드롭다운 */
+#settingPanel { width: 210px; padding: 6px 0; }
+.setting-panel-item { display: flex; align-items: center; gap: 8px; padding: 9px 16px; font-size: 13px; color: var(--text-sub); cursor: pointer; transition: background .12s; white-space: nowrap; }
+.setting-panel-item:hover { background: var(--bg); color: var(--text); }
+
+/* GNB 툴팁 */
+#gnbTooltip {
+  position: fixed; z-index: 500; left: 68px;
+  background: var(--sidebar-bg); color: #fff;
+  font-size: 12px; font-weight: 600;
+  padding: 6px 12px; border-radius: 6px;
+  white-space: nowrap; pointer-events: none;
+  box-shadow: 0 4px 14px rgba(0,0,0,.25);
+  transform: translateY(-50%);
+  border-left: 3px solid var(--primary);
+  opacity: 0; transition: opacity .13s;
+}
+#gnbTooltip.visible { opacity: 1; }
+#gnbTooltip::before { content: ''; position: absolute; left: -7px; top: 50%; transform: translateY(-50%); border: 6px solid transparent; border-right-color: #1e293b; border-left-width: 0; }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   TOAST
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.toast-stack { position: fixed; bottom: 24px; right: 24px; z-index: 300; display: flex; flex-direction: column-reverse; gap: 8px; }
+.toast { display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-md); min-width: 280px; max-width: 340px; animation: tIn .25s ease; }
+@keyframes tIn { from { opacity:0; transform:translateX(16px); } to { opacity:1; transform:none; } }
+.toast-ico  { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.toast-body { flex: 1; }
+.toast-title{ font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+.toast-msg  { font-size: 12px; color: var(--text-sub); }
+.toast-x    { background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 16px; padding: 0; align-self: flex-start; }
+.toast.t-success { border-left: 4px solid var(--success); }
+.toast.t-error   { border-left: 4px solid var(--danger); }
+.toast.t-warning { border-left: 4px solid var(--warning); }
+.toast.t-info    { border-left: 4px solid var(--info); }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════
+     HEADER
+════════════════════════════ -->
+<header class="header">
+  <div class="header-brand">
+    <div class="brand-icon">E</div>
+    <div class="brand-text">
+      <div class="brand-name">ENTWIZ CRM</div>
+      <div class="brand-version">v1.0 Beta</div>
+    </div>
+    <button class="header-toggle" onclick="toggleSidebar()" title="사이드바 접기/펼치기">☰</button>
+  </div>
+  <div class="header-right">
+    <button class="icon-btn" id="btnNoti" onclick="toggleNoti()" title="알림">
+      🔔<span class="dot" id="notiDot"></span>
+    </button>
+    <button class="icon-btn" id="btnSetting" onclick="toggleSetting()" title="설정">⚙️</button>
+    <div class="header-user" id="btnUser" onclick="toggleUser()">
+      <div class="avatar">김</div>
+      <div>
+        <div class="user-name">김운영</div>
+        <div class="user-role">마케팅팀 · 관리자</div>
+      </div>
+      <span class="user-arrow" id="userArrow">▾</span>
+    </div>
+  </div>
+</header>
+
+<!-- ════════════════════════════
+     SIDEBAR
+════════════════════════════ -->
+<aside class="sidebar" id="sidebar">
+  <nav>
+    <!-- 홈 -->
+    <div class="gnb-item" onclick="loadPage('CRM_홈.html',null,this)">
+      <span class="gnb-icon">📊</span>
+      <span class="gnb-label2">홈</span>
+    </div>
+
+    <!-- 캠페인 시작하기 -->
+    <div class="gnb-item" onclick="navWIP('캠페인 시작하기')">
+      <span class="gnb-icon">🚀</span>
+      <span class="gnb-label2">캠페인 시작하기</span>
+    </div>
+
+    <div class="gnb-label">고객</div>
+
+    <!-- 고객 관리 (현재 페이지) -->
+    <div class="gnb-item active open" onclick="toggleGnb(this)">
+      <span class="gnb-icon">👥</span>
+      <span class="gnb-label2">고객 관리</span>
+      <span class="gnb-arrow">▶</span>
+    </div>
+    <div class="lnb open">
+      <div class="lnb-item active" onclick="loadPage('CRM_고객관리.html','list',this)">고객 목록/검색</div>
+      <div class="lnb-item" onclick="loadPage('CRM_고객관리.html','segment',this)">세그먼트 관리</div>
+      <div class="lnb-item" onclick="loadPage('CRM_고객관리.html','autotag',this)">자동 태그 관리</div>
+      <div class="lnb-item" onclick="loadPage('CRM_고객관리.html','grade',this)">등급 관리</div>
+    </div>
+
+    <div class="gnb-label">자동화</div>
+
+    <!-- 자동화 캠페인 -->
+    <div class="gnb-item" onclick="toggleGnb(this)">
+      <span class="gnb-icon">💰</span>
+      <span class="gnb-label2">자동화 캠페인</span>
+      <span class="gnb-arrow">▶</span>
+    </div>
+    <div class="lnb">
+      <div class="lnb-item" onclick="loadPage('CRM_자동화캠페인.html','upsell',this)">업셀/크로스셀 설정</div>
+      <div class="lnb-item" onclick="loadPage('CRM_자동화캠페인.html','cart',this)">장바구니 이탈 복구</div>
+      <div class="lnb-item" onclick="loadPage('CRM_자동화캠페인.html','remarketing',this)">구매 후 리마케팅 시퀀스</div>
+      <div class="lnb-item" onclick="loadPage('CRM_자동화캠페인.html','repurchase',this)">재구매 리마인드</div>
+      <div class="lnb-item" onclick="loadPage('CRM_자동화캠페인.html','churnprev',this)">이탈 방지 시퀀스 설정</div>
+      <div class="lnb-item" onclick="loadPage('CRM_자동화캠페인.html','reactivate',this)">휴면 고객 재활성</div>
+      <div class="lnb-item" onclick="loadPage('CRM_자동화캠페인.html','vip',this)">VIP 자동화 설정</div>
+      <div class="lnb-item" onclick="loadPage('CRM_자동화캠페인.html','aioptimize',this)">AI 발송 최적화 설정</div>
+    </div>
+
+    <!-- 메시지 캠페인 -->
+    <div class="gnb-item" onclick="toggleGnb(this)">
+      <span class="gnb-icon">📣</span>
+      <span class="gnb-label2">메시지 캠페인</span>
+      <span class="gnb-arrow">▶</span>
+    </div>
+    <div class="lnb">
+      <div class="lnb-item" onclick="navWIP('캠페인 목록')">캠페인 목록</div>
+      <div class="lnb-item" onclick="navWIP('캠페인 만들기')">캠페인 만들기</div>
+      <div class="lnb-item" onclick="navWIP('이벤트 자동 메시지')">이벤트 자동 메시지</div>
+      <div class="lnb-item" onclick="navWIP('리드 관리')">리드 관리</div>
+      <div class="lnb-item" onclick="navWIP('A/B 테스트')">A/B 테스트</div>
+      <div class="lnb-item" onclick="navWIP('채널 관리')">채널 관리</div>
+    </div>
+
+    <!-- 리텐션 -->
+    <div class="gnb-item" onclick="toggleGnb(this)">
+      <span class="gnb-icon">🔒</span>
+      <span class="gnb-label2">리텐션</span>
+      <span class="gnb-arrow">▶</span>
+    </div>
+    <div class="lnb">
+      <div class="lnb-item" onclick="navWIP('포인트 관리')">포인트 관리</div>
+      <div class="lnb-item" onclick="navWIP('레퍼럴 관리')">레퍼럴 관리</div>
+      <div class="lnb-item" onclick="navWIP('구독/멤버십')">구독/멤버십</div>
+      <div class="lnb-item" onclick="navWIP('리뷰 &amp; 커뮤니티')">리뷰 &amp; 커뮤니티</div>
+    </div>
+
+    <!-- 영업 관리 -->
+    <div class="gnb-item" onclick="toggleGnb(this)">
+      <span class="gnb-icon">🤝</span>
+      <span class="gnb-label2">영업 관리</span>
+      <span class="gnb-arrow">▶</span>
+    </div>
+    <div class="lnb">
+      <div class="lnb-item" onclick="navWIP('영업 파이프라인')">영업 파이프라인</div>
+      <div class="lnb-item" onclick="navWIP('담당자 배정 규칙 설정')">담당자 배정 규칙 설정</div>
+      <div class="lnb-item" onclick="navWIP('팔로업 자동화 설정')">팔로업 자동화 설정</div>
+    </div>
+
+    <!-- 워크플로우 -->
+    <div class="gnb-item" onclick="toggleGnb(this)">
+      <span class="gnb-icon">⚡</span>
+      <span class="gnb-label2">워크플로우</span>
+      <span class="gnb-arrow">▶</span>
+    </div>
+    <div class="lnb">
+      <div class="lnb-item" onclick="navWIP('트리거 목록')">트리거 목록</div>
+      <div class="lnb-item" onclick="navWIP('시나리오 관리')">시나리오 관리</div>
+      <div class="lnb-item" onclick="navWIP('발송 이력')">발송 이력</div>
+    </div>
+
+    <div class="gnb-label">서비스</div>
+
+    <!-- 고객 지원 -->
+    <div class="gnb-item" onclick="toggleGnb(this)">
+      <span class="gnb-icon">🎧</span>
+      <span class="gnb-label2">고객 지원</span>
+      <span class="gnb-badge">3</span>
+      <span class="gnb-arrow">▶</span>
+    </div>
+    <div class="lnb">
+      <div class="lnb-item" onclick="navWIP('티켓 목록')">티켓 목록</div>
+      <div class="lnb-item" onclick="navWIP('고객 건강도 현황')">고객 건강도 현황</div>
+      <div class="lnb-item" onclick="navWIP('상담 이력')">상담 이력</div>
+      <div class="lnb-item" onclick="navWIP('이탈 위험 고객 목록')">이탈 위험 고객 목록</div>
+    </div>
+
+    <!-- 커머스 관리 -->
+    <div class="gnb-item" onclick="toggleGnb(this)">
+      <span class="gnb-icon">🛒</span>
+      <span class="gnb-label2">커머스 관리</span>
+      <span class="gnb-arrow">▶</span>
+    </div>
+    <div class="lnb">
+      <div class="lnb-item" onclick="navWIP('개인화 진열 설정')">개인화 진열 설정</div>
+      <div class="lnb-item" onclick="navWIP('재고 알림 설정')">재고 알림 설정</div>
+      <div class="lnb-item" onclick="navWIP('AI 추천 엔진 설정')">AI 추천 엔진 설정</div>
+    </div>
+
+    <div class="gnb-label">데이터</div>
+
+    <!-- 애널리틱스 -->
+    <div class="gnb-item" onclick="toggleGnb(this)">
+      <span class="gnb-icon">📈</span>
+      <span class="gnb-label2">애널리틱스</span>
+      <span class="gnb-arrow">▶</span>
+    </div>
+    <div class="lnb">
+      <div class="lnb-item" onclick="navWIP('KPI 대시보드')">KPI 대시보드</div>
+      <div class="lnb-item" onclick="navWIP('코호트 분석')">코호트 분석</div>
+      <div class="lnb-item" onclick="navWIP('고객 여정 (퍼널)')">고객 여정 (퍼널)</div>
+      <div class="lnb-item" onclick="navWIP('세그먼트별 매출')">세그먼트별 매출</div>
+      <div class="lnb-item" onclick="navWIP('캠페인 성과')">캠페인 성과</div>
+      <div class="lnb-item" onclick="navWIP('채널별 지표')">채널별 지표</div>
+      <div class="lnb-item" onclick="navWIP('자동 리포트 설정')">자동 리포트 설정</div>
+    </div>
+  </nav>
+
+  <!-- 설정 — GNB 하단 고정 -->
+  <div class="sidebar-bottom">
+    <div class="gnb-item" onclick="toggleGnb(this)">
+      <span class="gnb-icon">⚙️</span>
+      <span class="gnb-label2">설정</span>
+      <span class="gnb-arrow">▶</span>
+    </div>
+    <div class="lnb">
+      <div class="lnb-item" onclick="navWIP('세그먼트 기준 설정')">세그먼트 기준 설정</div>
+      <div class="lnb-item" onclick="navWIP('등급 기준 설정')">등급 기준 설정</div>
+      <div class="lnb-item" onclick="navWIP('건강도 점수 가중치 설정')">건강도 점수 가중치 설정</div>
+      <div class="lnb-item" onclick="navWIP('채널 연동 설정')">채널 연동 설정</div>
+      <div class="lnb-item" onclick="navWIP('데이터 관리')">데이터 관리</div>
+      <div class="lnb-item" onclick="navWIP('권한/계정 관리')">권한/계정 관리</div>
+      <div class="lnb-item" onclick="navWIP('알림 설정')">알림 설정</div>
+    </div>
+  </div>
+</aside>
+
+<!-- 알림 패널 -->
+<div id="notiPanel" class="header-panel">
+  <div class="panel-head">
+    <span class="panel-title">알림 <span class="panel-unread-count" id="unreadCount">3</span></span>
+    <button class="panel-read-all" onclick="markAllRead()">모두 읽음</button>
+  </div>
+  <div class="noti-list">
+    <div class="noti-item unread">
+      <span class="noti-icon">🚨</span>
+      <div class="noti-body">
+        <div class="noti-title">이탈 위험 고객 41명 감지</div>
+        <div class="noti-desc">세그먼트 '이탈위험' 고객이 전주 대비 증가했습니다.</div>
+        <div class="noti-time">방금 전</div>
+      </div>
+      <span class="noti-dot"></span>
+    </div>
+    <div class="noti-item unread">
+      <span class="noti-icon">🎫</span>
+      <div class="noti-body">
+        <div class="noti-title">새 CS 티켓 5건 접수</div>
+        <div class="noti-desc">긴급 티켓 2건 포함 · 미처리 티켓을 확인하세요.</div>
+        <div class="noti-time">8분 전</div>
+      </div>
+      <span class="noti-dot"></span>
+    </div>
+    <div class="noti-item unread">
+      <span class="noti-icon">📊</span>
+      <div class="noti-body">
+        <div class="noti-title">주간 캠페인 성과 리포트 도착</div>
+        <div class="noti-desc">지난주 대비 전환율 +12% 상승했습니다.</div>
+        <div class="noti-time">32분 전</div>
+      </div>
+      <span class="noti-dot"></span>
+    </div>
+    <div class="noti-item">
+      <span class="noti-icon">✅</span>
+      <div class="noti-body">
+        <div class="noti-title">봄 프로모션 캠페인 발송 완료</div>
+        <div class="noti-desc">총 2,847명에게 알림톡이 발송되었습니다.</div>
+        <div class="noti-time">1시간 전</div>
+      </div>
+      <span class="noti-dot"></span>
+    </div>
+    <div class="noti-item">
+      <span class="noti-icon">⚠️</span>
+      <div class="noti-body">
+        <div class="noti-title">이메일 채널 발송 지연 감지</div>
+        <div class="noti-desc">현재 이메일 발송이 지연되고 있습니다. 확인 필요.</div>
+        <div class="noti-time">2시간 전</div>
+      </div>
+      <span class="noti-dot"></span>
+    </div>
+  </div>
+  <div class="panel-footer"><a href="#">전체 알림 보기 →</a></div>
+</div>
+
+<!-- 유저 패널 -->
+<div id="userPanel" class="header-panel">
+  <div style="padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;">
+    <div class="avatar" style="width:40px;height:40px;font-size:15px;flex-shrink:0;">김</div>
+    <div>
+      <div style="font-size:14px;font-weight:700;">김운영</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">마케팅팀 · 관리자</div>
+      <div style="font-size:11px;color:var(--text-muted);">lala98@entwiz.com</div>
+    </div>
+  </div>
+  <div style="padding:6px 0;">
+    <div class="setting-panel-item" onclick="navWIP('내 프로필')">👤&nbsp; 내 프로필</div>
+    <div class="setting-panel-item" onclick="navWIP('알림 설정')">🔔&nbsp; 알림 설정</div>
+    <div class="setting-panel-item" style="border-top:1px solid var(--border);margin-top:4px;color:var(--danger);" onclick="doLogout()">🚪&nbsp; 로그아웃</div>
+  </div>
+</div>
+
+<!-- 설정 드롭다운 -->
+<div id="settingPanel" class="header-panel">
+  <div class="setting-panel-item" onclick="navToSetting('세그먼트 기준 설정')">⚙️&nbsp; 세그먼트 기준 설정</div>
+  <div class="setting-panel-item" onclick="navToSetting('등급 기준 설정')">🏅&nbsp; 등급 기준 설정</div>
+  <div class="setting-panel-item" onclick="navToSetting('건강도 점수 가중치 설정')">💚&nbsp; 건강도 점수 가중치 설정</div>
+  <div class="setting-panel-item" onclick="navToSetting('채널 연동 설정')">🔗&nbsp; 채널 연동 설정</div>
+  <div class="setting-panel-item" onclick="navToSetting('데이터 관리')">🗂️&nbsp; 데이터 관리</div>
+  <div class="setting-panel-item" onclick="navToSetting('권한/계정 관리')">👥&nbsp; 권한/계정 관리</div>
+  <div class="setting-panel-item" onclick="navToSetting('알림 설정')">🔔&nbsp; 알림 설정</div>
+</div>
+
+<!-- ════════════════════════════
+     CONTENT IFRAME
+════════════════════════════ -->
+<iframe id="contentFrame" class="content-frame" src="CRM_고객관리.html#list"></iframe>
+
+<!-- TOAST -->
+<div class="toast-stack" id="toastStack"></div>
+
+<script src="crm-common.js"></script>
+<script>
+/* ── 페이지 로드 / 화면 전환 ─────────────────────────────── */
+function loadPage(file, screen, lnbEl) {
+  const iframe = document.getElementById('contentFrame');
+  try {
+    // 한글 파일명은 URL에서 인코딩되므로 decodeURIComponent 사용
+    const curFile = decodeURIComponent(iframe.contentWindow.location.pathname.split('/').pop());
+    if (curFile === file && typeof iframe.contentWindow.showScreen === 'function') {
+      iframe.contentWindow.showScreen(screen || 'list');
+    } else {
+      iframe.src = screen ? file + '#' + screen : file;
+    }
+  } catch(e) {
+    iframe.src = screen ? file + '#' + screen : file;
+  }
+  _setActive(lnbEl);
+}
+
+/* ── 콘텐츠 페이지에서 호출: file+screen으로 LNB 활성화 ── */
+function activateLnb(file, screen) {
+  let found = null;
+  document.querySelectorAll('.lnb-item').forEach(el => {
+    const oc = el.getAttribute('onclick') || '';
+    if (oc.includes(file) && oc.includes("'" + screen + "'")) found = el;
+  });
+  // 일치 항목이 없으면 (상세 화면 등 숨겨진 화면) 사이드바 상태 유지
+  if (found) _setActive(found);
+}
+
+/* ── 내부: 활성 상태 일괄 교체 ─────────────────────────── */
+function _setActive(el) {
+  document.querySelectorAll('.gnb-item').forEach(i => i.classList.remove('active'));
+  document.querySelectorAll('.lnb-item').forEach(l => l.classList.remove('active'));
+  if (!el) return;
+  el.classList.add('active');
+  if (!el.classList.contains('gnb-item')) {
+    const parentGnb = el.closest('.lnb')?.previousElementSibling;
+    if (parentGnb?.classList.contains('gnb-item')) parentGnb.classList.add('active');
+  }
+}
+</script>
+</body>
+</html>

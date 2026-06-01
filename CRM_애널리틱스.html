@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="crm-layout.css">
+<title>애널리틱스 | ENTWIZ CRM</title>
+<style>
+:root {
+  --primary: #2563EB; --primary-dark: #1D4ED8; --primary-light: #EFF6FF;
+  --bg: #F8FAFC; --surface: #FFFFFF; --border: #E2E8F0;
+  --text: #0F172A; --text-sub: #475569; --text-muted: #94A3B8;
+  --success: #059669; --success-bg: #ECFDF5;
+  --warning: #D97706; --warning-bg: #FFFBEB;
+  --danger: #DC2626; --danger-bg: #FEF2F2;
+  --info: #2563EB; --info-bg: #EFF6FF;
+  --radius: 8px; --radius-sm: 5px;
+  --shadow: 0 1px 3px rgba(0,0,0,.08); --shadow-md: 0 4px 16px rgba(0,0,0,.10);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Pretendard','Malgun Gothic','맑은 고딕',-apple-system,sans-serif; font-size: 14px; color: var(--text); background: var(--bg); padding: 0; margin: 0; }
+a { text-decoration: none; } button { font-family: inherit; cursor: pointer; }
+
+.screen { display: none; } .screen.active { display: block; }
+
+/* 브레드크럼 */
+.breadcrumb { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text-muted); margin-bottom: 14px; }
+.breadcrumb .sep { color: var(--border); font-size: 14px; }
+.breadcrumb .curr { color: var(--text-sub); font-weight: 600; }
+.breadcrumb .bc-link { cursor: pointer; color: var(--text-muted); }
+.breadcrumb .bc-link:hover { color: var(--primary); }
+
+/* 페이지 헤더 */
+.page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+.page-title { font-size: 20px; font-weight: 800; }
+.page-desc { font-size: 13px; color: var(--text-sub); margin-top: 3px; }
+.page-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+/* 버튼 */
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: var(--radius); font-size: 13px; font-weight: 600; border: 1px solid transparent; transition: all .15s; white-space: nowrap; cursor: pointer; }
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-secondary { background: var(--surface); color: var(--text-sub); border-color: var(--border); }
+.btn-secondary:hover { background: var(--bg); }
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-danger:hover { background: #b91c1c; }
+.btn-ghost { background: none; border-color: transparent; color: var(--text-sub); }
+.btn-ghost:hover { background: var(--bg); }
+.btn-sm { padding: 5px 10px; font-size: 12px; border-radius: var(--radius-sm); }
+
+/* 셀렉트 */
+.sel { padding: 7px 28px 7px 10px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 13px; font-family: inherit; background: var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2394A3B8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 10px center; appearance: none; cursor: pointer; color: var(--text-sub); }
+.sel:focus { outline: none; border-color: var(--primary); }
+
+/* KPI 그리드 */
+.kpi-grid-6 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 20px; }
+.kpi-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; box-shadow: var(--shadow); }
+.kpi-label { font-size: 11px; color: var(--text-muted); font-weight: 700; letter-spacing: .05em; text-transform: uppercase; margin-bottom: 8px; }
+.kpi-value { font-size: 26px; font-weight: 800; color: var(--text); line-height: 1.1; }
+.kpi-value small { font-size: 14px; font-weight: 600; color: var(--text-muted); }
+.kpi-trend { font-size: 12px; color: var(--text-muted); margin-top: 6px; display: flex; align-items: center; gap: 4px; }
+.kpi-trend.up { color: var(--success); }
+.kpi-trend.down { color: var(--danger); }
+
+/* 카드 */
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 16px; overflow: hidden; }
+.card-head { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.card-title { font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.card-body { padding: 20px; }
+
+/* 요약 캠페인 카드 (4열) */
+.campaign-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 16px; overflow: hidden; }
+.cs-item { padding: 20px; border-right: 1px solid var(--border); }
+.cs-item:last-child { border-right: none; }
+.cs-label { font-size: 11px; font-weight: 700; color: var(--text-muted); letter-spacing: .05em; text-transform: uppercase; margin-bottom: 8px; }
+.cs-value { font-size: 22px; font-weight: 800; color: var(--text); }
+.cs-value small { font-size: 14px; font-weight: 500; color: var(--text-muted); }
+
+/* 바 차트 */
+.bar-chart { display: flex; align-items: flex-end; gap: 10px; height: 160px; padding: 0 4px; }
+.bar-col { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; }
+.bar-label { font-size: 11px; color: var(--text-muted); font-weight: 600; }
+.bar-amount { font-size: 11px; color: var(--text-sub); font-weight: 700; }
+.bar { width: 100%; border-radius: 4px 4px 0 0; background: var(--primary); opacity: .85; transition: opacity .2s; min-height: 4px; }
+.bar:hover { opacity: 1; }
+.bar-wrap { flex: 1; display: flex; align-items: flex-end; width: 100%; }
+
+/* 데이터 테이블 */
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th { padding: 10px 14px; text-align: left; font-size: 11px; font-weight: 700; color: var(--text-muted); letter-spacing: .05em; text-transform: uppercase; border-bottom: 2px solid var(--border); background: var(--bg); white-space: nowrap; }
+.data-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: middle; }
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: var(--bg); }
+
+/* 배지 */
+.badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 700; }
+.badge-success { background: var(--success-bg); color: var(--success); }
+.badge-muted { background: var(--bg); color: var(--text-muted); border: 1px solid var(--border); }
+.badge-warning { background: var(--warning-bg); color: var(--warning); }
+.badge-danger { background: var(--danger-bg); color: var(--danger); }
+.badge-primary { background: var(--primary-light); color: var(--primary); }
+.badge-info { background: #EFF6FF; color: var(--info); }
+
+/* 토글 */
+.toggle { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle-track { position: absolute; inset: 0; background: var(--border); border-radius: 12px; cursor: pointer; transition: background .2s; }
+.toggle input:checked + .toggle-track { background: var(--primary); }
+.toggle-track::before { content: ''; position: absolute; width: 18px; height: 18px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: transform .2s; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
+.toggle input:checked + .toggle-track::before { transform: translateX(20px); }
+
+/* 프로그레스 바 */
+.progress-bar { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 3px; background: var(--primary); }
+.progress-fill.success { background: var(--success); }
+.progress-fill.warning { background: var(--warning); }
+
+/* 인사이트 배너 */
+.insight-banner { background: linear-gradient(135deg, #EFF6FF 0%, #F0FDF4 100%); border: 1px solid #BFDBFE; border-radius: var(--radius); padding: 14px 18px; display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.insight-icon { font-size: 20px; flex-shrink: 0; }
+.insight-text { font-size: 13px; color: var(--text-sub); line-height: 1.5; }
+.insight-text strong { color: var(--primary); }
+
+/* 2열 그리드 */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+/* ══════════ COHORT ══════════ */
+.cohort-filter { display: flex; gap: 10px; align-items: center; margin-bottom: 16px; }
+.cohort-table-wrap { overflow-x: auto; }
+.cohort-table { border-collapse: collapse; font-size: 13px; }
+.cohort-table th, .cohort-table td { padding: 10px 14px; border: 1px solid var(--border); text-align: center; white-space: nowrap; }
+.cohort-table th { background: var(--bg); font-size: 11px; font-weight: 700; color: var(--text-muted); letter-spacing: .04em; }
+.cohort-table td:first-child { font-weight: 600; color: var(--text-sub); text-align: left; background: var(--bg); }
+.cohort-cell { font-size: 12px; font-weight: 700; }
+.cohort-insight-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 16px; }
+.ci-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; box-shadow: var(--shadow); }
+.ci-label { font-size: 11px; font-weight: 700; color: var(--text-muted); letter-spacing: .05em; text-transform: uppercase; margin-bottom: 6px; }
+.ci-value { font-size: 22px; font-weight: 800; color: var(--primary); }
+.ci-desc { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+/* ══════════ FUNNEL ══════════ */
+.funnel-wrap { display: flex; flex-direction: column; gap: 0; margin-bottom: 20px; }
+.funnel-step { display: flex; align-items: center; gap: 16px; padding: 6px 0; }
+.funnel-bar-outer { flex: 1; display: flex; align-items: center; gap: 12px; }
+.funnel-bar-inner { background: var(--primary); border-radius: 4px; height: 44px; display: flex; align-items: center; padding: 0 14px; color: #fff; font-weight: 700; font-size: 13px; transition: width .4s ease; white-space: nowrap; }
+.funnel-step-num { width: 26px; height: 26px; border-radius: 50%; background: var(--primary-light); color: var(--primary); font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.funnel-meta { min-width: 180px; }
+.funnel-step-name { font-size: 13px; font-weight: 700; }
+.funnel-step-count { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.funnel-pct { font-size: 13px; font-weight: 800; color: var(--text-sub); min-width: 50px; text-align: right; }
+.funnel-drop { display: flex; align-items: center; gap: 6px; padding: 4px 0 4px 42px; }
+.funnel-drop-line { width: 2px; height: 24px; background: var(--border); margin-left: 10px; }
+.funnel-drop-label { font-size: 11px; color: var(--danger); font-weight: 700; background: var(--danger-bg); padding: 2px 8px; border-radius: 10px; }
+.drop-section { padding-left: 56px; margin: 2px 0; }
+
+.exit-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; }
+.exit-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); }
+.exit-card-title { font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 10px; letter-spacing: .04em; text-transform: uppercase; }
+.exit-reason { display: flex; align-items: center; justify-content: space-between; padding: 5px 0; font-size: 12px; border-bottom: 1px dashed var(--border); }
+.exit-reason:last-child { border-bottom: none; }
+.exit-reason-label { color: var(--text-sub); }
+.exit-reason-pct { font-weight: 700; color: var(--text); }
+
+/* ══════════ REVENUE ══════════ */
+.seg-bar-wrap { min-width: 100px; }
+.top5-rank { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; font-size: 11px; font-weight: 800; background: var(--bg); color: var(--text-muted); }
+.top5-rank.gold { background: #FEF3C7; color: #D97706; }
+.top5-rank.silver { background: #F1F5F9; color: #64748B; }
+.top5-rank.bronze { background: #FEF2F2; color: #92400E; }
+.ltv-chart { display: flex; flex-direction: column; gap: 12px; }
+.ltv-row { display: grid; grid-template-columns: 120px 1fr 80px; align-items: center; gap: 12px; }
+.ltv-label { font-size: 12px; color: var(--text-sub); font-weight: 600; }
+.ltv-bar-wrap { height: 10px; background: var(--border); border-radius: 5px; overflow: hidden; }
+.ltv-bar { height: 100%; border-radius: 5px; }
+.ltv-value { font-size: 12px; font-weight: 700; color: var(--text); text-align: right; }
+
+/* ══════════ CAMPAIGN ══════════ */
+.camp-summary { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 16px; overflow: hidden; }
+.camp-sum-item { padding: 18px 16px; border-right: 1px solid var(--border); }
+.camp-sum-item:last-child { border-right: none; }
+
+/* ══════════ CHANNEL ══════════ */
+.channel-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 16px; }
+.ch-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; box-shadow: var(--shadow); }
+.ch-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 12px; }
+.ch-name { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
+.ch-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.ch-metric { }
+.ch-metric-label { font-size: 10px; color: var(--text-muted); font-weight: 700; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 2px; }
+.ch-metric-value { font-size: 15px; font-weight: 800; color: var(--text); }
+.ch-send { font-size: 11px; color: var(--text-muted); margin-bottom: 10px; }
+
+/* 히트맵 시간대 */
+.heatmap-wrap { overflow-x: auto; }
+.heatmap-table { border-collapse: collapse; font-size: 11px; }
+.heatmap-table th, .heatmap-table td { padding: 6px 8px; border: 1px solid var(--border); text-align: center; white-space: nowrap; }
+.heatmap-table th { background: var(--bg); font-weight: 700; color: var(--text-muted); }
+.heatmap-table td:first-child { font-weight: 700; color: var(--text-sub); background: var(--bg); text-align: left; padding-right: 12px; }
+
+/* ══════════ REPORT ══════════ */
+.tpl-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; }
+.tpl-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); cursor: pointer; transition: all .15s; }
+.tpl-card:hover { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+.tpl-icon { font-size: 24px; margin-bottom: 10px; }
+.tpl-name { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+.tpl-desc { font-size: 11px; color: var(--text-muted); line-height: 1.5; }
+.integration-row { display: flex; align-items: center; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+.integration-row:last-child { border-bottom: none; }
+.integration-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+.integration-name { font-size: 13px; font-weight: 700; }
+.integration-status { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+</style>
+</head>
+<body>
+<main class="content">
+
+<div class="breadcrumb">
+  <span class="bc-link">ENTWIZ CRM</span>
+  <span class="sep">›</span>
+  <span>애널리틱스</span>
+  <span class="sep">›</span>
+  <span class="curr" id="bcCurr">KPI 대시보드</span>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCREEN: KPI 대시보드
+══════════════════════════════════════ -->
+<div id="screen-kpi" class="screen active">
+  <div class="page-header">
+    <div>
+      <div class="page-title">KPI 대시보드</div>
+      <div class="page-desc">핵심 성과 지표를 한눈에 확인합니다.</div>
+    </div>
+    <div class="page-actions">
+      <select class="sel" onchange="showToast('info','기간 변경',this.options[this.selectedIndex].text+' 데이터를 불러옵니다.')">
+        <option>오늘</option>
+        <option selected>이번 주</option>
+        <option>이번 달</option>
+        <option>이번 분기</option>
+      </select>
+      <button class="btn btn-secondary" onclick="showToast('info','리포트 내보내기','KPI 리포트를 PDF로 내보냅니다.')">📥 리포트 내보내기</button>
+    </div>
+  </div>
+
+  <!-- KPI 카드 6개 (2행 3열) -->
+  <div class="kpi-grid-6">
+    <div class="kpi-card">
+      <div class="kpi-label">전체 고객수</div>
+      <div class="kpi-value">12,847<small>명</small></div>
+      <div class="kpi-trend up">▲ +3.2% 전월 대비</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">신규 고객</div>
+      <div class="kpi-value">847<small>명</small></div>
+      <div class="kpi-trend up">▲ +12.4% 전월 대비</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">이탈 고객</div>
+      <div class="kpi-value">124<small>명</small></div>
+      <div class="kpi-trend down">▼ -5.1% 전월 대비</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">전환율</div>
+      <div class="kpi-value">4.73<small>%</small></div>
+      <div class="kpi-trend up">▲ +0.8%p 전월 대비</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">평균 주문금액</div>
+      <div class="kpi-value">87,400<small>원</small></div>
+      <div class="kpi-trend up">▲ +4.2% 전월 대비</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">고객 생애 가치 (LTV)</div>
+      <div class="kpi-value">324,000<small>원</small></div>
+      <div class="kpi-trend up">▲ +7.1% 전월 대비</div>
+    </div>
+  </div>
+
+  <!-- 캠페인 성과 요약 -->
+  <div class="campaign-summary">
+    <div class="cs-item">
+      <div class="cs-label">이번달 발송 건수</div>
+      <div class="cs-value">47,832<small>건</small></div>
+    </div>
+    <div class="cs-item">
+      <div class="cs-label">오픈율</div>
+      <div class="cs-value">23.4<small>%</small></div>
+    </div>
+    <div class="cs-item">
+      <div class="cs-label">클릭율 (CTR)</div>
+      <div class="cs-value">8.7<small>%</small></div>
+    </div>
+    <div class="cs-item">
+      <div class="cs-label">전환 건수</div>
+      <div class="cs-value">1,127<small>건</small></div>
+    </div>
+  </div>
+
+  <!-- 매출 추이 차트 -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title">📊 일별 매출 추이 (최근 7일)</span>
+      <span style="font-size:12px;color:var(--text-muted);">단위: 만원</span>
+    </div>
+    <div class="card-body">
+      <div class="bar-chart" id="revenueBarChart">
+        <!-- JS로 렌더링 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 세그먼트별 신규 유입 테이블 -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title">👥 이번달 세그먼트별 신규 유입</span>
+      <button class="btn btn-ghost btn-sm" onclick="showScreen('revenue')">세그먼트 분석 →</button>
+    </div>
+    <div class="card-body" style="padding:0;">
+      <table class="data-table">
+        <thead><tr>
+          <th>세그먼트명</th><th>신규 유입</th><th>전월 대비</th><th>비율</th><th>비중</th>
+        </tr></thead>
+        <tbody>
+          <tr><td><span class="badge badge-warning">VIP-Gold</span></td><td>127명</td><td><span style="color:var(--success)">▲ +18.2%</span></td><td>15.0%</td><td><div class="progress-bar" style="min-width:100px"><div class="progress-fill" style="width:100%;background:#F59E0B"></div></div></td></tr>
+          <tr><td><span class="badge badge-primary">VIP-Silver</span></td><td>218명</td><td><span style="color:var(--success)">▲ +9.4%</span></td><td>25.8%</td><td><div class="progress-bar" style="min-width:100px"><div class="progress-fill" style="width:86%"></div></div></td></tr>
+          <tr><td><span class="badge badge-success">신규 활성</span></td><td>312명</td><td><span style="color:var(--success)">▲ +22.1%</span></td><td>36.8%</td><td><div class="progress-bar" style="min-width:100px"><div class="progress-fill success" style="width:100%"></div></div></td></tr>
+          <tr><td><span class="badge badge-muted">일반</span></td><td>108명</td><td><span style="color:var(--danger)">▼ -3.2%</span></td><td>12.8%</td><td><div class="progress-bar" style="min-width:100px"><div class="progress-fill" style="width:35%"></div></div></td></tr>
+          <tr><td><span class="badge" style="background:#F0FDF4;color:#059669">재활성</span></td><td>82명</td><td><span style="color:var(--success)">▲ +6.8%</span></td><td>9.7%</td><td><div class="progress-bar" style="min-width:100px"><div class="progress-fill" style="width:26%"></div></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div><!-- /screen-kpi -->
+
+<!-- ══════════════════════════════════════
+     SCREEN: 코호트 분석
+══════════════════════════════════════ -->
+<div id="screen-cohort" class="screen">
+  <div class="page-header">
+    <div>
+      <div class="page-title">코호트 분석</div>
+      <div class="page-desc">동일 기간 유입 고객의 재방문·재구매 패턴을 분석합니다.</div>
+    </div>
+    <div class="page-actions">
+      <button class="btn btn-secondary" onclick="showToast('info','내보내기','코호트 분석 데이터를 CSV로 내보냅니다.')">📥 CSV 내보내기</button>
+    </div>
+  </div>
+
+  <div class="insight-banner">
+    <span class="insight-icon">💡</span>
+    <div class="insight-text">코호트 분석은 특정 기간에 <strong>처음 구매한 고객 그룹</strong>이 이후 몇 개월 동안 얼마나 재구매하는지 보여줍니다. 높을수록 짙은 초록색으로 표시됩니다.</div>
+  </div>
+
+  <!-- 필터 -->
+  <div class="cohort-filter">
+    <span style="font-size:13px;color:var(--text-muted);font-weight:600;">기준:</span>
+    <select class="sel">
+      <option selected>첫 구매</option>
+      <option>첫 가입</option>
+    </select>
+    <span style="font-size:13px;color:var(--text-muted);font-weight:600;">기간:</span>
+    <select class="sel">
+      <option selected>월별</option>
+      <option>주별</option>
+    </select>
+  </div>
+
+  <!-- 코호트 테이블 -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title">재구매율 코호트 매트릭스</span>
+      <span style="font-size:11px;color:var(--text-muted);">각 셀: 해당 월 재구매율 (%) · 색상: 높을수록 짙은 초록</span>
+    </div>
+    <div class="card-body" style="padding:16px 20px;">
+      <div class="cohort-table-wrap">
+        <table class="cohort-table">
+          <thead>
+            <tr>
+              <th style="text-align:left;">유입 코호트</th>
+              <th>고객 수</th>
+              <th>Month 0</th>
+              <th>Month 1</th>
+              <th>Month 2</th>
+              <th>Month 3</th>
+              <th>Month 4</th>
+              <th>Month 5</th>
+            </tr>
+          </thead>
+          <tbody id="cohortTbody">
+            <!-- JS로 렌더링 -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 코호트 인사이트 -->
+      <div class="cohort-insight-grid">
+        <div class="ci-card">
+          <div class="ci-label">평균 1개월 재구매율</div>
+          <div class="ci-value">36.8%</div>
+          <div class="ci-desc">전월 대비 +2.1%p 향상</div>
+        </div>
+        <div class="ci-card">
+          <div class="ci-label">평균 3개월 재구매율</div>
+          <div class="ci-value">19.3%</div>
+          <div class="ci-desc">업종 평균(14.7%) 대비 우수</div>
+        </div>
+        <div class="ci-card">
+          <div class="ci-label">최고 성과 코호트</div>
+          <div class="ci-value" style="font-size:16px;">2025년 11월</div>
+          <div class="ci-desc">3개월 재구매율 23.6% 달성</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div><!-- /screen-cohort -->
+
+<!-- ══════════════════════════════════════
+     SCREEN: 고객 여정 (퍼널)
+══════════════════════════════════════ -->
+<div id="screen-journey" class="screen">
+  <div class="page-header">
+    <div>
+      <div class="page-title">고객 여정 (퍼널)</div>
+      <div class="page-desc">방문부터 구매까지 단계별 전환율을 분석합니다.</div>
+    </div>
+    <div class="page-actions">
+      <select class="sel">
+        <option selected>이번 달</option>
+        <option>지난 달</option>
+        <option>이번 분기</option>
+      </select>
+      <button class="btn btn-secondary" onclick="showToast('info','내보내기','퍼널 분석 데이터를 내보냅니다.')">📥 내보내기</button>
+    </div>
+  </div>
+
+  <div class="grid-2" style="gap:16px;margin-bottom:16px;">
+    <!-- 퍼널 시각화 -->
+    <div class="card" style="margin-bottom:0">
+      <div class="card-head">
+        <span class="card-title">🔻 전환 퍼널</span>
+        <span style="font-size:11px;color:var(--text-muted);">이번 달 기준</span>
+      </div>
+      <div class="card-body">
+        <div class="funnel-wrap">
+          <!-- Step 1 -->
+          <div class="funnel-step">
+            <div class="funnel-step-num">1</div>
+            <div class="funnel-meta">
+              <div class="funnel-step-name">사이트 방문</div>
+              <div class="funnel-step-count">48,320명</div>
+            </div>
+            <div class="funnel-bar-outer">
+              <div class="funnel-bar-inner" style="width:100%;background:#2563EB;">100%</div>
+            </div>
+            <div class="funnel-pct">100%</div>
+          </div>
+          <div class="drop-section"><span class="badge badge-danger" style="font-size:10px;">▼ 35.4% 이탈</span></div>
+          <!-- Step 2 -->
+          <div class="funnel-step">
+            <div class="funnel-step-num">2</div>
+            <div class="funnel-meta">
+              <div class="funnel-step-name">상품 조회</div>
+              <div class="funnel-step-count">31,204명</div>
+            </div>
+            <div class="funnel-bar-outer">
+              <div class="funnel-bar-inner" style="width:64.6%;background:#3B82F6;">64.6%</div>
+            </div>
+            <div class="funnel-pct">64.6%</div>
+          </div>
+          <div class="drop-section"><span class="badge badge-danger" style="font-size:10px;">▼ 58.8% 이탈</span></div>
+          <!-- Step 3 -->
+          <div class="funnel-step">
+            <div class="funnel-step-num">3</div>
+            <div class="funnel-meta">
+              <div class="funnel-step-name">장바구니 담기</div>
+              <div class="funnel-step-count">12,847명</div>
+            </div>
+            <div class="funnel-bar-outer">
+              <div class="funnel-bar-inner" style="width:26.6%;background:#60A5FA;">26.6%</div>
+            </div>
+            <div class="funnel-pct">26.6%</div>
+          </div>
+          <div class="drop-section"><span class="badge badge-warning" style="font-size:10px;">▼ 43.7% 이탈</span></div>
+          <!-- Step 4 -->
+          <div class="funnel-step">
+            <div class="funnel-step-num">4</div>
+            <div class="funnel-meta">
+              <div class="funnel-step-name">결제 시작</div>
+              <div class="funnel-step-count">7,234명</div>
+            </div>
+            <div class="funnel-bar-outer">
+              <div class="funnel-bar-inner" style="width:15%;background:#93C5FD;">15.0%</div>
+            </div>
+            <div class="funnel-pct">15.0%</div>
+          </div>
+          <div class="drop-section"><span class="badge badge-warning" style="font-size:10px;">▼ 42.9% 이탈</span></div>
+          <!-- Step 5 -->
+          <div class="funnel-step">
+            <div class="funnel-step-num" style="background:#ECFDF5;color:#059669;">5</div>
+            <div class="funnel-meta">
+              <div class="funnel-step-name" style="color:var(--success);">구매 완료 ✓</div>
+              <div class="funnel-step-count">4,127명</div>
+            </div>
+            <div class="funnel-bar-outer">
+              <div class="funnel-bar-inner" style="width:8.5%;background:#059669;">8.5%</div>
+            </div>
+            <div class="funnel-pct" style="color:var(--success)">8.5%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 단계별 이탈 원인 -->
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="exit-card">
+        <div class="exit-card-title">📌 상품조회 → 장바구니 이탈 원인</div>
+        <div class="exit-reason"><span class="exit-reason-label">가격 비교 후 이탈</span><span class="exit-reason-pct">41.2%</span></div>
+        <div class="exit-reason"><span class="exit-reason-label">상세 정보 부족</span><span class="exit-reason-pct">28.7%</span></div>
+        <div class="exit-reason"><span class="exit-reason-label">재고 없음</span><span class="exit-reason-pct">18.4%</span></div>
+      </div>
+      <div class="exit-card">
+        <div class="exit-card-title">📌 장바구니 → 결제 이탈 원인</div>
+        <div class="exit-reason"><span class="exit-reason-label">배송비 확인 후 이탈</span><span class="exit-reason-pct">38.1%</span></div>
+        <div class="exit-reason"><span class="exit-reason-label">회원가입 요구</span><span class="exit-reason-pct">24.3%</span></div>
+        <div class="exit-reason"><span class="exit-reason-label">쿠폰·할인 탐색</span><span class="exit-reason-pct">19.8%</span></div>
+      </div>
+      <div class="exit-card">
+        <div class="exit-card-title">📌 결제시작 → 구매완료 이탈 원인</div>
+        <div class="exit-reason"><span class="exit-reason-label">결제 수단 불편</span><span class="exit-reason-pct">33.4%</span></div>
+        <div class="exit-reason"><span class="exit-reason-label">개인정보 우려</span><span class="exit-reason-pct">22.8%</span></div>
+        <div class="exit-reason"><span class="exit-reason-label">UI 오류·버그</span><span class="exit-reason-pct">16.2%</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 개선 제안 배너 -->
+  <div class="insight-banner" style="background:linear-gradient(135deg,#FFF7ED,#ECFDF5);border-color:#A7F3D0;">
+    <span class="insight-icon">🚀</span>
+    <div class="insight-text">
+      <strong>자동화 캠페인 개선 제안:</strong> 장바구니 이탈 고객에게 자동화 캠페인 발송 시 전환율 평균 <strong>+8.3%</strong> 향상됩니다.
+      <a href="#" onclick="showScreen('campaign');return false;" style="color:var(--primary);font-weight:700;margin-left:8px;">캠페인 만들기 →</a>
+    </div>
+  </div>
+</div><!-- /screen-journey -->
+
+<!-- ══════════════════════════════════════
+     SCREEN: 세그먼트별 매출
+══════════════════════════════════════ -->
+<div id="screen-revenue" class="screen">
+  <div class="page-header">
+    <div>
+      <div class="page-title">세그먼트별 매출</div>
+      <div class="page-desc">고객 세그먼트 유형별 매출 기여도를 분석합니다.</div>
+    </div>
+    <div class="page-actions">
+      <select class="sel">
+        <option selected>이번 달</option>
+        <option>지난 달</option>
+        <option>이번 분기</option>
+        <option>올해</option>
+      </select>
+      <select class="sel">
+        <option selected>전체 세그먼트</option>
+        <option>VIP</option>
+        <option>일반</option>
+        <option>이탈 위험</option>
+      </select>
+      <button class="btn btn-secondary" onclick="showToast('info','내보내기','세그먼트 매출 데이터를 CSV로 내보냅니다.')">📥 내보내기</button>
+    </div>
+  </div>
+
+  <!-- 세그먼트별 매출 테이블 -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title">세그먼트별 매출 현황</span>
+      <span style="font-size:12px;color:var(--text-muted);">총 매출 ₩1,284,720,000</span>
+    </div>
+    <div class="card-body" style="padding:0;">
+      <table class="data-table">
+        <thead><tr>
+          <th>세그먼트</th>
+          <th>고객 수</th>
+          <th>총 매출</th>
+          <th>평균 주문금액</th>
+          <th>구매 빈도</th>
+          <th>전월 대비</th>
+          <th>매출 비중</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="badge badge-warning">VIP-Gold</span></td>
+            <td>1,284명</td>
+            <td style="font-weight:700;">₩491,163,840</td>
+            <td>₩382,490</td>
+            <td>4.2회/월</td>
+            <td><span style="color:var(--success)">▲ +11.4%</span></td>
+            <td style="min-width:140px">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div class="progress-bar" style="flex:1"><div class="progress-fill" style="width:100%;background:#F59E0B;"></div></div>
+                <span style="font-size:12px;font-weight:700;min-width:36px;">38.2%</span>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-primary">VIP-Silver</span></td>
+            <td>2,147명</td>
+            <td style="font-weight:700;">₩274,890,480</td>
+            <td>₩128,040</td>
+            <td>2.8회/월</td>
+            <td><span style="color:var(--success)">▲ +6.2%</span></td>
+            <td style="min-width:140px">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div class="progress-bar" style="flex:1"><div class="progress-fill" style="width:56%"></div></div>
+                <span style="font-size:12px;font-weight:700;min-width:36px;">21.4%</span>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-success">신규 활성</span></td>
+            <td>3,124명</td>
+            <td style="font-weight:700;">₩163,159,440</td>
+            <td>₩52,230</td>
+            <td>1.4회/월</td>
+            <td><span style="color:var(--success)">▲ +22.1%</span></td>
+            <td style="min-width:140px">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div class="progress-bar" style="flex:1"><div class="progress-fill success" style="width:33%"></div></div>
+                <span style="font-size:12px;font-weight:700;min-width:36px;">12.7%</span>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-muted">일반</span></td>
+            <td>2,847명</td>
+            <td style="font-weight:700;">₩125,902,560</td>
+            <td>₩44,220</td>
+            <td>0.9회/월</td>
+            <td><span style="color:var(--danger)">▼ -2.8%</span></td>
+            <td style="min-width:140px">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div class="progress-bar" style="flex:1"><div class="progress-fill" style="width:25.6%;background:#94A3B8"></div></div>
+                <span style="font-size:12px;font-weight:700;min-width:36px;">9.8%</span>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="badge" style="background:#F0FDF4;color:#059669">재활성</span></td>
+            <td>847명</td>
+            <td style="font-weight:700;">₩93,784,560</td>
+            <td>₩110,720</td>
+            <td>1.8회/월</td>
+            <td><span style="color:var(--success)">▲ +34.7%</span></td>
+            <td style="min-width:140px">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div class="progress-bar" style="flex:1"><div class="progress-fill" style="width:19.1%;background:#10B981"></div></div>
+                <span style="font-size:12px;font-weight:700;min-width:36px;">7.3%</span>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-danger">이탈 위험</span></td>
+            <td>412명</td>
+            <td style="font-weight:700;">₩52,673,520</td>
+            <td>₩127,850</td>
+            <td>0.3회/월</td>
+            <td><span style="color:var(--danger)">▼ -18.4%</span></td>
+            <td style="min-width:140px">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div class="progress-bar" style="flex:1"><div class="progress-fill" style="width:10.7%;background:#EF4444"></div></div>
+                <span style="font-size:12px;font-weight:700;min-width:36px;">4.1%</span>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="badge" style="background:#F8FAFC;color:#94A3B8">휴면</span></td>
+            <td>1,248명</td>
+            <td style="font-weight:700;">₩48,803,760</td>
+            <td>₩39,100</td>
+            <td>0.1회/월</td>
+            <td><span style="color:var(--danger)">▼ -7.2%</span></td>
+            <td style="min-width:140px">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div class="progress-bar" style="flex:1"><div class="progress-fill" style="width:9.9%;background:#CBD5E1"></div></div>
+                <span style="font-size:12px;font-weight:700;min-width:36px;">3.8%</span>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-muted">기타</span></td>
+            <td>938명</td>
+            <td style="font-weight:700;">₩34,687,440</td>
+            <td>₩36,980</td>
+            <td>0.2회/월</td>
+            <td><span style="color:var(--text-muted)">— 0.0%</span></td>
+            <td style="min-width:140px">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div class="progress-bar" style="flex:1"><div class="progress-fill" style="width:7%;background:#CBD5E1"></div></div>
+                <span style="font-size:12px;font-weight:700;min-width:36px;">2.7%</span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <!-- TOP 5 고객 -->
+    <div class="card" style="margin-bottom:0">
+      <div class="card-head"><span class="card-title">🏆 매출 기여 상위 고객 TOP 5</span></div>
+      <div class="card-body" style="padding:0;">
+        <table class="data-table">
+          <thead><tr><th>#</th><th>고객명</th><th>누적 구매액</th><th>최근 구매일</th><th>세그먼트</th></tr></thead>
+          <tbody>
+            <tr><td><span class="top5-rank gold">1</span></td><td><strong>김**</strong></td><td>₩12,840,000</td><td>2026-05-27</td><td><span class="badge badge-warning">VIP-Gold</span></td></tr>
+            <tr><td><span class="top5-rank silver">2</span></td><td><strong>이**</strong></td><td>₩9,470,000</td><td>2026-05-26</td><td><span class="badge badge-warning">VIP-Gold</span></td></tr>
+            <tr><td><span class="top5-rank bronze">3</span></td><td><strong>박**</strong></td><td>₩8,230,000</td><td>2026-05-25</td><td><span class="badge badge-warning">VIP-Gold</span></td></tr>
+            <tr><td><span class="top5-rank">4</span></td><td><strong>최**</strong></td><td>₩7,140,000</td><td>2026-05-24</td><td><span class="badge badge-primary">VIP-Silver</span></td></tr>
+            <tr><td><span class="top5-rank">5</span></td><td><strong>정**</strong></td><td>₩6,890,000</td><td>2026-05-23</td><td><span class="badge badge-primary">VIP-Silver</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- LTV 비교 바 차트 -->
+    <div class="card" style="margin-bottom:0">
+      <div class="card-head"><span class="card-title">📊 세그먼트별 LTV 비교</span></div>
+      <div class="card-body">
+        <div class="ltv-chart">
+          <div class="ltv-row"><span class="ltv-label">VIP-Gold</span><div class="ltv-bar-wrap"><div class="ltv-bar" style="width:100%;background:#F59E0B;"></div></div><span class="ltv-value">₩1,240,000</span></div>
+          <div class="ltv-row"><span class="ltv-label">VIP-Silver</span><div class="ltv-bar-wrap"><div class="ltv-bar" style="width:72%;background:#3B82F6;"></div></div><span class="ltv-value">₩893,000</span></div>
+          <div class="ltv-row"><span class="ltv-label">재활성</span><div class="ltv-bar-wrap"><div class="ltv-bar" style="width:48%;background:#10B981;"></div></div><span class="ltv-value">₩595,000</span></div>
+          <div class="ltv-row"><span class="ltv-label">신규 활성</span><div class="ltv-bar-wrap"><div class="ltv-bar" style="width:38%;background:#60A5FA;"></div></div><span class="ltv-value">₩472,000</span></div>
+          <div class="ltv-row"><span class="ltv-label">일반</span><div class="ltv-bar-wrap"><div class="ltv-bar" style="width:29%;background:#94A3B8;"></div></div><span class="ltv-value">₩360,000</span></div>
+          <div class="ltv-row"><span class="ltv-label">이탈 위험</span><div class="ltv-bar-wrap"><div class="ltv-bar" style="width:18%;background:#EF4444;"></div></div><span class="ltv-value">₩224,000</span></div>
+          <div class="ltv-row"><span class="ltv-label">휴면</span><div class="ltv-bar-wrap"><div class="ltv-bar" style="width:10%;background:#CBD5E1;"></div></div><span class="ltv-value">₩124,000</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div><!-- /screen-revenue -->
+
+<!-- ══════════════════════════════════════
+     SCREEN: 캠페인 성과
+══════════════════════════════════════ -->
+<div id="screen-campaign" class="screen">
+  <div class="page-header">
+    <div>
+      <div class="page-title">캠페인 성과</div>
+      <div class="page-desc">발송된 캠페인의 성과 지표를 분석합니다.</div>
+    </div>
+    <div class="page-actions">
+      <select class="sel">
+        <option selected>이번 달</option>
+        <option>지난 달</option>
+        <option>이번 분기</option>
+      </select>
+      <button class="btn btn-secondary" onclick="showToast('info','내보내기','캠페인 성과를 CSV로 내보냅니다.')">📥 내보내기</button>
+    </div>
+  </div>
+
+  <!-- 요약 카드 5개 -->
+  <div class="camp-summary">
+    <div class="camp-sum-item">
+      <div class="cs-label">총 캠페인 수</div>
+      <div class="cs-value">142<small>건</small></div>
+    </div>
+    <div class="camp-sum-item">
+      <div class="cs-label">이번달 발송</div>
+      <div class="cs-value">23<small>건</small></div>
+    </div>
+    <div class="camp-sum-item">
+      <div class="cs-label">평균 오픈율</div>
+      <div class="cs-value">21.3<small>%</small></div>
+    </div>
+    <div class="camp-sum-item">
+      <div class="cs-label">평균 클릭율</div>
+      <div class="cs-value">7.8<small>%</small></div>
+    </div>
+    <div class="camp-sum-item">
+      <div class="cs-label">캠페인 유발 매출</div>
+      <div class="cs-value" style="font-size:18px;">₩84,320,000</div>
+    </div>
+  </div>
+
+  <!-- 캠페인 성과 테이블 -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title">캠페인 성과 상세</span>
+      <div style="display:flex;gap:8px;">
+        <select class="sel" style="font-size:12px;padding:5px 22px 5px 8px;">
+          <option>전체 유형</option>
+          <option>자동화</option>
+          <option>메시지</option>
+          <option>A/B테스트</option>
+        </select>
+      </div>
+    </div>
+    <div class="card-body" style="padding:0;overflow-x:auto;">
+      <table class="data-table" style="min-width:1000px;">
+        <thead><tr>
+          <th>캠페인명</th>
+          <th>유형</th>
+          <th>발송일</th>
+          <th>발송수</th>
+          <th>오픈율</th>
+          <th>클릭율</th>
+          <th>전환수</th>
+          <th>전환율</th>
+          <th>매출</th>
+          <th>상태</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>VIP 봄 시즌 특가</strong></td>
+            <td><span class="badge badge-primary">메시지</span></td>
+            <td>05-20</td><td>3,247건</td>
+            <td><span style="color:var(--success);font-weight:700;">34.2%</span></td>
+            <td>12.4%</td><td>187건</td><td>5.8%</td>
+            <td>₩18,420,000</td>
+            <td><span class="badge badge-success">완료</span></td>
+          </tr>
+          <tr>
+            <td><strong>장바구니 이탈 자동화</strong></td>
+            <td><span class="badge badge-warning">자동화</span></td>
+            <td>상시</td><td>1,124건</td>
+            <td>28.7%</td>
+            <td><span style="color:var(--success);font-weight:700;">16.3%</span></td>
+            <td>142건</td><td>12.6%</td>
+            <td>₩11,340,000</td>
+            <td><span class="badge badge-success">진행중</span></td>
+          </tr>
+          <tr>
+            <td><strong>신규 가입 환영 시리즈</strong></td>
+            <td><span class="badge badge-warning">자동화</span></td>
+            <td>상시</td><td>847건</td>
+            <td>52.1%</td>
+            <td>21.4%</td><td>98건</td><td>11.6%</td>
+            <td>₩6,720,000</td>
+            <td><span class="badge badge-success">진행중</span></td>
+          </tr>
+          <tr>
+            <td><strong>휴면 고객 재활성 A/B</strong></td>
+            <td><span class="badge badge-info">A/B테스트</span></td>
+            <td>05-15</td><td>2,480건</td>
+            <td>18.4%</td>
+            <td>7.2%</td><td>74건</td><td>3.0%</td>
+            <td>₩5,180,000</td>
+            <td><span class="badge badge-success">완료</span></td>
+          </tr>
+          <tr>
+            <td><strong>어버이날 기념 프로모션</strong></td>
+            <td><span class="badge badge-primary">메시지</span></td>
+            <td>05-08</td><td>8,247건</td>
+            <td>31.4%</td>
+            <td>9.8%</td><td>284건</td><td>3.4%</td>
+            <td>₩16,890,000</td>
+            <td><span class="badge badge-success">완료</span></td>
+          </tr>
+          <tr>
+            <td><strong>포인트 소멸 알림</strong></td>
+            <td><span class="badge badge-warning">자동화</span></td>
+            <td>상시</td><td>423건</td>
+            <td>71.2%</td>
+            <td>38.4%</td><td>187건</td><td>44.2%</td>
+            <td>₩4,820,000</td>
+            <td><span class="badge badge-success">진행중</span></td>
+          </tr>
+          <tr>
+            <td><strong>신상품 출시 알림</strong></td>
+            <td><span class="badge badge-primary">메시지</span></td>
+            <td>05-12</td><td>5,124건</td>
+            <td>24.7%</td>
+            <td>8.1%</td><td>127건</td><td>2.5%</td>
+            <td>₩8,470,000</td>
+            <td><span class="badge badge-success">완료</span></td>
+          </tr>
+          <tr>
+            <td><strong>재구매 유도 (30일 후)</strong></td>
+            <td><span class="badge badge-warning">자동화</span></td>
+            <td>상시</td><td>1,847건</td>
+            <td>22.3%</td>
+            <td>8.7%</td><td>124건</td><td>6.7%</td>
+            <td>₩7,440,000</td>
+            <td><span class="badge badge-success">진행중</span></td>
+          </tr>
+          <tr>
+            <td><strong>세일 마감 카운트다운</strong></td>
+            <td><span class="badge badge-primary">메시지</span></td>
+            <td>05-25</td><td>4,823건</td>
+            <td>41.2%</td>
+            <td>18.4%</td><td>312건</td><td>6.5%</td>
+            <td>₩14,280,000</td>
+            <td><span class="badge badge-success">완료</span></td>
+          </tr>
+          <tr>
+            <td><strong>등급 업그레이드 혜택 안내</strong></td>
+            <td><span class="badge badge-info">A/B테스트</span></td>
+            <td>05-18</td><td>1,234건</td>
+            <td>38.7%</td>
+            <td>14.2%</td><td>87건</td><td>7.1%</td>
+            <td>₩4,870,000</td>
+            <td><span class="badge badge-success">완료</span></td>
+          </tr>
+          <tr>
+            <td><strong>생일 쿠폰 자동 발송</strong></td>
+            <td><span class="badge badge-warning">자동화</span></td>
+            <td>상시</td><td>284건</td>
+            <td>84.2%</td>
+            <td>47.3%</td><td>142건</td><td>50.0%</td>
+            <td>₩9,840,000</td>
+            <td><span class="badge badge-success">진행중</span></td>
+          </tr>
+          <tr>
+            <td><strong>6월 프로모션 예고</strong></td>
+            <td><span class="badge badge-primary">메시지</span></td>
+            <td>예정</td><td>—</td>
+            <td>—</td><td>—</td><td>—</td><td>—</td>
+            <td>—</td>
+            <td><span class="badge badge-muted">예약됨</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 채널별 성과 비교 -->
+  <div class="card">
+    <div class="card-head"><span class="card-title">채널별 성과 비교</span></div>
+    <div class="card-body">
+      <div class="grid-2" style="gap:12px;">
+        <div style="background:var(--bg);border-radius:var(--radius);padding:16px;">
+          <div style="font-size:12px;font-weight:700;color:var(--text-muted);margin-bottom:10px;">📧 이메일</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div><div style="font-size:10px;color:var(--text-muted);margin-bottom:2px;">오픈율</div><div style="font-size:18px;font-weight:800;">24.3%</div></div>
+            <div><div style="font-size:10px;color:var(--text-muted);margin-bottom:2px;">클릭율</div><div style="font-size:18px;font-weight:800;">8.1%</div></div>
+          </div>
+        </div>
+        <div style="background:var(--bg);border-radius:var(--radius);padding:16px;">
+          <div style="font-size:12px;font-weight:700;color:var(--text-muted);margin-bottom:10px;">💬 알림톡</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div><div style="font-size:10px;color:var(--text-muted);margin-bottom:2px;">오픈율</div><div style="font-size:18px;font-weight:800;color:var(--success);">67.2%</div></div>
+            <div><div style="font-size:10px;color:var(--text-muted);margin-bottom:2px;">클릭율</div><div style="font-size:18px;font-weight:800;color:var(--success);">21.4%</div></div>
+          </div>
+        </div>
+        <div style="background:var(--bg);border-radius:var(--radius);padding:16px;">
+          <div style="font-size:12px;font-weight:700;color:var(--text-muted);margin-bottom:10px;">📱 SMS</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div><div style="font-size:10px;color:var(--text-muted);margin-bottom:2px;">오픈율</div><div style="font-size:18px;font-weight:800;">78.4%</div></div>
+            <div><div style="font-size:10px;color:var(--text-muted);margin-bottom:2px;">클릭율</div><div style="font-size:18px;font-weight:800;">15.2%</div></div>
+          </div>
+        </div>
+        <div style="background:var(--bg);border-radius:var(--radius);padding:16px;">
+          <div style="font-size:12px;font-weight:700;color:var(--text-muted);margin-bottom:10px;">🟡 카카오채널</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div><div style="font-size:10px;color:var(--text-muted);margin-bottom:2px;">오픈율</div><div style="font-size:18px;font-weight:800;">43.1%</div></div>
+            <div><div style="font-size:10px;color:var(--text-muted);margin-bottom:2px;">클릭율</div><div style="font-size:18px;font-weight:800;">18.7%</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div><!-- /screen-campaign -->
+
+<!-- ══════════════════════════════════════
+     SCREEN: 채널별 지표
+══════════════════════════════════════ -->
+<div id="screen-channel" class="screen">
+  <div class="page-header">
+    <div>
+      <div class="page-title">채널별 지표</div>
+      <div class="page-desc">마케팅 채널별 유입, 전환, 비용 효율을 비교합니다.</div>
+    </div>
+    <div class="page-actions">
+      <select class="sel">
+        <option selected>이번 달</option>
+        <option>지난 달</option>
+        <option>이번 분기</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- 채널 카드 6개 (3열 2행) -->
+  <div class="channel-cards">
+    <div class="ch-card">
+      <div class="ch-icon" style="background:#EFF6FF;">📧</div>
+      <div class="ch-name">이메일</div>
+      <div class="ch-send">발송 23,847건</div>
+      <div class="ch-metrics">
+        <div class="ch-metric"><div class="ch-metric-label">오픈율</div><div class="ch-metric-value">24.3%</div></div>
+        <div class="ch-metric"><div class="ch-metric-label">CTR</div><div class="ch-metric-value">8.1%</div></div>
+        <div class="ch-metric"><div class="ch-metric-label">전환율</div><div class="ch-metric-value">3.4%</div></div>
+        <div class="ch-metric"><div class="ch-metric-label">ROAS</div><div class="ch-metric-value" style="color:var(--success);">412%</div></div>
+      </div>
+    </div>
+    <div class="ch-card">
+      <div class="ch-icon" style="background:#FFF7ED;">💬</div>
+      <div class="ch-name">알림톡</div>
+      <div class="ch-send">발송 18,234건</div>
+      <div class="ch-metrics">
+        <div class="ch-metric"><div class="ch-metric-label">오픈율</div><div class="ch-metric-value" style="color:var(--success);">67.2%</div></div>
+        <div class="ch-metric"><div class="ch-metric-label">CTR</div><div class="ch-metric-value" style="color:var(--success);">21.4%</div></div>
+        <div class="ch-metric"><div class="ch-metric-label">전환율</div><div class="ch-metric-value" style="color:var(--success);">8.7%</div></div>
+        <div class="ch-metric"><div class="ch-metric-label">ROAS</div><div class="ch-metric-value" style="color:var(--success);">687%</div></div>
+      </div>
+    </div>
+    <div class="ch-card">
+      <div class="ch-icon" style="background:#F0FDF4;">📱</div>
+      <div class="ch-name">SMS</div>
+      <div class="ch-send">발송 12,103건</div>
+      <div class="ch-metrics">
+        <div class="ch-metric"><div class="ch-metric-label">오픈율</div><div class="ch-metric-value">78.4%</div></div>
+        <div class="ch-metric"><div class="ch-metric-label">CTR</div><div class="ch-metric-value">15.2%</div></div>
+        <div class="ch-metric"><div class="ch-metric-label">전환율</div><div class="ch-metric-value">5.1%</div></div>
+        <div class="ch-metric"><div class="ch-metric-label">ROAS</div><div class="ch-metric-value">298%</div></div>
+      </div>
+    </div>
+    <div class="ch-card">
+      <div class="ch-icon" style="background:#FEFCE8;">🟡</div>
+      <div class="ch-name">카카오채널</div>
+      <div class="ch-send">발송 8,947건</div>
+      <div class="ch-metrics">
+        <div class="ch-metric"><div class="ch-metric-label">오픈율</div><div class="ch-metric-value">43.1%</div></div>
+        <div class="ch-metric"><div class="ch-metric-label">CTR</div><div class="ch-metric-value">18.7%</div></div>
+        <div class="ch-metric"><div class="ch-metric-label">전환율</div><div class="ch-metric-value">7.2%</div></div>
+        <div class="ch-metric"><div class="ch-metric-label">ROAS</div><div class="ch-metric-value">534%</div></div>
+      </div>
+    </div>
+    <div class="ch-card">
+      <div class="ch-icon" style="background:#F5F3FF;">🔔</div>
+      <div class="ch-name">푸시알림</div>
+      <div class="ch-send">발송 31,204건</div>
+      <div class="ch-metrics">
+        <div class="ch-metric"><div class="ch-metric-label">오픈율</div><div class="ch-metric-value" style="color:var(--warning);">12.3%</div></div>
+        <div class="ch-metric"><div class="ch-metric-label">CTR</div><div class="ch-metric-value">4.8%</div></div>
+        <div class="ch-metric"><div class="ch-metric-label">전환율</div><div class="ch-metric-value">2.1%</div></div>
+        <div class="ch-metric"><div class="ch-metric-label">ROAS</div><div class="ch-metric-value" style="color:var(--warning);">187%</div></div>
+      </div>
+    </div>
+    <div class="ch-card">
+      <div class="ch-icon" style="background:#FEF2F2;">🪟</div>
+      <div class="ch-name">웹팝업</div>
+      <div class="ch-send">노출 48,320건</div>
+      <div class="ch-metrics">
+        <div class="ch-metric"><div class="ch-metric-label">클릭율</div><div class="ch-metric-value">3.7%</div></div>
+        <div class="ch-metric"><div class="ch-metric-label">전환율</div><div class="ch-metric-value">1.8%</div></div>
+        <div class="ch-metric"><div class="ch-metric-label">ROAS</div><div class="ch-metric-value">124%</div></div>
+        <div class="ch-metric"><div class="ch-metric-label">순위</div><div class="ch-metric-value" style="color:var(--danger);">6위</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROAS 테이블 -->
+  <div class="card">
+    <div class="card-head"><span class="card-title">💰 채널별 비용 대비 효율 (ROAS)</span></div>
+    <div class="card-body" style="padding:0;">
+      <table class="data-table">
+        <thead><tr>
+          <th>채널</th>
+          <th>총 발송/노출</th>
+          <th>투입 비용</th>
+          <th>발생 매출</th>
+          <th>ROAS</th>
+          <th>CPC</th>
+          <th>CPA</th>
+          <th>평가</th>
+        </tr></thead>
+        <tbody>
+          <tr><td>💬 알림톡</td><td>18,234건</td><td>₩1,823,400</td><td>₩12,527,000</td><td><strong style="color:var(--success)">687%</strong></td><td>₩468</td><td>₩2,140</td><td><span class="badge badge-success">최우수</span></td></tr>
+          <tr><td>🟡 카카오채널</td><td>8,947건</td><td>₩1,342,050</td><td>₩7,161,000</td><td><strong style="color:var(--success)">534%</strong></td><td>₩387</td><td>₩2,083</td><td><span class="badge badge-success">우수</span></td></tr>
+          <tr><td>📧 이메일</td><td>23,847건</td><td>₩714,000</td><td>₩2,939,000</td><td><strong style="color:var(--success)">412%</strong></td><td>₄₉₁</td><td>₩2,614</td><td><span class="badge badge-success">우수</span></td></tr>
+          <tr><td>📱 SMS</td><td>12,103건</td><td>₩2,420,600</td><td>₩7,213,000</td><td><strong>298%</strong></td><td>₩1,317</td><td>₩3,922</td><td><span class="badge badge-primary">보통</span></td></tr>
+          <tr><td>🔔 푸시알림</td><td>31,204건</td><td>₩936,120</td><td>₩1,753,000</td><td><strong style="color:var(--warning)">187%</strong></td><td>₩624</td><td>₩14,311</td><td><span class="badge badge-warning">개선 필요</span></td></tr>
+          <tr><td>🪟 웹팝업</td><td>48,320건</td><td>₩482,000</td><td>₩598,000</td><td><strong style="color:var(--danger)">124%</strong></td><td>₩270</td><td>₩27,889</td><td><span class="badge badge-danger">검토 필요</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 시간대별 오픈율 히트맵 -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title">🕐 시간대별 오픈율 히트맵</span>
+      <span style="font-size:11px;color:var(--text-muted);">짙을수록 오픈율 높음</span>
+    </div>
+    <div class="card-body">
+      <div class="heatmap-wrap">
+        <table class="heatmap-table" id="heatmapTable">
+          <!-- JS로 렌더링 -->
+        </table>
+      </div>
+    </div>
+  </div>
+</div><!-- /screen-channel -->
+
+<!-- ══════════════════════════════════════
+     SCREEN: 자동 리포트 설정
+══════════════════════════════════════ -->
+<div id="screen-report" class="screen">
+  <div class="page-header">
+    <div>
+      <div class="page-title">자동 리포트 설정</div>
+      <div class="page-desc">정기 성과 리포트를 자동으로 생성하여 팀에게 발송합니다.</div>
+    </div>
+    <div class="page-actions">
+      <button class="btn btn-primary" onclick="showToast('success','리포트 추가','새 자동 리포트를 설정합니다.')">+ 리포트 추가</button>
+    </div>
+  </div>
+
+  <!-- 연동 상태 -->
+  <div class="card">
+    <div class="card-head"><span class="card-title">🔗 발송 채널 연동 상태</span></div>
+    <div class="card-body" style="padding:12px 20px;">
+      <div class="integration-row">
+        <div class="integration-icon" style="background:#EFF6FF;">📧</div>
+        <div style="flex:1">
+          <div class="integration-name">이메일 (SMTP)</div>
+          <div class="integration-status">smtp.entwiz.com · TLS 보안</div>
+        </div>
+        <span class="badge badge-success">● 연동됨</span>
+        <button class="btn btn-ghost btn-sm" onclick="navWIP('이메일 설정')">설정</button>
+      </div>
+      <div class="integration-row">
+        <div class="integration-icon" style="background:#F0FDF4;">💬</div>
+        <div style="flex:1">
+          <div class="integration-name">Slack</div>
+          <div class="integration-status">#crm-analytics 채널 · ENTWIZ Workspace</div>
+        </div>
+        <span class="badge badge-success">● 연동됨</span>
+        <button class="btn btn-ghost btn-sm" onclick="navWIP('Slack 설정')">설정</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 활성 리포트 목록 -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title">활성 리포트 목록</span>
+      <span style="font-size:12px;color:var(--text-muted);">총 6개</span>
+    </div>
+    <div class="card-body" style="padding:0;overflow-x:auto;">
+      <table class="data-table" style="min-width:900px;">
+        <thead><tr>
+          <th>리포트명</th>
+          <th>유형</th>
+          <th>포함 지표</th>
+          <th>수신자</th>
+          <th>발송 채널</th>
+          <th>다음 발송</th>
+          <th style="text-align:center;">상태</th>
+          <th style="text-align:right;">관리</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>일간 KPI 요약</strong></td>
+            <td><span class="badge badge-primary">일간</span></td>
+            <td style="font-size:12px;color:var(--text-muted);">전환율, 신규고객, 매출</td>
+            <td>마케팅팀 (5명)</td>
+            <td>📧 이메일, 💬 Slack</td>
+            <td>05-29 09:00</td>
+            <td style="text-align:center;"><label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label></td>
+            <td style="text-align:right;">
+              <button class="btn btn-ghost btn-sm" onclick="navWIP('리포트 편집')">편집</button>
+              <button class="btn btn-ghost btn-sm" onclick="showToast('danger','삭제','리포트를 삭제하려면 확인하세요.')" style="color:var(--danger)">삭제</button>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>주간 캠페인 성과</strong></td>
+            <td><span class="badge badge-warning">주간</span></td>
+            <td style="font-size:12px;color:var(--text-muted);">오픈율, 클릭율, 전환, ROAS</td>
+            <td>CRM팀 전체</td>
+            <td>💬 Slack</td>
+            <td>06-02 10:00</td>
+            <td style="text-align:center;"><label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label></td>
+            <td style="text-align:right;">
+              <button class="btn btn-ghost btn-sm" onclick="navWIP('리포트 편집')">편집</button>
+              <button class="btn btn-ghost btn-sm" onclick="showToast('danger','삭제','리포트를 삭제하려면 확인하세요.')" style="color:var(--danger)">삭제</button>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>월간 세그먼트 분석</strong></td>
+            <td><span class="badge badge-success">월간</span></td>
+            <td style="font-size:12px;color:var(--text-muted);">LTV, 세그먼트 이동, 코호트</td>
+            <td>경영진 (3명)</td>
+            <td>📧 이메일</td>
+            <td>06-01 09:00</td>
+            <td style="text-align:center;"><label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label></td>
+            <td style="text-align:right;">
+              <button class="btn btn-ghost btn-sm" onclick="navWIP('리포트 편집')">편집</button>
+              <button class="btn btn-ghost btn-sm" onclick="showToast('danger','삭제','리포트를 삭제하려면 확인하세요.')" style="color:var(--danger)">삭제</button>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>주간 채널 성과 비교</strong></td>
+            <td><span class="badge badge-warning">주간</span></td>
+            <td style="font-size:12px;color:var(--text-muted);">채널별 ROAS, 오픈율, CTR</td>
+            <td>마케팅팀 (5명)</td>
+            <td>📧 이메일, 💬 Slack</td>
+            <td>06-02 09:00</td>
+            <td style="text-align:center;"><label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label></td>
+            <td style="text-align:right;">
+              <button class="btn btn-ghost btn-sm" onclick="navWIP('리포트 편집')">편집</button>
+              <button class="btn btn-ghost btn-sm" onclick="showToast('danger','삭제','리포트를 삭제하려면 확인하세요.')" style="color:var(--danger)">삭제</button>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>일간 이탈 위험 알림</strong></td>
+            <td><span class="badge badge-primary">일간</span></td>
+            <td style="font-size:12px;color:var(--text-muted);">이탈 위험 고객, RFM 변화</td>
+            <td>CS팀 (8명)</td>
+            <td>💬 Slack</td>
+            <td>05-29 08:00</td>
+            <td style="text-align:center;"><label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label></td>
+            <td style="text-align:right;">
+              <button class="btn btn-ghost btn-sm" onclick="navWIP('리포트 편집')">편집</button>
+              <button class="btn btn-ghost btn-sm" onclick="showToast('danger','삭제','리포트를 삭제하려면 확인하세요.')" style="color:var(--danger)">삭제</button>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>월간 자동화 캠페인 요약</strong></td>
+            <td><span class="badge badge-success">월간</span></td>
+            <td style="font-size:12px;color:var(--text-muted);">자동화 성과, 최적화 제안</td>
+            <td>마케팅팀 리더</td>
+            <td>📧 이메일</td>
+            <td>06-01 10:00</td>
+            <td style="text-align:center;"><label class="toggle"><input type="checkbox"><span class="toggle-track"></span></label></td>
+            <td style="text-align:right;">
+              <button class="btn btn-ghost btn-sm" onclick="navWIP('리포트 편집')">편집</button>
+              <button class="btn btn-ghost btn-sm" onclick="showToast('danger','삭제','리포트를 삭제하려면 확인하세요.')" style="color:var(--danger)">삭제</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 템플릿 카드 -->
+  <div class="card">
+    <div class="card-head"><span class="card-title">📋 리포트 템플릿</span></div>
+    <div class="card-body">
+      <div class="tpl-cards">
+        <div class="tpl-card" onclick="showToast('success','템플릿 선택','KPI 요약 리포트 템플릿을 불러옵니다.')">
+          <div class="tpl-icon">📊</div>
+          <div class="tpl-name">KPI 요약</div>
+          <div class="tpl-desc">전환율, 신규고객, 매출 등 핵심 KPI를 자동 요약</div>
+        </div>
+        <div class="tpl-card" onclick="showToast('success','템플릿 선택','캠페인 주간 리뷰 템플릿을 불러옵니다.')">
+          <div class="tpl-icon">📣</div>
+          <div class="tpl-name">캠페인 주간 리뷰</div>
+          <div class="tpl-desc">주간 캠페인 성과 및 A/B 테스트 결과 정리</div>
+        </div>
+        <div class="tpl-card" onclick="showToast('success','템플릿 선택','세그먼트 월간 분석 템플릿을 불러옵니다.')">
+          <div class="tpl-icon">👥</div>
+          <div class="tpl-name">세그먼트 월간 분석</div>
+          <div class="tpl-desc">세그먼트별 LTV, 코호트 재구매율 포함 월간 분석</div>
+        </div>
+        <div class="tpl-card" onclick="showToast('success','템플릿 선택','채널 성과 요약 템플릿을 불러옵니다.')">
+          <div class="tpl-icon">📡</div>
+          <div class="tpl-name">채널 성과 요약</div>
+          <div class="tpl-desc">채널별 ROAS, CTR, 전환율 비교 및 최적화 제안</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div><!-- /screen-report -->
+
+</main>
+
+<script src="crm-layout.js"></script>
+<script src="crm-common.js"></script>
+<script>
+/* ─── SCREEN META ─────────────────────────────── */
+const SCREEN_META = {
+  kpi:      { label: 'KPI 대시보드' },
+  cohort:   { label: '코호트 분석' },
+  journey:  { label: '고객 여정 (퍼널)' },
+  revenue:  { label: '세그먼트별 매출' },
+  campaign: { label: '캠페인 성과' },
+  channel:  { label: '채널별 지표' },
+  report:   { label: '자동 리포트 설정' },
+};
+
+function showScreen(name, pushState = true) {
+  if (!SCREEN_META[name]) return;
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name)?.classList.add('active');
+  document.querySelector('.content')?.scrollTo({ top: 0 });
+  const el = document.getElementById('bcCurr');
+  if (el) el.textContent = SCREEN_META[name].label;
+  if (pushState) history.pushState({ screen: name }, '', '#' + name);
+  else history.replaceState({ screen: name }, '', '#' + name);
+  if (typeof crmSetActiveSidebar === 'function') crmSetActiveSidebar();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const hash = location.hash.replace('#', '') || 'kpi';
+  showScreen(SCREEN_META[hash] ? hash : 'kpi', false);
+  renderBarChart();
+  renderCohortTable();
+  renderHeatmap();
+});
+
+window.addEventListener('popstate', e => {
+  showScreen(e.state?.screen || 'kpi', false);
+});
+
+/* ─── KPI 바 차트 ─────────────────────────────── */
+function renderBarChart() {
+  const days = [
+    { label: '월', amount: 342 },
+    { label: '화', amount: 287 },
+    { label: '수', amount: 412 },
+    { label: '목', amount: 356 },
+    { label: '금', amount: 523 },
+    { label: '토', amount: 621 },
+    { label: '일', amount: 489 },
+  ];
+  const maxVal = Math.max(...days.map(d => d.amount));
+  const chartEl = document.getElementById('revenueBarChart');
+  if (!chartEl) return;
+  const colors = ['#60A5FA','#93C5FD','#60A5FA','#93C5FD','#3B82F6','#2563EB','#3B82F6'];
+  chartEl.innerHTML = days.map((d, i) => {
+    const pct = Math.round((d.amount / maxVal) * 100);
+    return `
+      <div class="bar-col">
+        <div class="bar-amount">${d.amount}만</div>
+        <div class="bar-wrap">
+          <div class="bar" style="height:${pct}%;background:${colors[i]};width:100%;"></div>
+        </div>
+        <div class="bar-label">${d.label}</div>
+      </div>`;
+  }).join('');
+}
+
+/* ─── 코호트 테이블 렌더링 ─────────────────────── */
+function renderCohortTable() {
+  const cohortData = [
+    { month: '2025년 11월', size: '1,247명', rates: [100, 41.2, 28.4, 23.6, 18.2, 15.1] },
+    { month: '2025년 12월', size: '1,523명', rates: [100, 38.7, 26.1, 19.7, 15.3, 12.8] },
+    { month: '2026년 1월',  size: '1,084명', rates: [100, 35.4, 24.8, 18.4, 14.2, null] },
+    { month: '2026년 2월',  size: '1,347명', rates: [100, 37.2, 25.3, 19.1, null, null] },
+    { month: '2026년 3월',  size: '1,621명', rates: [100, 39.8, 27.4, null, null, null] },
+    { month: '2026년 4월',  size: '1,025명', rates: [100, 36.1, null, null, null, null] },
+  ];
+
+  const tbody = document.getElementById('cohortTbody');
+  if (!tbody) return;
+
+  tbody.innerHTML = cohortData.map(row => {
+    const cells = row.rates.map(r => {
+      if (r === null) return '<td style="background:#F8FAFC;color:#CBD5E1;">—</td>';
+      if (r === 100) return `<td style="background:rgba(37,99,235,0.15);"><span class="cohort-cell" style="color:#1D4ED8;">100%</span></td>`;
+      const alpha = Math.min(0.9, (r / 45) * 0.9);
+      const textColor = alpha > 0.5 ? '#fff' : '#059669';
+      return `<td style="background:rgba(5,150,105,${alpha});"><span class="cohort-cell" style="color:${textColor};">${r}%</span></td>`;
+    }).join('');
+    return `<tr><td>${row.month}<br><span style="font-size:11px;color:var(--text-muted);font-weight:400;">${row.size}</span></td>${cells}</tr>`;
+  }).join('');
+}
+
+/* ─── 히트맵 렌더링 ─────────────────────────────── */
+function renderHeatmap() {
+  const tableEl = document.getElementById('heatmapTable');
+  if (!tableEl) return;
+
+  const channels = ['📧 이메일', '💬 알림톡', '📱 SMS', '🟡 카카오채널'];
+  // 시간대별 오픈율 데이터 (0~23시)
+  const data = {
+    '📧 이메일':    [2,1,0,0,0,1,4,12,18,22,24,21,19,17,15,13,16,20,18,14,10,7,5,3],
+    '💬 알림톡':    [3,2,1,0,0,2,8,28,48,62,67,64,58,52,47,44,50,61,58,48,38,28,18,10],
+    '📱 SMS':       [4,2,1,0,0,2,10,34,58,72,78,74,68,61,54,51,56,68,64,54,42,30,22,12],
+    '🟡 카카오채널': [2,1,0,0,0,1,6,22,38,42,43,41,38,35,32,30,34,42,40,34,26,18,12,6],
+  };
+
+  const hours = Array.from({length: 24}, (_, i) => `${i}시`);
+
+  let html = `<thead><tr><th>채널 \\ 시간</th>`;
+  hours.forEach(h => { html += `<th>${h}</th>`; });
+  html += `</tr></thead><tbody>`;
+
+  channels.forEach(ch => {
+    html += `<tr><td>${ch}</td>`;
+    data[ch].forEach(val => {
+      const maxVal = Math.max(...data[ch]);
+      const alpha = (val / maxVal) * 0.85;
+      const textColor = alpha > 0.5 ? '#fff' : (val > 0 ? '#059669' : '#CBD5E1');
+      html += `<td style="background:rgba(5,150,105,${alpha});color:${textColor};font-weight:600;font-size:10px;">${val > 0 ? val + '%' : '—'}</td>`;
+    });
+    html += `</tr>`;
+  });
+  html += `</tbody>`;
+  tableEl.innerHTML = html;
+}
+</script>
+</body>
+</html>

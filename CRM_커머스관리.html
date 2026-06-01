@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>커머스 관리 — ENTWIZ CRM</title>
+  <link rel="stylesheet" href="crm-layout.css" />
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-light: #ede9fe;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --info: #3b82f6;
+      --border: #e5e7eb;
+      --text: #111827;
+      --text-muted: #6b7280;
+      --bg: #f9fafb;
+      --card-bg: #ffffff;
+      --radius: 10px;
+    }
+
+    body { padding: 0; margin: 0; }
+
+    /* ── 공통 레이아웃 ── */
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .page-header h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      margin: 0;
+    }
+    .page-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* ── 버튼 ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: opacity .15s, transform .1s;
+    }
+    .btn:hover { opacity: .88; transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-secondary { background: var(--bg); color: var(--text); border: 1px solid var(--border); }
+    .btn-success { background: var(--success); color: #fff; }
+    .btn-info { background: var(--info); color: #fff; }
+    .btn-danger { background: #fee2e2; color: var(--danger); }
+    .btn-sm { padding: 5px 11px; font-size: 12px; border-radius: 6px; }
+
+    /* ── 배지 ── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 9px;
+      border-radius: 50px;
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .badge-success { background: #d1fae5; color: #065f46; }
+    .badge-danger  { background: #fee2e2; color: #991b1b; }
+    .badge-warning { background: #fef3c7; color: #92400e; }
+    .badge-info    { background: #dbeafe; color: #1e40af; }
+    .badge-muted   { background: #f3f4f6; color: var(--text-muted); }
+    .badge-primary { background: var(--primary-light); color: var(--primary); }
+    .badge-active  { background: #d1fae5; color: #065f46; }
+
+    /* ── 카드 ── */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      margin: 0 0 16px 0;
+    }
+
+    /* ── 요약 카드 그리드 ── */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .summary-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .summary-card .s-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    .summary-card .s-value {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1;
+    }
+    .summary-card .s-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* ── 테이블 ── */
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--card-bg);
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    thead tr { background: var(--bg); }
+    th {
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: .4px;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    td {
+      padding: 11px 14px;
+      color: var(--text);
+      border-bottom: 1px solid #f3f4f6;
+      vertical-align: middle;
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background: #f9fafb; }
+
+    /* ── 배너 ── */
+    .info-banner {
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      margin-bottom: 20px;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .info-banner.blue  { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+    .info-banner.indigo{ background: var(--primary-light); color: var(--primary); border: 1px solid #c7d2fe; }
+    .info-banner .banner-icon { font-size: 18px; flex-shrink: 0; }
+    .info-banner strong { font-weight: 700; }
+
+    /* ── 기준 옵션 카드 그리드 ── */
+    .criteria-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .criteria-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+    }
+    .criteria-card .c-icon { font-size: 20px; margin-bottom: 6px; }
+    .criteria-card .c-name { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .criteria-card .c-desc { font-size: 11px; color: var(--text-muted); line-height: 1.5; }
+
+    /* ── 모델 카드 그리드 ── */
+    .model-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .model-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      position: relative;
+    }
+    .model-card.active-model { border-color: var(--success); box-shadow: 0 0 0 3px #d1fae5; }
+    .model-card .m-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .model-card .m-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px; }
+    .model-card .m-label { font-size: 11px; color: var(--text-muted); }
+    .model-card .m-val { font-size: 13px; font-weight: 600; color: var(--text); }
+    .model-card .m-acc { font-size: 28px; font-weight: 800; color: var(--primary); line-height: 1; margin-bottom: 14px; }
+
+    /* ── 스케줄 설정 ── */
+    .schedule-form {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      align-items: end;
+    }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .4px; }
+    .form-group select,
+    .form-group input {
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      font-size: 13px;
+      color: var(--text);
+      background: var(--card-bg);
+      outline: none;
+    }
+    .form-group select:focus,
+    .form-group input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+
+    /* ── 채널 설정 ── */
+    .channel-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+    }
+    .channel-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+    .channel-card .ch-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+    .channel-card .ch-icon { font-size: 20px; }
+    .channel-card .ch-name { font-size: 14px; font-weight: 700; color: var(--text); }
+    .channel-card input { width: 100%; box-sizing: border-box; padding: 8px 12px; border: 1px solid var(--border); border-radius: 7px; font-size: 12px; color: var(--text-muted); background: var(--bg); }
+
+    /* ── 재입고 테이블 래퍼 ── */
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .section-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    /* ── 진행률 바 ── */
+    .progress-bar { height: 6px; background: #e5e7eb; border-radius: 99px; overflow: hidden; margin-top: 8px; }
+    .progress-fill { height: 100%; border-radius: 99px; }
+
+    /* 액션 버튼 그룹 */
+    .action-group { display: flex; gap: 6px; }
+  </style>
+</head>
+<body>
+<main class="content">
+
+  <div class="breadcrumb">
+    <span class="bc-link">ENTWIZ CRM</span>
+    <span class="sep">›</span>
+    <span>커머스 관리</span>
+    <span class="sep">›</span>
+    <span class="curr" id="bcCurr">개인화 진열 설정</span>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SCREEN: display — 개인화 진열 설정
+  ══════════════════════════════════════════════ -->
+  <div class="screen" id="screen-display">
+
+    <div class="page-header">
+      <div>
+        <h2>🎯 개인화 진열 설정</h2>
+        <p class="page-desc">고객 세그먼트별로 메인·카테고리 페이지의 상품 진열 순서와 강조 방식을 다르게 설정합니다.</p>
+      </div>
+      <button class="btn btn-primary" onclick="showToast('success','규칙 추가','새 진열 규칙을 설정합니다.')">+ 진열 규칙 추가</button>
+    </div>
+
+    <!-- AI 연동 배너 -->
+    <div class="info-banner indigo">
+      <span class="banner-icon">✨</span>
+      <span><strong>AI 추천 엔진과 연동하면</strong> 실시간으로 개인화 진열 순서가 자동 최적화됩니다. AI 추천 엔진 설정 탭에서 하이브리드 모델을 활성화하세요.</span>
+    </div>
+
+    <!-- 진열 기준 옵션 설명 카드 -->
+    <div class="card">
+      <p class="card-title">진열 기준 옵션</p>
+      <div class="criteria-grid">
+        <div class="criteria-card">
+          <div class="c-icon">🧠</div>
+          <div class="c-name">구매확률순</div>
+          <div class="c-desc">AI가 예측한 고객별 구매 확률 높은 순으로 배치</div>
+        </div>
+        <div class="criteria-card">
+          <div class="c-icon">🆕</div>
+          <div class="c-name">최신순</div>
+          <div class="c-desc">등록일 기준 최신 상품을 상단에 노출</div>
+        </div>
+        <div class="criteria-card">
+          <div class="c-icon">🔥</div>
+          <div class="c-name">인기순</div>
+          <div class="c-desc">조회수·장바구니·판매량 기반 인기 상품 우선</div>
+        </div>
+        <div class="criteria-card">
+          <div class="c-icon">💰</div>
+          <div class="c-name">마진순</div>
+          <div class="c-desc">수익 기여도 높은 상품을 전략적으로 상단 배치</div>
+        </div>
+        <div class="criteria-card">
+          <div class="c-icon">⚡</div>
+          <div class="c-name">재고소진우선</div>
+          <div class="c-desc">재고 임박 상품을 먼저 노출해 소진율 향상</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 진열 규칙 목록 -->
+    <div class="section-header">
+      <span class="section-title">진열 규칙 목록 <span class="badge badge-primary" style="margin-left:6px;">8개 규칙</span></span>
+      <button class="btn btn-secondary btn-sm">⬇ CSV 내보내기</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>규칙명</th>
+            <th>적용 세그먼트</th>
+            <th>적용 페이지</th>
+            <th>진열 기준</th>
+            <th>우선순위</th>
+            <th>상태</th>
+            <th>관리</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color:var(--text-muted);">01</td>
+            <td><strong>VIP 신상품 우선</strong></td>
+            <td><span class="badge badge-warning">VIP</span></td>
+            <td>메인 페이지</td>
+            <td>최신순 + 구매확률순</td>
+            <td><span class="badge badge-primary">P1</span></td>
+            <td><span class="badge badge-success">활성</span></td>
+            <td><div class="action-group"><button class="btn btn-secondary btn-sm" onclick="showToast('info','편집','규칙 편집 모드로 전환합니다.')">편집</button><button class="btn btn-danger btn-sm" onclick="showToast('success','삭제','규칙이 삭제되었습니다.')">삭제</button></div></td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-muted);">02</td>
+            <td><strong>이탈 위험 할인 우선</strong></td>
+            <td><span class="badge badge-danger">이탈위험</span></td>
+            <td>메인 페이지, 이메일</td>
+            <td>마진순 + 재고소진우선</td>
+            <td><span class="badge badge-primary">P1</span></td>
+            <td><span class="badge badge-success">활성</span></td>
+            <td><div class="action-group"><button class="btn btn-secondary btn-sm" onclick="showToast('info','편집','규칙 편집 모드로 전환합니다.')">편집</button><button class="btn btn-danger btn-sm" onclick="showToast('success','삭제','규칙이 삭제되었습니다.')">삭제</button></div></td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-muted);">03</td>
+            <td><strong>휴면 고객 베스트셀러</strong></td>
+            <td><span class="badge badge-muted">휴면</span></td>
+            <td>메인 페이지</td>
+            <td>인기순</td>
+            <td><span class="badge badge-info">P2</span></td>
+            <td><span class="badge badge-success">활성</span></td>
+            <td><div class="action-group"><button class="btn btn-secondary btn-sm" onclick="showToast('info','편집','규칙 편집 모드로 전환합니다.')">편집</button><button class="btn btn-danger btn-sm" onclick="showToast('success','삭제','규칙이 삭제되었습니다.')">삭제</button></div></td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-muted);">04</td>
+            <td><strong>신규 회원 트렌드</strong></td>
+            <td><span class="badge badge-info">신규</span></td>
+            <td>카테고리 전체</td>
+            <td>인기순 + 최신순</td>
+            <td><span class="badge badge-info">P2</span></td>
+            <td><span class="badge badge-success">활성</span></td>
+            <td><div class="action-group"><button class="btn btn-secondary btn-sm" onclick="showToast('info','편집','규칙 편집 모드로 전환합니다.')">편집</button><button class="btn btn-danger btn-sm" onclick="showToast('success','삭제','규칙이 삭제되었습니다.')">삭제</button></div></td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-muted);">05</td>
+            <td><strong>단골 재구매 유도</strong></td>
+            <td><span class="badge badge-success">단골</span></td>
+            <td>메인 페이지, 마이페이지</td>
+            <td>구매확률순</td>
+            <td><span class="badge badge-primary">P1</span></td>
+            <td><span class="badge badge-success">활성</span></td>
+            <td><div class="action-group"><button class="btn btn-secondary btn-sm" onclick="showToast('info','편집','규칙 편집 모드로 전환합니다.')">편집</button><button class="btn btn-danger btn-sm" onclick="showToast('success','삭제','규칙이 삭제되었습니다.')">삭제</button></div></td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-muted);">06</td>
+            <td><strong>계절 상품 재고 소진</strong></td>
+            <td><span class="badge badge-muted">전체</span></td>
+            <td>카테고리 — 시즌</td>
+            <td>재고소진우선</td>
+            <td><span class="badge badge-warning">P3</span></td>
+            <td><span class="badge badge-success">활성</span></td>
+            <td><div class="action-group"><button class="btn btn-secondary btn-sm" onclick="showToast('info','편집','규칙 편집 모드로 전환합니다.')">편집</button><button class="btn btn-danger btn-sm" onclick="showToast('success','삭제','규칙이 삭제되었습니다.')">삭제</button></div></td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-muted);">07</td>
+            <td><strong>고마진 상품 부스트</strong></td>
+            <td><span class="badge badge-warning">VIP</span></td>
+            <td>검색 결과</td>
+            <td>마진순</td>
+            <td><span class="badge badge-warning">P3</span></td>
+            <td><span class="badge badge-muted">비활성</span></td>
+            <td><div class="action-group"><button class="btn btn-secondary btn-sm" onclick="showToast('info','편집','규칙 편집 모드로 전환합니다.')">편집</button><button class="btn btn-danger btn-sm" onclick="showToast('success','삭제','규칙이 삭제되었습니다.')">삭제</button></div></td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-muted);">08</td>
+            <td><strong>AI 하이브리드 전체</strong></td>
+            <td><span class="badge badge-muted">전체</span></td>
+            <td>전체 페이지</td>
+            <td>구매확률순 (AI)</td>
+            <td><span class="badge badge-primary">P1</span></td>
+            <td><span class="badge badge-muted">비활성</span></td>
+            <td><div class="action-group"><button class="btn btn-secondary btn-sm" onclick="showToast('info','편집','규칙 편집 모드로 전환합니다.')">편집</button><button class="btn btn-danger btn-sm" onclick="showToast('success','삭제','규칙이 삭제되었습니다.')">삭제</button></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SCREEN: stock — 재고 알림 설정
+  ══════════════════════════════════════════════ -->
+  <div class="screen" id="screen-stock">
+
+    <div class="page-header">
+      <div>
+        <h2>📦 재고 알림 설정</h2>
+        <p class="page-desc">재고 부족 또는 소진 임박 시 담당자·고객에게 자동으로 알림을 발송합니다.</p>
+      </div>
+      <button class="btn btn-primary" onclick="showToast('success','규칙 추가','새 재고 알림 규칙을 설정합니다.')">+ 알림 규칙 추가</button>
+    </div>
+
+    <!-- 요약 카드 -->
+    <div class="summary-grid">
+      <div class="summary-card">
+        <span class="s-label">알림 규칙 총 수</span>
+        <span class="s-value">14</span>
+        <span class="s-sub">활성 11 · 비활성 3</span>
+      </div>
+      <div class="summary-card">
+        <span class="s-label">오늘 발송된 알림</span>
+        <span class="s-value" style="color:var(--info);">23건</span>
+        <span class="s-sub">이메일 15 · SMS 5 · 슬랙 3</span>
+      </div>
+      <div class="summary-card">
+        <span class="s-label">재고 부족 상품</span>
+        <span class="s-value" style="color:var(--danger);">8개</span>
+        <span class="s-sub">임계값 이하 상품</span>
+      </div>
+      <div class="summary-card">
+        <span class="s-label">재입고 예정</span>
+        <span class="s-value" style="color:var(--success);">3개</span>
+        <span class="s-sub">이번 주 내 입고 예정</span>
+      </div>
+    </div>
+
+    <!-- 알림 규칙 테이블 -->
+    <div class="section-header">
+      <span class="section-title">알림 규칙 목록</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>상품명 / 카테고리</th>
+            <th>재고 임계값</th>
+            <th>알림 채널</th>
+            <th>알림 대상</th>
+            <th>마지막 발송</th>
+            <th>상태</th>
+            <th>관리</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><div style="font-weight:600;">엔트위즈 슬림 자켓</div><div style="font-size:11px;color:var(--text-muted);">아우터 / 자켓</div></td>
+            <td>재고 <strong>10</strong>개 이하</td>
+            <td><div style="display:flex;gap:4px;flex-wrap:wrap;"><span class="badge badge-info">이메일</span><span class="badge badge-success">슬랙</span></div></td>
+            <td>담당자</td>
+            <td>2026-05-28 09:14</td>
+            <td><span class="badge badge-success">활성</span></td>
+            <td><button class="btn btn-secondary btn-sm" onclick="showToast('info','편집','알림 규칙을 편집합니다.')">편집</button></td>
+          </tr>
+          <tr>
+            <td><div style="font-weight:600;">린넨 와이드 팬츠</div><div style="font-size:11px;color:var(--text-muted);">하의 / 팬츠</div></td>
+            <td>재고 <strong>5</strong>개 이하</td>
+            <td><div style="display:flex;gap:4px;flex-wrap:wrap;"><span class="badge badge-info">이메일</span><span class="badge badge-warning">SMS</span></div></td>
+            <td>전체 (담당자+고객)</td>
+            <td>2026-05-27 22:05</td>
+            <td><span class="badge badge-success">활성</span></td>
+            <td><button class="btn btn-secondary btn-sm" onclick="showToast('info','편집','알림 규칙을 편집합니다.')">편집</button></td>
+          </tr>
+          <tr>
+            <td><div style="font-weight:600;">오버핏 그래픽 티셔츠</div><div style="font-size:11px;color:var(--text-muted);">상의 / 티셔츠</div></td>
+            <td>재고 <strong>15</strong>개 이하</td>
+            <td><div style="display:flex;gap:4px;flex-wrap:wrap;"><span class="badge badge-success">슬랙</span></div></td>
+            <td>담당자</td>
+            <td>2026-05-28 07:30</td>
+            <td><span class="badge badge-success">활성</span></td>
+            <td><button class="btn btn-secondary btn-sm" onclick="showToast('info','편집','알림 규칙을 편집합니다.')">편집</button></td>
+          </tr>
+          <tr>
+            <td><div style="font-weight:600;">크로스 미니백</div><div style="font-size:11px;color:var(--text-muted);">악세서리 / 가방</div></td>
+            <td>재고 <strong>3</strong>개 이하</td>
+            <td><div style="display:flex;gap:4px;flex-wrap:wrap;"><span class="badge badge-info">이메일</span><span class="badge badge-warning">SMS</span><span class="badge badge-success">슬랙</span></div></td>
+            <td>전체</td>
+            <td>2026-05-28 11:02</td>
+            <td><span class="badge badge-success">활성</span></td>
+            <td><button class="btn btn-secondary btn-sm" onclick="showToast('info','편집','알림 규칙을 편집합니다.')">편집</button></td>
+          </tr>
+          <tr>
+            <td><div style="font-weight:600;">캐시미어 니트</div><div style="font-size:11px;color:var(--text-muted);">상의 / 니트</div></td>
+            <td>재고 <strong>8</strong>개 이하</td>
+            <td><div style="display:flex;gap:4px;flex-wrap:wrap;"><span class="badge badge-info">이메일</span></div></td>
+            <td>담당자</td>
+            <td>2026-05-26 18:40</td>
+            <td><span class="badge badge-success">활성</span></td>
+            <td><button class="btn btn-secondary btn-sm" onclick="showToast('info','편집','알림 규칙을 편집합니다.')">편집</button></td>
+          </tr>
+          <tr>
+            <td><div style="font-weight:600;">플랫폼 스니커즈</div><div style="font-size:11px;color:var(--text-muted);">신발 / 스니커즈</div></td>
+            <td>재고 <strong>20</strong>개 이하</td>
+            <td><div style="display:flex;gap:4px;flex-wrap:wrap;"><span class="badge badge-warning">SMS</span><span class="badge badge-success">슬랙</span></div></td>
+            <td>고객</td>
+            <td>2026-05-25 10:15</td>
+            <td><span class="badge badge-success">활성</span></td>
+            <td><button class="btn btn-secondary btn-sm" onclick="showToast('info','편집','알림 규칙을 편집합니다.')">편집</button></td>
+          </tr>
+          <tr>
+            <td><div style="font-weight:600;">스트라이프 셔츠</div><div style="font-size:11px;color:var(--text-muted);">상의 / 셔츠</div></td>
+            <td>재고 <strong>12</strong>개 이하</td>
+            <td><div style="display:flex;gap:4px;flex-wrap:wrap;"><span class="badge badge-info">이메일</span></div></td>
+            <td>담당자</td>
+            <td>2026-05-24 15:22</td>
+            <td><span class="badge badge-muted">비활성</span></td>
+            <td><button class="btn btn-secondary btn-sm" onclick="showToast('info','편집','알림 규칙을 편집합니다.')">편집</button></td>
+          </tr>
+          <tr>
+            <td><div style="font-weight:600;">데님 스키니 진</div><div style="font-size:11px;color:var(--text-muted);">하의 / 데님</div></td>
+            <td>재고 <strong>7</strong>개 이하</td>
+            <td><div style="display:flex;gap:4px;flex-wrap:wrap;"><span class="badge badge-info">이메일</span><span class="badge badge-success">슬랙</span></div></td>
+            <td>전체</td>
+            <td>2026-05-28 08:00</td>
+            <td><span class="badge badge-success">활성</span></td>
+            <td><button class="btn btn-secondary btn-sm" onclick="showToast('info','편집','알림 규칙을 편집합니다.')">편집</button></td>
+          </tr>
+          <tr>
+            <td><div style="font-weight:600;">실크 블라우스</div><div style="font-size:11px;color:var(--text-muted);">상의 / 블라우스</div></td>
+            <td>재고 <strong>6</strong>개 이하</td>
+            <td><div style="display:flex;gap:4px;flex-wrap:wrap;"><span class="badge badge-warning">SMS</span></div></td>
+            <td>고객</td>
+            <td>2026-05-27 14:10</td>
+            <td><span class="badge badge-success">활성</span></td>
+            <td><button class="btn btn-secondary btn-sm" onclick="showToast('info','편집','알림 규칙을 편집합니다.')">편집</button></td>
+          </tr>
+          <tr>
+            <td><div style="font-weight:600;">울 코트</div><div style="font-size:11px;color:var(--text-muted);">아우터 / 코트</div></td>
+            <td>재고 <strong>4</strong>개 이하</td>
+            <td><div style="display:flex;gap:4px;flex-wrap:wrap;"><span class="badge badge-info">이메일</span><span class="badge badge-warning">SMS</span></div></td>
+            <td>전체</td>
+            <td>2026-05-23 09:55</td>
+            <td><span class="badge badge-muted">비활성</span></td>
+            <td><button class="btn btn-secondary btn-sm" onclick="showToast('info','편집','알림 규칙을 편집합니다.')">편집</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 재입고 알림 신청 현황 -->
+    <div class="section-header" style="margin-top:8px;">
+      <span class="section-title">재입고 알림 신청 고객 현황</span>
+      <button class="btn btn-success btn-sm" onclick="showToast('success','전체 발송','재입고 알림을 신청한 전체 고객에게 발송합니다.')">📢 재입고 시 전체 발송</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>상품명</th>
+            <th>현재 재고</th>
+            <th>알림 신청 고객 수</th>
+            <th>예상 재입고일</th>
+            <th>발송</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>린넨 와이드 팬츠 (베이지 M)</strong></td>
+            <td><span class="badge badge-danger">0개 (품절)</span></td>
+            <td><strong style="color:var(--primary);">142명</strong></td>
+            <td>2026-06-03</td>
+            <td><button class="btn btn-primary btn-sm" onclick="showToast('success','발송 완료','142명에게 재입고 알림을 발송했습니다.')">발송</button></td>
+          </tr>
+          <tr>
+            <td><strong>크로스 미니백 (블랙)</strong></td>
+            <td><span class="badge badge-danger">2개</span></td>
+            <td><strong style="color:var(--primary);">87명</strong></td>
+            <td>2026-06-07</td>
+            <td><button class="btn btn-primary btn-sm" onclick="showToast('success','발송 완료','87명에게 재입고 알림을 발송했습니다.')">발송</button></td>
+          </tr>
+          <tr>
+            <td><strong>엔트위즈 슬림 자켓 (화이트 S)</strong></td>
+            <td><span class="badge badge-warning">4개</span></td>
+            <td><strong style="color:var(--primary);">63명</strong></td>
+            <td>2026-06-05</td>
+            <td><button class="btn btn-primary btn-sm" onclick="showToast('success','발송 완료','63명에게 재입고 알림을 발송했습니다.')">발송</button></td>
+          </tr>
+          <tr>
+            <td><strong>캐시미어 니트 (네이비 L)</strong></td>
+            <td><span class="badge badge-danger">0개 (품절)</span></td>
+            <td><strong style="color:var(--primary);">51명</strong></td>
+            <td>미정</td>
+            <td><button class="btn btn-secondary btn-sm" onclick="showToast('warning','재입고일 미정','재입고 예정일을 먼저 입력해주세요.')">대기중</button></td>
+          </tr>
+          <tr>
+            <td><strong>플랫폼 스니커즈 (240)</strong></td>
+            <td><span class="badge badge-warning">6개</span></td>
+            <td><strong style="color:var(--primary);">38명</strong></td>
+            <td>2026-06-10</td>
+            <td><button class="btn btn-primary btn-sm" onclick="showToast('success','발송 완료','38명에게 재입고 알림을 발송했습니다.')">발송</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 알림 채널 설정 -->
+    <div class="card" style="margin-top:8px;">
+      <p class="card-title">알림 채널 설정</p>
+      <div class="channel-grid">
+        <div class="channel-card">
+          <div class="ch-header">
+            <span class="ch-icon">📧</span>
+            <span class="ch-name">이메일 발신 주소</span>
+          </div>
+          <input type="text" value="noreply@entwiz.com" readonly />
+          <div style="margin-top:8px;">
+            <input type="text" placeholder="SMTP 호스트 (예: smtp.entwiz.com)" />
+          </div>
+        </div>
+        <div class="channel-card">
+          <div class="ch-header">
+            <span class="ch-icon">💬</span>
+            <span class="ch-name">카카오 알림톡 (비즈니스)</span>
+          </div>
+          <input type="text" value="ENT_20240115" readonly />
+          <div style="margin-top:8px;">
+            <input type="text" placeholder="알림톡 API 키 입력" />
+          </div>
+        </div>
+        <div class="channel-card">
+          <div class="ch-header">
+            <span class="ch-icon">🟩</span>
+            <span class="ch-name">슬랙 웹훅 URL</span>
+          </div>
+          <input type="text" value="https://hooks.slack.com/services/T0••••/B••••/••••" readonly />
+          <div style="margin-top:8px;">
+            <button class="btn btn-secondary btn-sm" style="width:100%;justify-content:center;" onclick="showToast('info','테스트','슬랙 채널에 테스트 메시지를 발송합니다.')">연결 테스트</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SCREEN: airecommend — AI 추천 엔진 설정
+  ══════════════════════════════════════════════ -->
+  <div class="screen" id="screen-airecommend">
+
+    <div class="page-header">
+      <div>
+        <h2>🤖 AI 추천 엔진 설정</h2>
+        <p class="page-desc">학습 모델 선택, 배치 위치, 성과 지표를 한 곳에서 관리합니다.</p>
+      </div>
+      <button class="btn btn-primary" onclick="showToast('info','AI 학습 시작','모델 학습이 시작되었습니다. 완료 시 알림을 보내드립니다.')">⚡ 즉시 학습 시작</button>
+    </div>
+
+    <!-- 설명 배너 -->
+    <div class="info-banner blue">
+      <span class="banner-icon">🤖</span>
+      <span><strong>ENTWIZ AI 추천 엔진</strong>은 고객 행동 데이터를 학습해 최적의 상품을 추천합니다. 하이브리드 모델은 협업 필터링과 콘텐츠 기반 필터링을 결합하여 가장 높은 정확도를 제공합니다.</span>
+    </div>
+
+    <!-- 추천 모델 현황 카드 3개 -->
+    <div class="model-grid">
+      <!-- 협업 필터링 -->
+      <div class="model-card">
+        <div class="m-title">🔗 협업 필터링 <span class="badge badge-muted">대기중</span></div>
+        <div class="m-acc">87.3%</div>
+        <div class="m-row"><span class="m-label">정확도</span><span class="m-val">87.3%</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:87.3%;background:var(--info);"></div></div>
+        <div style="height:10px;"></div>
+        <div class="m-row"><span class="m-label">학습 데이터</span><span class="m-val">2.4M 건</span></div>
+        <div class="m-row"><span class="m-label">마지막 업데이트</span><span class="m-val">오늘 06:00</span></div>
+        <div class="m-row"><span class="m-label">평균 응답 속도</span><span class="m-val">12ms</span></div>
+        <div style="margin-top:14px;">
+          <button class="btn btn-secondary btn-sm" style="width:100%;justify-content:center;" onclick="showToast('info','모델 활성화','협업 필터링 모델을 활성화합니다.')">모델 활성화</button>
+        </div>
+      </div>
+
+      <!-- 콘텐츠 기반 필터링 -->
+      <div class="model-card">
+        <div class="m-title">📄 콘텐츠 기반 필터링 <span class="badge badge-muted">대기중</span></div>
+        <div class="m-acc">82.1%</div>
+        <div class="m-row"><span class="m-label">정확도</span><span class="m-val">82.1%</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:82.1%;background:var(--warning);"></div></div>
+        <div style="height:10px;"></div>
+        <div class="m-row"><span class="m-label">학습 데이터</span><span class="m-val">1.8M 건</span></div>
+        <div class="m-row"><span class="m-label">마지막 업데이트</span><span class="m-val">어제 23:00</span></div>
+        <div class="m-row"><span class="m-label">평균 응답 속도</span><span class="m-val">8ms</span></div>
+        <div style="margin-top:14px;">
+          <button class="btn btn-secondary btn-sm" style="width:100%;justify-content:center;" onclick="showToast('info','모델 활성화','콘텐츠 기반 필터링 모델을 활성화합니다.')">모델 활성화</button>
+        </div>
+      </div>
+
+      <!-- 하이브리드 모델 (현재 적용 중) -->
+      <div class="model-card active-model">
+        <div class="m-title">⚡ 하이브리드 모델 <span class="badge badge-success">현재 적용 중</span></div>
+        <div class="m-acc" style="color:var(--success);">91.2%</div>
+        <div class="m-row"><span class="m-label">정확도</span><span class="m-val" style="color:var(--success);font-weight:700;">91.2%</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:91.2%;background:var(--success);"></div></div>
+        <div style="height:10px;"></div>
+        <div class="m-row"><span class="m-label">학습 데이터</span><span class="m-val">4.2M 건</span></div>
+        <div class="m-row"><span class="m-label">마지막 업데이트</span><span class="m-val">오늘 06:00</span></div>
+        <div class="m-row"><span class="m-label">평균 응답 속도</span><span class="m-val">18ms</span></div>
+        <div style="margin-top:14px;">
+          <button class="btn btn-success btn-sm" style="width:100%;justify-content:center;" disabled>✓ 적용 중</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 추천 배치 설정 테이블 -->
+    <div class="section-header">
+      <span class="section-title">추천 배치 설정</span>
+      <button class="btn btn-secondary btn-sm" onclick="showToast('success','저장','배치 설정이 저장되었습니다.')">변경사항 저장</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>배치 위치</th>
+            <th>추천 상품 수</th>
+            <th>적용 알고리즘</th>
+            <th>노출 세그먼트</th>
+            <th>전환율</th>
+            <th>상태</th>
+            <th>관리</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>🏠 메인 페이지</strong><div style="font-size:11px;color:var(--text-muted);">히어로 섹션 하단</div></td>
+            <td>8개</td>
+            <td><span class="badge badge-success">하이브리드</span></td>
+            <td>전체</td>
+            <td><strong style="color:var(--success);">6.8%</strong></td>
+            <td><span class="badge badge-success">활성</span></td>
+            <td><button class="btn btn-secondary btn-sm" onclick="showToast('info','편집','배치 설정을 편집합니다.')">편집</button></td>
+          </tr>
+          <tr>
+            <td><strong>📦 상품 상세 페이지</strong><div style="font-size:11px;color:var(--text-muted);">함께 보면 좋은 상품</div></td>
+            <td>6개</td>
+            <td><span class="badge badge-info">협업 필터링</span></td>
+            <td>전체</td>
+            <td><strong style="color:var(--success);">9.2%</strong></td>
+            <td><span class="badge badge-success">활성</span></td>
+            <td><button class="btn btn-secondary btn-sm" onclick="showToast('info','편집','배치 설정을 편집합니다.')">편집</button></td>
+          </tr>
+          <tr>
+            <td><strong>🛒 장바구니 페이지</strong><div style="font-size:11px;color:var(--text-muted);">이런 상품도 어떠세요</div></td>
+            <td>4개</td>
+            <td><span class="badge badge-success">하이브리드</span></td>
+            <td>전체</td>
+            <td><strong style="color:var(--success);">11.4%</strong></td>
+            <td><span class="badge badge-success">활성</span></td>
+            <td><button class="btn btn-secondary btn-sm" onclick="showToast('info','편집','배치 설정을 편집합니다.')">편집</button></td>
+          </tr>
+          <tr>
+            <td><strong>📧 이메일 (뉴스레터)</strong><div style="font-size:11px;color:var(--text-muted);">개인화 상품 추천</div></td>
+            <td>5개</td>
+            <td><span class="badge badge-success">하이브리드</span></td>
+            <td>활성 고객</td>
+            <td><strong style="color:var(--warning);">3.1%</strong></td>
+            <td><span class="badge badge-success">활성</span></td>
+            <td><button class="btn btn-secondary btn-sm" onclick="showToast('info','편집','배치 설정을 편집합니다.')">편집</button></td>
+          </tr>
+          <tr>
+            <td><strong>🔍 검색 결과 페이지</strong><div style="font-size:11px;color:var(--text-muted);">관련 상품 추천</div></td>
+            <td>4개</td>
+            <td><span class="badge badge-warning">콘텐츠 기반</span></td>
+            <td>전체</td>
+            <td><strong style="color:var(--warning);">4.7%</strong></td>
+            <td><span class="badge badge-muted">비활성</span></td>
+            <td><button class="btn btn-secondary btn-sm" onclick="showToast('info','편집','배치 설정을 편집합니다.')">편집</button></td>
+          </tr>
+          <tr>
+            <td><strong>✅ 주문 완료 페이지</strong><div style="font-size:11px;color:var(--text-muted);">추가 구매 유도</div></td>
+            <td>3개</td>
+            <td><span class="badge badge-info">협업 필터링</span></td>
+            <td>전체</td>
+            <td><strong style="color:var(--success);">7.9%</strong></td>
+            <td><span class="badge badge-success">활성</span></td>
+            <td><button class="btn btn-secondary btn-sm" onclick="showToast('info','편집','배치 설정을 편집합니다.')">편집</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 모델 학습 스케줄 -->
+    <div class="card">
+      <p class="card-title">🕐 모델 학습 스케줄 설정</p>
+      <div class="schedule-form">
+        <div class="form-group">
+          <label>학습 주기</label>
+          <select>
+            <option>매일</option>
+            <option>매주</option>
+            <option>매월</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>학습 시각</label>
+          <input type="time" value="06:00" />
+        </div>
+        <div class="form-group">
+          <label>마지막 학습 완료</label>
+          <input type="text" value="2026-05-28 06:00 (소요: 42분)" readonly style="background:#f9fafb;color:var(--text-muted);" />
+        </div>
+        <div class="form-group">
+          <label>&nbsp;</label>
+          <button class="btn btn-primary" onclick="showToast('info','AI 학습 시작','모델 학습이 시작되었습니다. 완료 시 알림을 보내드립니다.')">⚡ 즉시 학습 시작</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 추천 성과 지표 테이블 -->
+    <div class="section-header">
+      <span class="section-title">추천 성과 지표</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>기간</th>
+            <th>추천 노출 수</th>
+            <th>추천 클릭률 (CTR)</th>
+            <th>추천 전환율 (CVR)</th>
+            <th>추천으로 인한 매출</th>
+            <th>전월 대비</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>이번 달</strong> <span class="badge badge-primary" style="margin-left:4px;">진행 중</span></td>
+            <td>1,284,700</td>
+            <td><strong style="color:var(--success);">7.3%</strong></td>
+            <td><strong style="color:var(--success);">3.8%</strong></td>
+            <td><strong>₩ 148,290,000</strong></td>
+            <td><span class="badge badge-success">▲ +12.4%</span></td>
+          </tr>
+          <tr>
+            <td><strong>지난 달</strong></td>
+            <td>1,102,400</td>
+            <td>6.5%</td>
+            <td>3.3%</td>
+            <td>₩ 131,900,000</td>
+            <td><span class="badge badge-success">▲ +8.1%</span></td>
+          </tr>
+          <tr>
+            <td><strong>2개월 전</strong></td>
+            <td>987,300</td>
+            <td>5.9%</td>
+            <td>3.0%</td>
+            <td>₩ 121,980,000</td>
+            <td><span class="badge badge-success">▲ +5.3%</span></td>
+          </tr>
+          <tr>
+            <td><strong>3개월 전</strong></td>
+            <td>891,100</td>
+            <td>5.2%</td>
+            <td>2.6%</td>
+            <td>₩ 115,830,000</td>
+            <td><span class="badge badge-muted">— 기준</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</main>
+
+<script src="crm-layout.js"></script>
+<script src="crm-common.js"></script>
+<script>
+  /* ── 서브스크린 메타 ── */
+  const SCREEN_META = {
+    display:     { label: '개인화 진열 설정' },
+    stock:       { label: '재고 알림 설정' },
+    airecommend: { label: 'AI 추천 엔진 설정' },
+  };
+
+  /* ── showScreen ── */
+  function showScreen(name, pushState = true) {
+    if (!SCREEN_META[name]) return;
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-' + name)?.classList.add('active');
+    document.querySelector('.content')?.scrollTo({ top: 0 });
+    const el = document.getElementById('bcCurr');
+    if (el) el.textContent = SCREEN_META[name].label;
+    if (pushState) history.pushState({ screen: name }, '', '#' + name);
+    else           history.replaceState({ screen: name }, '', '#' + name);
+    if (typeof crmSetActiveSidebar === 'function') crmSetActiveSidebar();
+  }
+
+  /* ── 초기화 ── */
+  document.addEventListener('DOMContentLoaded', () => {
+    const hash = location.hash.replace('#', '') || 'display';
+    showScreen(SCREEN_META[hash] ? hash : 'display', false);
+  });
+
+  window.addEventListener('popstate', e => {
+    showScreen(e.state?.screen || 'display', false);
+  });
+</script>
+</body>
+</html>

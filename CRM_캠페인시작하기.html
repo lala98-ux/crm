@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="crm-layout.css">
+<title>캠페인 시작하기 | ENTWIZ CRM</title>
+<style>
+:root {
+  --primary:#2563EB; --primary-dark:#1D4ED8; --primary-light:#EFF6FF;
+  --bg:#F8FAFC; --surface:#FFFFFF; --border:#E2E8F0;
+  --text:#0F172A; --text-sub:#475569; --text-muted:#94A3B8;
+  --success:#059669; --success-bg:#ECFDF5;
+  --warning:#D97706; --warning-bg:#FFFBEB;
+  --danger:#DC2626; --danger-bg:#FEF2F2;
+  --radius:8px; --radius-sm:5px;
+  --shadow:0 1px 3px rgba(0,0,0,.08); --shadow-md:0 4px 16px rgba(0,0,0,.10);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Pretendard','Malgun Gothic','맑은 고딕',-apple-system,sans-serif;font-size:14px;color:var(--text);background:var(--bg);}
+a{text-decoration:none;} button{font-family:inherit;cursor:pointer;}
+
+.breadcrumb{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-muted);margin-bottom:14px;}
+.breadcrumb .sep{color:var(--border);font-size:14px;}
+.breadcrumb .curr{color:var(--text-sub);font-weight:600;}
+
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;}
+.page-title{font-size:20px;font-weight:800;}
+.page-desc{font-size:13px;color:var(--text-sub);margin-top:3px;}
+.page-actions{display:flex;gap:8px;}
+
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--radius);font-size:13px;font-weight:600;border:1px solid transparent;transition:all .15s;white-space:nowrap;cursor:pointer;}
+.btn-primary{background:var(--primary);color:#fff;}
+.btn-primary:hover{background:var(--primary-dark);}
+.btn-secondary{background:var(--surface);color:var(--text-sub);border-color:var(--border);}
+.btn-secondary:hover{background:var(--bg);}
+.btn-sm{padding:5px 10px;font-size:12px;border-radius:var(--radius-sm);}
+.btn-ghost{background:none;border-color:transparent;color:var(--text-sub);}
+.btn-ghost:hover{background:var(--bg);}
+
+/* AI 추천 배너 */
+.ai-banner {
+  background: linear-gradient(135deg, #1E3A8A 0%, #2563EB 60%, #7C3AED 100%);
+  border-radius: 12px;
+  padding: 20px 24px;
+  color: #fff;
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.ai-banner-icon { font-size: 36px; flex-shrink: 0; }
+.ai-banner-body { flex: 1; }
+.ai-banner-label { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.6); margin-bottom: 4px; }
+.ai-banner-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+.ai-banner-desc { font-size: 13px; color: rgba(255,255,255,.8); }
+.ai-banner-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.btn-white { background: #fff; color: var(--primary); font-weight: 700; border: none; padding: 8px 18px; border-radius: var(--radius); font-size: 13px; cursor: pointer; transition: background .15s; }
+.btn-white:hover { background: rgba(255,255,255,.9); }
+.btn-outline-white { background: rgba(255,255,255,.15); color: #fff; border: 1px solid rgba(255,255,255,.3); padding: 8px 18px; border-radius: var(--radius); font-size: 13px; cursor: pointer; font-weight: 600; transition: background .15s; }
+.btn-outline-white:hover { background: rgba(255,255,255,.25); }
+
+/* 탭 */
+.tab-bar { display: flex; gap: 0; border-bottom: 2px solid var(--border); margin-bottom: 24px; }
+.tab-btn { padding: 10px 20px; font-size: 14px; font-weight: 600; color: var(--text-muted); background: none; border: none; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all .15s; }
+.tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+.tab-btn:hover:not(.active) { color: var(--text-sub); }
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* 섹션 제목 */
+.section-title { font-size: 13px; font-weight: 700; color: var(--text-muted); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+.section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* 빠른 추천 카드 (가로 스크롤) */
+.recommend-row { display: flex; gap: 14px; margin-bottom: 32px; overflow-x: auto; padding-bottom: 4px; }
+.recommend-row::-webkit-scrollbar { height: 4px; }
+.recommend-row::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+.rec-card {
+  flex-shrink: 0;
+  width: 220px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: all .2s;
+}
+.rec-card:hover { border-color: var(--primary); box-shadow: 0 4px 16px rgba(37,99,235,.1); transform: translateY(-2px); z-index: 2; }
+.rec-badge { position: absolute; top: 10px; right: 10px; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; }
+.rec-badge.hot { background: #FEE2E2; color: var(--danger); }
+.rec-badge.new { background: #DBEAFE; color: var(--primary); }
+.rec-badge.ai { background: #EDE9FE; color: #7C3AED; }
+.rec-icon { font-size: 28px; margin-bottom: 10px; }
+.rec-name { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+.rec-desc { font-size: 12px; color: var(--text-sub); line-height: 1.5; margin-bottom: 12px; flex: 1; }
+.rec-meta { font-size: 11px; color: var(--text-muted); margin-bottom: 12px; }
+.rec-meta span { color: var(--success); font-weight: 600; }
+
+/* 캠페인 타입 카드 그리드 */
+.campaign-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
+.campaign-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 22px;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: all .2s;
+  display: flex;
+  flex-direction: column;
+}
+.campaign-card:hover { border-color: var(--primary); box-shadow: 0 4px 20px rgba(37,99,235,.12); transform: translateY(-2px); }
+.campaign-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
+.campaign-card-icon { font-size: 32px; }
+.campaign-card-tag { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 10px; }
+.tag-instant { background: #FFF7ED; color: #C2410C; }
+.tag-auto { background: #F0FDF4; color: #15803D; }
+.tag-ab { background: #EDE9FE; color: #7C3AED; }
+.campaign-card-name { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+.campaign-card-desc { font-size: 12px; color: var(--text-sub); line-height: 1.6; flex: 1; }
+.campaign-card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); }
+.campaign-card-stat { font-size: 11px; color: var(--text-muted); }
+.campaign-card-stat strong { color: var(--text-sub); font-weight: 600; }
+
+/* 자동화 캠페인 카드 */
+.auto-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 32px; }
+.auto-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  padding: 20px 16px; cursor: pointer; transition: all .2s; text-align: center;
+}
+.auto-card:hover { border-color: var(--primary); box-shadow: 0 4px 16px rgba(37,99,235,.08); transform: translateY(-2px); }
+.auto-card-icon { font-size: 32px; margin-bottom: 10px; line-height: 1; }
+.auto-card-tag { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; background: #F0FDF4; color: #15803D; margin-bottom: 8px; }
+.auto-card-tag.ai { background: #EDE9FE; color: #7C3AED; }
+.auto-card-name { font-size: 13px; font-weight: 700; margin-bottom: 5px; }
+.auto-card-desc { font-size: 11px; color: var(--text-sub); line-height: 1.5; }
+
+
+
+</style>
+</head>
+<body>
+<main class="content">
+
+<div class="breadcrumb">
+  <span>ENTWIZ CRM</span>
+  <span class="sep">›</span>
+  <span class="curr">캠페인 시작하기</span>
+</div>
+
+<div class="page-header">
+  <div>
+    <div class="page-title">새 캠페인 시작하기</div>
+    <div class="page-desc">목표에 맞는 캠페인 유형을 선택하거나 추천 템플릿으로 빠르게 시작하세요.</div>
+  </div>
+</div>
+
+<!-- AI 추천 배너 -->
+<div class="ai-banner">
+  <div class="ai-banner-icon">🤖</div>
+  <div class="ai-banner-body">
+    <div class="ai-banner-label">AI 인사이트</div>
+    <div class="ai-banner-title">지금 '장바구니 이탈 복구 캠페인'을 실행하면 최대 +18% 매출 회복이 예측됩니다</div>
+    <div class="ai-banner-desc">지난 7일 내 장바구니를 담고 구매하지 않은 고객 1,284명이 감지되었습니다.</div>
+  </div>
+  <div class="ai-banner-actions">
+    <button class="btn-white" onclick="location.href='CRM_자동화캠페인.html#cart'">바로 설정하기</button>
+    <button class="btn-outline-white" onclick="location.href='CRM_애널리틱스.html#journey'">더 보기</button>
+  </div>
+</div>
+
+<!-- 탭 -->
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('instant', this)">⚡ 즉시 발송</button>
+  <button class="tab-btn" onclick="switchTab('auto', this)">🤖 자동화 캠페인</button>
+</div>
+
+<!-- ── 즉시 발송 탭 ── -->
+<div id="tab-instant" class="tab-panel active">
+
+  <div class="section-title">✨ 지금 추천</div>
+  <div class="recommend-row" style="margin-bottom:32px;padding-top:8px;position:relative;z-index:1;">
+
+    <!-- A/B 테스트 카드 -->
+    <div class="rec-card" style="border-color:#C4B5FD;background:linear-gradient(160deg,#F5F3FF,#EDE9FE);" onclick="openCampaignBuilder('abtest','A/B 테스트 캠페인')">
+      <span class="rec-badge" style="background:#EDE9FE;color:#7C3AED;">A/B</span>
+      <div class="rec-icon">🔬</div>
+      <div class="rec-name" style="color:#5B21B6;">A/B 테스트 캠페인</div>
+      <div class="rec-desc">문구·시간·혜택·채널 두 가지 버전을 테스트하고 성과 높은 안을 자동 선택합니다.</div>
+      <button class="btn btn-sm" style="width:100%;background:#7C3AED;color:#fff;border-color:#7C3AED;" onclick="event.stopPropagation();openCampaignBuilder('abtest','A/B 테스트 캠페인')">만들기</button>
+    </div>
+    <div class="rec-card" style="border-color:var(--success);" onclick="location.href='CRM_메시지캠페인.html#list'">
+      <span class="rec-badge hot">HOT</span>
+      <div class="rec-icon">🛒</div>
+      <div class="rec-name">장바구니 이탈 쿠폰 <span style="font-size:10px;background:var(--success-bg);color:var(--success);padding:2px 6px;border-radius:10px;font-weight:700;vertical-align:middle;margin-left:2px;">● 진행중</span></div>
+      <div class="rec-desc">장바구니 담은 고객에게 할인 쿠폰을 발송합니다.</div>
+      <div style="background:var(--success-bg);border-radius:5px;padding:8px 10px;margin-bottom:10px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
+          <span style="font-size:11px;color:var(--text-sub);">1,203 / 1,500건 발송</span>
+          <span style="font-size:11px;color:var(--success);font-weight:700;">전환 7.8%</span>
+        </div>
+        <div style="background:#d1fae5;border-radius:4px;height:4px;overflow:hidden;">
+          <div style="height:100%;background:var(--success);width:80%;border-radius:4px;"></div>
+        </div>
+      </div>
+      <button class="btn btn-sm" style="width:100%;background:var(--success-bg);color:var(--success);border:1px solid var(--success);font-weight:700;" onclick="location.href='CRM_메시지캠페인.html#list'">현황 보기 →</button>
+    </div>
+    <div class="rec-card" onclick="event.stopPropagation();openCampaignBuilder('birthday','이번 달 생일 고객 혜택')">
+      <span class="rec-badge ai">AI 추천</span>
+      <div class="rec-icon">🎂</div>
+      <div class="rec-name">이번 달 생일 고객 혜택</div>
+      <div class="rec-desc">5월 생일 고객에게 특별 혜택을 발송합니다.</div>
+      <div class="rec-meta">예상 타겟 <span>312명</span></div>
+      <button class="btn btn-primary btn-sm" style="width:100%;" onclick="event.stopPropagation();openCampaignBuilder('birthday','이번 달 생일 고객 혜택')">만들기</button>
+    </div>
+    <div class="rec-card" onclick="event.stopPropagation();openCampaignBuilder('general','90일 미구매 고객 재활성')">
+      <span class="rec-badge hot">HOT</span>
+      <div class="rec-icon">😴</div>
+      <div class="rec-name">90일 미구매 고객 재활성</div>
+      <div class="rec-desc">장기 미구매 고객에게 복귀 혜택을 제안합니다.</div>
+      <div class="rec-meta">예상 타겟 <span>2,847명</span></div>
+      <button class="btn btn-primary btn-sm" style="width:100%;" onclick="event.stopPropagation();openCampaignBuilder('general','90일 미구매 고객 재활성')">만들기</button>
+    </div>
+    <div class="rec-card" onclick="event.stopPropagation();openCampaignBuilder('general','VIP 전용 신상품 선공개')">
+      <span class="rec-badge new">NEW</span>
+      <div class="rec-icon">⭐</div>
+      <div class="rec-name">VIP 전용 신상품 선공개</div>
+      <div class="rec-desc">VIP 고객에게 신상품을 먼저 공개합니다.</div>
+      <div class="rec-meta">예상 타겟 <span>184명</span></div>
+      <button class="btn btn-primary btn-sm" style="width:100%;" onclick="event.stopPropagation();openCampaignBuilder('general','VIP 전용 신상품 선공개')">만들기</button>
+    </div>
+    <div class="rec-card" onclick="event.stopPropagation();openCampaignBuilder('general','포인트 소멸 예정 알림')">
+      <div class="rec-icon">🎁</div>
+      <div class="rec-name">포인트 소멸 예정 알림</div>
+      <div class="rec-desc">30일 내 포인트가 소멸되는 고객에게 알립니다.</div>
+      <div class="rec-meta">예상 타겟 <span>671명</span></div>
+      <button class="btn btn-primary btn-sm" style="width:100%;" onclick="event.stopPropagation();openCampaignBuilder('general','포인트 소멸 예정 알림')">만들기</button>
+    </div>
+  </div><!-- recommend-row end -->
+
+  <div class="section-title">캠페인 유형 선택</div>
+  <div class="campaign-grid">
+    <div class="campaign-card" style="border-color:var(--warning);" onclick="location.href='CRM_메시지캠페인.html#list'">
+      <div class="campaign-card-top">
+        <div class="campaign-card-icon">📣</div>
+        <span class="campaign-card-tag tag-instant">즉시 발송</span>
+      </div>
+      <div class="campaign-card-name">일반 메시지 캠페인 <span style="font-size:10px;background:var(--warning-bg);color:var(--warning);padding:2px 6px;border-radius:10px;font-weight:700;vertical-align:middle;margin-left:4px;">⏰ 예약됨</span></div>
+      <div class="campaign-card-desc">대상 고객을 직접 선택하고 채널·메시지를 설정해 즉시 또는 예약 발송합니다.</div>
+      <div style="background:var(--warning-bg);border-radius:5px;padding:8px 10px;margin:10px 0 0;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">
+          <span style="font-size:12px;font-weight:600;color:var(--text);">VIP 감사 메시지</span>
+          <span style="font-size:10px;color:var(--text-muted);">카카오채널 · 수동</span>
+        </div>
+        <div style="font-size:11px;color:var(--text-sub);">0 / 342건 예정 · 발송 예정일 06.01</div>
+      </div>
+      <div class="campaign-card-footer">
+        <div class="campaign-card-stat">지원 채널 <strong>카카오 · 이메일 · SMS</strong></div>
+        <button class="btn btn-sm" style="background:var(--warning-bg);color:var(--warning);border:1px solid var(--warning);font-weight:700;white-space:nowrap;">현황 보기 →</button>
+      </div>
+    </div>
+    <div class="campaign-card" onclick="openCampaignBuilder('coupon','쿠폰/혜택 발송')">
+      <div class="campaign-card-top">
+        <div class="campaign-card-icon">🎫</div>
+        <span class="campaign-card-tag tag-instant">즉시 발송</span>
+      </div>
+      <div class="campaign-card-name">쿠폰/혜택 발송</div>
+      <div class="campaign-card-desc">할인 쿠폰, 포인트, 무료배송 등 혜택을 특정 세그먼트에 일괄 발송합니다.</div>
+      <div class="campaign-card-footer">
+        <div class="campaign-card-stat">지원 채널 <strong>카카오 · 이메일</strong></div>
+        <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openCampaignBuilder('coupon','쿠폰/혜택 발송')">만들기</button>
+      </div>
+    </div>
+    <div class="campaign-card" onclick="openCampaignBuilder('event','이벤트/공지 알림')">
+      <div class="campaign-card-top">
+        <div class="campaign-card-icon">📢</div>
+        <span class="campaign-card-tag tag-instant">즉시 발송</span>
+      </div>
+      <div class="campaign-card-name">이벤트/공지 알림</div>
+      <div class="campaign-card-desc">신상품 출시, 기간 한정 이벤트, 공지사항을 전체 또는 특정 고객에게 알립니다.</div>
+      <div class="campaign-card-footer">
+        <div class="campaign-card-stat">지원 채널 <strong>카카오 · 이메일 · 앱푸시</strong></div>
+        <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openCampaignBuilder('event','이벤트/공지 알림')">만들기</button>
+      </div>
+    </div>
+    <div class="campaign-card" onclick="openCampaignBuilder('birthday','기념일 메시지')">
+      <div class="campaign-card-top">
+        <div class="campaign-card-icon">🎂</div>
+        <span class="campaign-card-tag tag-instant">즉시 발송</span>
+      </div>
+      <div class="campaign-card-name">기념일 메시지</div>
+      <div class="campaign-card-desc">생일, 회원 기념일, 첫 구매 기념일에 맞춘 개인화 메시지를 발송합니다.</div>
+      <div class="campaign-card-footer">
+        <div class="campaign-card-stat">지원 채널 <strong>카카오 · SMS</strong></div>
+        <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openCampaignBuilder('birthday','기념일 메시지')">만들기</button>
+      </div>
+    </div>
+    <div class="campaign-card" onclick="openCampaignBuilder('review','구매 후 리뷰 요청')">
+      <div class="campaign-card-top">
+        <div class="campaign-card-icon">📊</div>
+        <span class="campaign-card-tag tag-instant">즉시 발송</span>
+      </div>
+      <div class="campaign-card-name">구매 후 리뷰 요청</div>
+      <div class="campaign-card-desc">구매 완료 후 일정 시간이 지난 고객에게 리뷰 작성을 유도합니다.</div>
+      <div class="campaign-card-footer">
+        <div class="campaign-card-stat">지원 채널 <strong>이메일 · 앱푸시</strong></div>
+        <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openCampaignBuilder('review','구매 후 리뷰 요청')">만들기</button>
+      </div>
+    </div>
+    <div class="campaign-card" onclick="openCampaignBuilder('restock','재입고 알림')">
+      <div class="campaign-card-top">
+        <div class="campaign-card-icon">🔔</div>
+        <span class="campaign-card-tag tag-instant">즉시 발송</span>
+      </div>
+      <div class="campaign-card-name">재입고 알림</div>
+      <div class="campaign-card-desc">관심 상품이 재입고되었을 때 대기 중인 고객에게 즉시 알림을 발송합니다.</div>
+      <div class="campaign-card-footer">
+        <div class="campaign-card-stat">지원 채널 <strong>카카오 · SMS · 앱푸시</strong></div>
+        <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openCampaignBuilder('restock','재입고 알림')">만들기</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── 자동화 캠페인 탭 ── -->
+<div id="tab-auto" class="tab-panel">
+
+  <div class="section-title">수익 자동화</div>
+  <div class="auto-grid">
+
+    <div class="auto-card" onclick="location.href='CRM_자동화캠페인.html#upsell'">
+      <div class="auto-card-icon">💰</div>
+      <div class="auto-card-tag">수익 자동화</div>
+      <div class="auto-card-name">업셀 / 크로스셀</div>
+      <div class="auto-card-desc">구매 완료 직후 연관 상품을 추천하여 객단가를 자동으로 높입니다.</div>
+    </div>
+
+    <div class="auto-card" onclick="location.href='CRM_자동화캠페인.html#cart'">
+      <div class="auto-card-icon">🛒</div>
+      <div class="auto-card-tag">수익 자동화</div>
+      <div class="auto-card-name">장바구니 이탈 복구</div>
+      <div class="auto-card-desc">미결제 장바구니를 감지하고 단계별 리마인드로 구매를 유도합니다.</div>
+    </div>
+
+    <div class="auto-card" onclick="location.href='CRM_자동화캠페인.html#remarketing'">
+      <div class="auto-card-icon">🔄</div>
+      <div class="auto-card-tag">수익 자동화</div>
+      <div class="auto-card-name">구매 후 리마케팅</div>
+      <div class="auto-card-desc">구매 완료 후 단계별 시퀀스로 재구매를 자동 유도합니다.</div>
+    </div>
+
+    <div class="auto-card" onclick="location.href='CRM_자동화캠페인.html#repurchase'">
+      <div class="auto-card-icon">📅</div>
+      <div class="auto-card-tag ai">AI 기능</div>
+      <div class="auto-card-name">재구매 리마인드</div>
+      <div class="auto-card-desc">AI가 각 고객의 구매 주기를 분석해 최적 시점에 자동 알립니다.</div>
+    </div>
+
+    <div class="auto-card" onclick="location.href='CRM_자동화캠페인.html#churnprev'">
+      <div class="auto-card-icon">🛡️</div>
+      <div class="auto-card-tag">수익 자동화</div>
+      <div class="auto-card-name">이탈 방지 시퀀스</div>
+      <div class="auto-card-desc">이탈 위험 점수를 감지하고 단계별 개입으로 고객을 붙잡습니다.</div>
+    </div>
+
+    <div class="auto-card" onclick="location.href='CRM_자동화캠페인.html#reactivate'">
+      <div class="auto-card-icon">😴</div>
+      <div class="auto-card-tag">수익 자동화</div>
+      <div class="auto-card-name">휴면 고객 재활성</div>
+      <div class="auto-card-desc">90일 이상 미구매 고객을 감지하고 복귀 캠페인을 자동 실행합니다.</div>
+    </div>
+
+    <div class="auto-card" onclick="location.href='CRM_자동화캠페인.html#vip'">
+      <div class="auto-card-icon">👑</div>
+      <div class="auto-card-tag">수익 자동화</div>
+      <div class="auto-card-name">VIP 자동화</div>
+      <div class="auto-card-desc">VIP 달성·유지·이탈 위기 시 맞춤 혜택을 자동 발송합니다.</div>
+    </div>
+
+    <div class="auto-card" onclick="location.href='CRM_자동화캠페인.html#aioptimize'">
+      <div class="auto-card-icon">🤖</div>
+      <div class="auto-card-tag ai">AI 기능</div>
+      <div class="auto-card-name">AI 발송 최적화</div>
+      <div class="auto-card-desc">행동 패턴을 분석해 반응률 높은 시간대에 자동으로 발송합니다.</div>
+    </div>
+
+  </div>
+
+</div>
+
+
+
+<!-- (상품 선택 팝업은 CRM_메시지캠페인.html로 이동) -->
+<div class="backdrop" id="modal-product-select" style="display:none!important">
+  <div class="modal" style="max-width:480px;">
+    <div class="modal-head">
+      <div class="modal-title">📦 상품 선택</div>
+      <button class="modal-close" onclick="document.getElementById('modal-product-select').classList.remove('open')">×</button>
+    </div>
+    <div class="modal-body">
+      <input class="prod-modal-search" id="prodModalSearch" type="text" placeholder="🔍 상품명 검색..." oninput="renderProductModalList(this.value)">
+      <div class="prod-modal-list" id="prodModalList"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="document.getElementById('modal-product-select').classList.remove('open')">취소</button>
+      <button class="btn btn-primary" id="prodModalApplyBtn" onclick="applyProductSelect()" disabled>선택 완료</button>
+    </div>
+  </div>
+</div>
+
+<!-- (캠페인 빌더는 CRM_메시지캠페인.html#create로 이동) -->
+<div id="cpnBuilderOverlay" style="display:none!important">
+
+  <!-- 헤더 -->
+  <div class="cpn-header">
+    <button class="cpn-back-btn" onclick="closeCampaignBuilder()">← 뒤로</button>
+    <div class="cpn-header-info">
+      <div class="cpn-header-title">새 캠페인 만들기</div>
+      <div class="cpn-header-type" id="cpnHeaderType"></div>
+    </div>
+    <div style="flex:1;"></div>
+    <button class="btn btn-secondary btn-sm" onclick="showToast('임시저장되었습니다.')">임시저장</button>
+    <button class="btn btn-primary" onclick="saveCampaign()">캠페인 저장</button>
+  </div>
+
+  <!-- 본문 -->
+  <div class="cpn-body">
+    <div class="cpn-inner">
+
+      <!-- 1. 기본 설정 -->
+      <div class="cpn-section">
+        <div class="cpn-section-head">
+          <div class="cpn-section-num">1</div>
+          <div class="cpn-section-title">기본 설정</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">캠페인 이름 <span style="color:var(--danger);">*</span></label>
+          <input type="text" class="form-input" id="cpnName" placeholder="예: 6월 VIP 감사 메시지">
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;">
+          <span style="font-weight:600;color:var(--text-sub);">캠페인 유형</span>
+          <span id="cpnTypeChip" style="display:inline-flex;align-items:center;gap:5px;background:var(--warning-bg);border:1px solid #FDE68A;color:var(--warning);border-radius:20px;padding:3px 10px;font-size:12px;font-weight:700;"></span>
+        </div>
+      </div>
+
+      <!-- 2. 발송 대상 -->
+      <div class="cpn-section">
+        <div class="cpn-section-head">
+          <div class="cpn-section-num">2</div>
+          <div class="cpn-section-title">발송 대상</div>
+        </div>
+        <div class="cpn-aud-list">
+          <div class="cpn-aud-item selected" onclick="selectAudience(this,'all')">
+            <input type="radio" name="cpnAudience" value="all" checked>
+            <div class="cpn-aud-name">전체 고객</div>
+            <div class="cpn-aud-count">12,847명</div>
+          </div>
+          <div class="cpn-aud-item" onclick="selectAudience(this,'vip')">
+            <input type="radio" name="cpnAudience" value="vip">
+            <div class="cpn-aud-name">👑 VIP 고객</div>
+            <div class="cpn-aud-count">184명</div>
+          </div>
+          <div class="cpn-aud-item" onclick="selectAudience(this,'inactive')">
+            <input type="radio" name="cpnAudience" value="inactive">
+            <div class="cpn-aud-name">😴 90일 이상 미구매</div>
+            <div class="cpn-aud-count">2,847명</div>
+          </div>
+          <div class="cpn-aud-item" onclick="selectAudience(this,'cart')">
+            <input type="radio" name="cpnAudience" value="cart">
+            <div class="cpn-aud-name">🛒 장바구니 이탈</div>
+            <div class="cpn-aud-count">1,284명</div>
+          </div>
+          <div class="cpn-aud-item" onclick="selectAudience(this,'birthday')">
+            <input type="radio" name="cpnAudience" value="birthday">
+            <div class="cpn-aud-name">🎂 이번 달 생일</div>
+            <div class="cpn-aud-count">312명</div>
+          </div>
+          <div class="cpn-aud-item" onclick="selectAudience(this,'new')">
+            <input type="radio" name="cpnAudience" value="new">
+            <div class="cpn-aud-name">🆕 신규 가입 (30일 내)</div>
+            <div class="cpn-aud-count">567명</div>
+          </div>
+        </div>
+        <div id="cpnAudCount" style="margin-top:12px;font-size:13px;color:var(--text-sub);">
+          발송 예정: <strong id="cpnAudCountNum" style="color:var(--primary);">12,847</strong>명
+        </div>
+      </div>
+
+      <!-- 3. 메시지 설정 -->
+      <div class="cpn-section">
+        <div class="cpn-section-head">
+          <div class="cpn-section-num">3</div>
+          <div class="cpn-section-title">메시지 설정</div>
+        </div>
+
+        <!-- 채널 선택 -->
+        <div class="cpn-ch-grid">
+          <div class="cpn-ch-card" onclick="selectCpnChannel(this,'kakao')">
+            <div class="cpn-ch-icon">💬</div>
+            <div class="cpn-ch-name">카카오 알림톡</div>
+            <div class="cpn-ch-desc">수신동의 불필요</div>
+          </div>
+          <div class="cpn-ch-card" onclick="selectCpnChannel(this,'sms')">
+            <div class="cpn-ch-icon">📱</div>
+            <div class="cpn-ch-name">SMS</div>
+            <div class="cpn-ch-desc">단문·장문 메시지</div>
+          </div>
+          <div class="cpn-ch-card" onclick="selectCpnChannel(this,'email')">
+            <div class="cpn-ch-icon">📧</div>
+            <div class="cpn-ch-name">이메일</div>
+            <div class="cpn-ch-desc">HTML 템플릿</div>
+          </div>
+        </div>
+
+        <!-- 채널별 설정 + 미리보기 -->
+        <div class="cpn-msg-grid" id="cpnMsgGrid" style="display:none;">
+          <!-- 왼쪽: 설정 -->
+          <div class="cpn-msg-settings">
+
+            <!-- 카카오 -->
+            <div id="cpnContent-kakao" style="display:none;">
+              <div class="cpn-notice">
+                💡 카카오 비즈니스 포털에서 승인된 템플릿입니다. 템플릿 추가/수정은 <strong style="cursor:pointer;color:var(--primary);">설정 › 채널 연동</strong>에서 관리하세요.
+              </div>
+              <div class="form-group">
+                <label class="form-label">템플릿 선택 <span style="color:var(--danger);">*</span></label>
+                <select class="form-input" id="cpnKakaoTpl" onchange="onCpnKakaoTplChange()">
+                  <option value="">-- 템플릿을 선택하세요 --</option>
+                </select>
+              </div>
+              <div id="cpnKakaoVarsWrap" style="display:none;background:var(--bg);border-radius:var(--radius-sm);padding:12px;margin-bottom:14px;">
+                <div style="font-size:12px;font-weight:600;color:var(--text-sub);margin-bottom:8px;">변수 설정</div>
+                <div id="cpnKakaoVarFields"></div>
+              </div>
+            </div>
+
+            <!-- SMS -->
+            <div id="cpnContent-sms" style="display:none;">
+              <div class="form-group">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                  <label class="form-label" style="margin-bottom:0;">메시지 내용 <span style="color:var(--danger);">*</span></label>
+                  <button class="btn btn-ghost btn-sm" onclick="toggleCpnSmsTplPanel()" style="font-size:11px;padding:4px 8px;">📋 템플릿 불러오기</button>
+                </div>
+                <div id="cpnSmsTplPanel" style="display:none;border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:8px;max-height:160px;overflow-y:auto;">
+                  <div id="cpnSmsTplList"></div>
+                </div>
+                <textarea class="cpn-sms-textarea" id="cpnSmsBody" placeholder="[ENTWIZ] 내용을 직접 입력하거나 위에서 템플릿을 불러오세요." oninput="updateCpnSmsPreview();updateCpnSmsCount()"></textarea>
+                <div class="cpn-char-row" id="cpnSmsCharRow"><span id="cpnSmsCharCount">0</span>자</div>
+              </div>
+            </div>
+
+            <!-- 이메일 -->
+            <div id="cpnContent-email" style="display:none;">
+              <div class="cpn-notice">
+                💡 이메일 템플릿은 <strong style="cursor:pointer;color:var(--primary);">설정 › 채널 연동 › 이메일</strong>에서 관리합니다.
+              </div>
+              <div class="form-group">
+                <label class="form-label">이메일 템플릿</label>
+                <select class="form-input" id="cpnEmailTpl" onchange="onCpnEmailTplChange()">
+                  <option value="">직접 작성 (빈 템플릿)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">이메일 제목 <span style="color:var(--danger);">*</span></label>
+                <input type="text" class="form-input" id="cpnEmailSubject" placeholder="예: 이번 달 특별 혜택을 확인해보세요 🎁" oninput="updateCpnEmailPreview()">
+              </div>
+              <div id="cpnEmailVarsWrap" style="display:none;background:var(--bg);border-radius:var(--radius-sm);padding:12px;margin-bottom:14px;">
+                <div style="font-size:12px;font-weight:600;color:var(--text-sub);margin-bottom:8px;">변수 설정</div>
+                <div id="cpnEmailVarFields"></div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- 오른쪽: 미리보기 -->
+          <div class="cpn-preview-pane">
+            <div class="cpn-preview-title">
+              미리보기
+              <div class="cpn-device-toggle" id="cpnDeviceToggle" style="display:none;">
+                <button class="cpn-device-btn active" onclick="setCpnDevice(this,'mobile')">📱 모바일</button>
+                <button class="cpn-device-btn" onclick="setCpnDevice(this,'pc')">💻 PC</button>
+              </div>
+            </div>
+            <!-- 카카오 미리보기 -->
+            <div id="cpnKakaoPrev" style="display:none;">
+              <div class="cpn-kakao-bg">
+                <div class="cpn-kakao-sender">
+                  <div class="cpn-kakao-avatar">E</div>
+                  <div class="cpn-kakao-name">ENTWIZ</div>
+                </div>
+                <div class="cpn-kakao-bubble" id="cpnKakaoBubble">템플릿을 선택하면 미리보기가 표시됩니다.</div>
+                <div class="cpn-kakao-cta" id="cpnKakaoCta" style="display:none;"></div>
+              </div>
+            </div>
+            <!-- SMS 미리보기 -->
+            <div id="cpnSmsPrev" style="display:none;">
+              <div class="cpn-sms-preview">
+                <div class="cpn-sms-bubble" id="cpnSmsBubble" style="color:var(--text-muted);">메시지를 입력하면 미리보기가 표시됩니다.</div>
+              </div>
+              <div style="text-align:center;font-size:11px;color:var(--text-muted);margin-top:8px;">📱 SMS 미리보기</div>
+            </div>
+            <!-- 이메일 미리보기 -->
+            <div id="cpnEmailPrev" style="display:none;">
+              <div class="cpn-email-preview">
+                <div class="cpn-email-prev-head">
+                  <div class="cpn-email-prev-row"><span class="cpn-email-prev-label">발신:</span><span>ENTWIZ &lt;no-reply@entwiz.com&gt;</span></div>
+                  <div class="cpn-email-prev-row"><span class="cpn-email-prev-label">제목:</span><span id="cpnEmailPrevSubject" style="font-weight:600;color:var(--text);"></span></div>
+                </div>
+                <div class="cpn-email-prev-body" id="cpnEmailPrevBody">템플릿을 선택하면 미리보기가 표시됩니다.</div>
+              </div>
+            </div>
+            <!-- 빈 상태 -->
+            <div id="cpnEmptyPrev" class="cpn-empty-preview">
+              ← 채널과 템플릿을 선택하면<br>미리보기가 표시됩니다
+            </div>
+          </div>
+        </div><!-- /cpnMsgGrid -->
+
+      </div><!-- /section 3 -->
+
+      <!-- 4. 발송 일정 -->
+      <div class="cpn-section">
+        <div class="cpn-section-head">
+          <div class="cpn-section-num">4</div>
+          <div class="cpn-section-title">발송 일정</div>
+        </div>
+        <div class="cpn-sched-list">
+          <div class="cpn-sched-item selected" onclick="selectSched(this,'now')">
+            <input type="radio" name="cpnSched" value="now" checked>
+            <div>
+              <div class="cpn-sched-label">⚡ 즉시 발송</div>
+              <div class="cpn-sched-desc">저장 즉시 발송됩니다.</div>
+            </div>
+          </div>
+          <div class="cpn-sched-item" onclick="selectSched(this,'reserve')">
+            <input type="radio" name="cpnSched" value="reserve">
+            <div style="flex:1;">
+              <div class="cpn-sched-label">📅 예약 발송</div>
+              <div class="cpn-sched-desc">지정한 날짜·시간에 1회 발송됩니다.</div>
+              <div class="cpn-sched-detail" id="schedDetailReserve">
+                <input type="datetime-local" class="form-input" style="max-width:240px;margin-top:8px;">
+              </div>
+            </div>
+          </div>
+          <div class="cpn-sched-item" onclick="selectSched(this,'repeat')">
+            <input type="radio" name="cpnSched" value="repeat">
+            <div style="flex:1;">
+              <div class="cpn-sched-label">🔁 반복 발송</div>
+              <div class="cpn-sched-desc">주기적으로 반복 발송됩니다.</div>
+              <div class="cpn-sched-detail" id="schedDetailRepeat">
+                <div style="display:flex;gap:10px;align-items:center;margin-top:8px;font-size:13px;">
+                  <select class="form-input" style="width:auto;">
+                    <option>매일</option><option>매주</option><option>매월</option>
+                  </select>
+                  <span style="color:var(--text-muted);">시작일:</span>
+                  <input type="date" class="form-input" style="width:auto;">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /cpn-inner -->
+  </div><!-- /cpn-body -->
+
+  <!-- 푸터 -->
+  <div class="cpn-footer">
+    <div class="cpn-footer-left" id="cpnFooterInfo">발송 대상을 선택하세요</div>
+    <div class="cpn-footer-right">
+      <button class="btn btn-secondary" onclick="closeCampaignBuilder()">취소</button>
+      <button class="btn btn-primary" onclick="saveCampaign()">캠페인 저장</button>
+    </div>
+  </div>
+
+</div><!-- /cpnBuilderOverlay -->
+
+</main>
+
+<script src="crm-layout.js"></script>
+<script src="crm-common.js"></script>
+<script>
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+
+function openCampaignBuilder(typeKey, typeName) {
+  sessionStorage.setItem('cpn_typeKey',  typeKey  || 'general');
+  sessionStorage.setItem('cpn_typeName', typeName || '새 캠페인');
+  location.href = 'CRM_메시지캠페인.html#create';
+}
+
+
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,2181 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="crm-layout.css">
+<title>고객 관리 | ENTWIZ CRM</title>
+<style>
+:root {
+  --primary:#2563EB; --primary-dark:#1D4ED8; --primary-light:#EFF6FF;
+  --bg:#F8FAFC; --surface:#FFFFFF; --border:#E2E8F0;
+  --text:#0F172A; --text-sub:#475569; --text-muted:#94A3B8;
+  --success:#059669; --success-bg:#ECFDF5;
+  --warning:#D97706; --warning-bg:#FFFBEB;
+  --danger:#DC2626; --danger-bg:#FEF2F2;
+  --info:#2563EB; --info-bg:#EFF6FF;
+  --radius:8px; --radius-sm:5px;
+  --shadow:0 1px 3px rgba(0,0,0,.08); --shadow-md:0 4px 16px rgba(0,0,0,.10);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Pretendard','Malgun Gothic','맑은 고딕',-apple-system,sans-serif;font-size:14px;color:var(--text);background:var(--bg);}
+a{text-decoration:none;} button{font-family:inherit;cursor:pointer;}
+
+/* BREADCRUMB */
+.breadcrumb{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-muted);margin-bottom:14px;}
+.breadcrumb .sep{color:var(--border);font-size:14px;}
+.breadcrumb .curr{color:var(--text-sub);font-weight:600;}
+.breadcrumb .bc-link{cursor:pointer;color:var(--text-muted);}
+.breadcrumb .bc-link:hover{color:var(--primary);text-decoration:underline;}
+
+/* PAGE HEADER */
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;}
+.page-title{font-size:20px;font-weight:800;}
+.page-desc{font-size:13px;color:var(--text-sub);margin-top:3px;}
+.page-actions{display:flex;gap:8px;align-items:center;}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--radius);font-size:13px;font-weight:600;border:1px solid transparent;transition:all .15s;white-space:nowrap;}
+.btn-primary{background:var(--primary);color:#fff;border-color:var(--primary);}
+.btn-primary:hover{background:var(--primary-dark);}
+.btn-secondary{background:var(--surface);color:var(--text-sub);border-color:var(--border);}
+.btn-secondary:hover{background:var(--bg);}
+.btn-danger{background:var(--danger);color:#fff;}
+.btn-ghost{background:none;border-color:transparent;color:var(--text-sub);}
+.btn-ghost:hover{background:var(--bg);}
+.btn-sm{padding:5px 10px;font-size:12px;border-radius:var(--radius-sm);}
+
+/* STAT GRID */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow);}
+.stat-header{display:flex;justify-content:space-between;align-items:flex-start;}
+.stat-icon{font-size:22px;}
+.stat-label{font-size:12px;color:var(--text-muted);margin-bottom:6px;}
+.stat-value{font-size:24px;font-weight:800;}
+.stat-unit{font-size:14px;font-weight:600;color:var(--text-sub);margin-left:1px;}
+.stat-change{font-size:12px;margin-top:4px;}
+.stat-change.up{color:var(--success);}
+.stat-change.down{color:var(--danger);}
+
+/* FILTER BAR */
+.filter-bar{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
+.filter-search{display:flex;align-items:center;gap:7px;border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 10px;background:var(--bg);flex:1;min-width:200px;max-width:300px;}
+.filter-search input{border:none;background:none;outline:none;font-size:13px;width:100%;color:var(--text);}
+.filter-search input::placeholder{color:var(--text-muted);}
+.filter-ico{color:var(--text-muted);font-size:14px;}
+.filter-select{border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 28px 6px 10px;font-size:13px;color:var(--text-sub);background:var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%239896C0' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 10px center;appearance:none;outline:none;}
+.filter-sep{width:1px;height:20px;background:var(--border);}
+
+/* CUSTOM FILTER DROPDOWN */
+.filter-dropdown{position:relative;}
+.filter-dd-btn{display:flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 10px;font-size:13px;color:var(--text-sub);background:var(--bg);cursor:pointer;white-space:nowrap;font-family:inherit;transition:all .15s;}
+.filter-dd-btn:hover{border-color:var(--primary);color:var(--primary);}
+.filter-dd-btn.active{border-color:var(--primary);color:var(--primary);}
+.filter-dd-btn.has-filter{border-color:var(--primary);background:var(--primary-light);color:var(--primary);font-weight:600;}
+.filter-dd-arrow{font-size:10px;color:var(--text-muted);transition:transform .15s;pointer-events:none;}
+.filter-dd-btn.active .filter-dd-arrow{transform:rotate(180deg);}
+.filter-dd-panel{position:absolute;top:calc(100% + 6px);left:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-md);min-width:168px;z-index:50;display:none;padding:4px 0;}
+.filter-dd-panel.open{display:block;}
+.filter-dd-item{display:flex;align-items:center;gap:8px;padding:7px 14px;font-size:13px;color:var(--text);cursor:pointer;transition:background .1s;user-select:none;}
+.filter-dd-item:hover{background:var(--bg);}
+.filter-dd-item input{accent-color:var(--primary);width:14px;height:14px;cursor:pointer;flex-shrink:0;}
+/* FILTER TAGS ROW */
+.filter-tags-row{display:none;flex-wrap:wrap;gap:6px;margin-bottom:10px;align-items:center;}
+.filter-tag{display:inline-flex;align-items:center;gap:4px;background:var(--primary-light);border:1px solid #BFDBFE;color:var(--primary);border-radius:20px;padding:3px 8px 3px 10px;font-size:12px;font-weight:600;}
+.filter-tag-x{cursor:pointer;font-size:16px;line-height:1;color:#93C5FD;transition:color .15s;}
+.filter-tag-x:hover{color:var(--danger);}
+.filter-dd-divider{height:1px;background:var(--border);margin:4px 0;}
+.period-custom-wrap{display:none;padding:8px 14px 10px;}
+.period-custom-wrap.open{display:block;}
+.period-date-row{display:flex;align-items:center;gap:6px;margin-bottom:6px;}
+.period-date-input{flex:1;min-width:0;border:1px solid var(--border);border-radius:var(--radius-sm);padding:5px 6px;font-size:12px;color:var(--text);background:var(--surface);outline:none;font-family:inherit;transition:border-color .15s;}
+.period-date-input:focus{border-color:var(--primary);box-shadow:0 0 0 2px rgba(37,99,235,.1);}
+.period-date-sep{font-size:12px;color:var(--text-muted);flex-shrink:0;}
+
+/* TABLE */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);}
+.bulk-bar{display:none;align-items:center;gap:10px;background:var(--primary-light);border:1px solid #BFDBFE;border-radius:var(--radius-sm);padding:8px 14px;margin-bottom:8px;font-size:13px;}
+.bulk-bar.on{display:flex;}
+.bulk-count{font-weight:700;color:var(--primary);}
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead tr{background:var(--bg);border-bottom:2px solid var(--border);}
+th{padding:10px 12px;text-align:left;font-size:12px;font-weight:600;color:var(--text-sub);white-space:nowrap;cursor:pointer;user-select:none;}
+th:hover{color:var(--text);}
+.sort-ico{opacity:.35;margin-left:3px;font-size:10px;}
+td{padding:14px 12px;border-bottom:1px solid var(--border);vertical-align:middle;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:#FAFAFA;}
+tbody tr.selected td{background:#F5F4FB;}
+tbody tr.clickable{cursor:pointer;}
+tbody tr.clickable:hover td{background:var(--primary-light) !important;}
+tbody tr.clickable:hover td:first-child{box-shadow:inset 3px 0 0 var(--primary);}
+tbody tr.clickable:hover .td-name{color:var(--primary);}
+.td-phone{cursor:pointer;color:var(--text);white-space:nowrap;}
+.td-phone:hover{color:var(--primary);text-decoration:underline;}
+/* COLUMN DRAG & DROP */
+th.col-draggable{cursor:grab;position:relative;}
+th.col-draggable:active{cursor:grabbing;}
+th.col-draggable::after{content:'⠿';position:absolute;right:4px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--border);pointer-events:none;}
+th.col-draggable:hover::after{color:var(--text-muted);}
+th.col-dragging{opacity:.35;}
+th.col-drag-over{background:var(--primary-light)!important;outline:2px solid var(--primary);outline-offset:-2px;color:var(--primary);}
+.cb-cell{width:42px;text-align:center;}
+input[type=checkbox]{width:15px;height:15px;cursor:pointer;accent-color:var(--primary);}
+.td-name{font-weight:600;}
+.td-sub{font-size:12px;color:var(--text-muted);margin-top:2px;}
+.td-link{color:var(--primary);font-weight:600;cursor:pointer;}
+.td-link:hover{text-decoration:underline;}
+
+/* PAGINATION */
+.pagination{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-top:1px solid var(--border);font-size:12px;color:var(--text-sub);}
+.page-nums{display:flex;gap:3px;}
+.page-btn{width:30px;height:30px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);font-size:12px;display:flex;align-items:center;justify-content:center;color:var(--text-sub);transition:all .15s;font-family:inherit;}
+.page-btn:hover{border-color:var(--primary);color:var(--primary);}
+.page-btn.active{background:var(--primary);border-color:var(--primary);color:#fff;font-weight:700;}
+.page-size{display:flex;align-items:center;gap:6px;}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;}
+.b-success{background:var(--success-bg);color:#065F46;}
+.b-warning{background:var(--warning-bg);color:#92400E;}
+.b-danger{background:var(--danger-bg);color:#991B1B;}
+.b-info{background:var(--info-bg);color:#1E40AF;}
+.b-gray{background:#F1F5F9;color:var(--text-sub);}
+.b-purple{background:#F5F3FF;color:#6D28D9;}
+.g-bronze{background:#FDF6EC;color:#92400E;}
+.g-silver{background:#F8FAFC;color:#475569;border:1px solid var(--border);}
+.g-gold{background:#FFFBEB;color:#B45309;}
+.g-vip{background:var(--primary-light);color:#1D4ED8;}
+.h-champ{background:var(--primary-light);color:#1D4ED8;}
+.h-good{background:var(--success-bg);color:#065F46;}
+.h-caution{background:var(--warning-bg);color:#92400E;}
+.h-risk{background:var(--danger-bg);color:#991B1B;}
+.tag{display:inline-flex;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:500;background:var(--bg);color:var(--text-sub);border:1px solid var(--border);margin:1px;}
+
+/* SCREEN TOGGLE */
+.screen{display:none;}
+.screen.active{display:block;}
+
+/* DETAIL LAYOUT */
+.detail-layout{display:grid;grid-template-columns:280px 1fr;gap:16px;}
+.profile-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;position:sticky;top:24px;}
+.profile-avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--primary),#7C3AED);color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;margin:0 auto 12px;}
+.profile-name{text-align:center;font-size:16px;font-weight:800;margin-bottom:4px;}
+.profile-email{text-align:center;font-size:12px;color:var(--text-muted);margin-bottom:14px;}
+.profile-badges{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:16px;}
+.profile-score{background:var(--bg);border-radius:var(--radius-sm);padding:12px;margin-bottom:14px;}
+.score-label{font-size:11px;color:var(--text-muted);margin-bottom:6px;}
+.score-bar-wrap{background:#E2E8F0;border-radius:4px;height:8px;overflow:hidden;margin-bottom:4px;}
+.score-bar{height:100%;border-radius:4px;background:var(--primary);}
+.score-val{font-size:12px;font-weight:700;color:var(--primary);}
+.profile-info-list{font-size:12px;}
+.pil-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);}
+.pil-row:last-child{border-bottom:none;}
+.pil-label{color:var(--text-muted);}
+.pil-val{font-weight:600;text-align:right;}
+.profile-actions{display:flex;flex-direction:column;gap:6px;margin-top:14px;}
+
+/* DETAIL TABS */
+.detail-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:16px;}
+.detail-tab{padding:9px 16px;font-size:13px;font-weight:600;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;}
+.detail-tab:hover{color:var(--text-sub);}
+.detail-tab.active{color:var(--primary);border-bottom-color:var(--primary);}
+.detail-panel{display:none;}
+.detail-panel.active{display:block;}
+
+/* INFO SECTION */
+.info-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:14px;}
+.info-section-title{font-size:13px;font-weight:700;margin-bottom:12px;}
+.info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.info-label{font-size:11px;color:var(--text-muted);margin-bottom:3px;}
+.info-value{font-size:13px;font-weight:600;}
+
+/* TIMELINE */
+.timeline{position:relative;padding-left:20px;}
+.timeline::before{content:'';position:absolute;left:7px;top:0;bottom:0;width:2px;background:var(--border);}
+.tl-item{position:relative;margin-bottom:16px;}
+.tl-dot{position:absolute;left:-16px;top:3px;width:10px;height:10px;border-radius:50%;background:var(--primary);border:2px solid #fff;box-shadow:0 0 0 2px var(--primary);}
+.tl-dot.gray{background:var(--text-muted);box-shadow:0 0 0 2px var(--text-muted);}
+.tl-dot.warn{background:var(--warning);box-shadow:0 0 0 2px var(--warning);}
+.tl-date{font-size:11px;color:var(--text-muted);margin-bottom:2px;}
+.tl-title{font-size:13px;font-weight:600;margin-bottom:3px;}
+.tl-desc{font-size:12px;color:var(--text-sub);}
+
+/* METRICS ROW */
+.metrics-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px;}
+.metric-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;}
+.metric-label{font-size:11px;color:var(--text-muted);margin-bottom:4px;}
+.metric-value{font-size:18px;font-weight:800;}
+.metric-sub{font-size:11px;color:var(--text-muted);margin-top:2px;}
+
+/* SEGMENT CARDS */
+.seg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
+.seg-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;}
+.seg-card:hover{box-shadow:var(--shadow-md);}
+.seg-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+.seg-name{font-size:14px;font-weight:700;}
+.seg-count{font-size:22px;font-weight:800;margin-bottom:2px;}
+.seg-change{font-size:12px;color:var(--text-muted);}
+.seg-bar{background:#E2E8F0;border-radius:4px;height:6px;overflow:hidden;margin:10px 0 6px;}
+.seg-fill{height:100%;border-radius:4px;}
+.seg-conditions{font-size:11px;color:var(--text-muted);line-height:1.6;}
+.seg-actions{display:flex;gap:6px;margin-top:12px;}
+
+/* TAG GRID */
+.tag-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+.tag-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;}
+.tag-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.tag-name{font-size:13px;font-weight:700;}
+.tag-count-badge{font-size:12px;font-weight:700;padding:2px 10px;border-radius:20px;}
+.tag-condition{font-size:12px;color:var(--text-sub);background:var(--bg);border-radius:var(--radius-sm);padding:8px 10px;margin-bottom:8px;line-height:1.6;}
+.tag-scenario{font-size:11px;color:var(--primary);cursor:pointer;}
+.tag-scenario:hover{text-decoration:underline;}
+
+/* GRADE SECTION */
+.grade-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.grade-card{background:var(--surface);border:2px solid var(--border);border-radius:var(--radius);padding:16px;}
+.grade-icon{font-size:28px;text-align:center;margin-bottom:8px;}
+.grade-name{text-align:center;font-size:15px;font-weight:800;margin-bottom:10px;}
+.grade-count{text-align:center;margin-bottom:12px;}
+.grade-count-num{font-size:22px;font-weight:800;}
+.grade-count-label{font-size:11px;color:var(--text-muted);}
+.grade-divider{border-top:1px solid var(--border);margin:10px 0;}
+.grade-cond{font-size:12px;color:var(--text-sub);line-height:1.7;}
+.grade-cond span{font-weight:700;color:var(--text);}
+.grade-benefits{margin-top:10px;}
+.benefit-item{font-size:12px;color:var(--text-sub);padding:3px 0;display:flex;align-items:center;gap:5px;}
+.benefit-item::before{content:'✓';color:var(--success);font-weight:700;font-size:11px;}
+
+/* BULK ACTION MODALS */
+.bulk-info-banner{background:var(--primary-light);border:1px solid #BFDBFE;border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;color:var(--primary);font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.tag-chip-grid{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px;}
+.tag-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:500;background:var(--bg);border:1.5px solid var(--border);color:var(--text-sub);cursor:pointer;transition:all .15s;user-select:none;}
+.tag-chip:hover{border-color:var(--primary);color:var(--primary);}
+.tag-chip.selected{background:var(--primary-light);border-color:var(--primary);color:var(--primary);font-weight:600;}
+.tag-new-row{display:flex;gap:8px;margin-top:4px;}
+.tag-new-input{flex:1;border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 10px;font-size:13px;font-family:inherit;outline:none;color:var(--text);}
+.tag-new-input:focus{border-color:var(--primary);}
+.seg-radio-list{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;}
+.seg-radio-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .15s;}
+.seg-radio-item:hover{border-color:var(--primary);background:var(--primary-light);}
+.seg-radio-item.selected{border-color:var(--primary);background:var(--primary-light);}
+.seg-radio-item input[type=radio]{accent-color:var(--primary);flex-shrink:0;}
+.seg-radio-label{font-size:13px;font-weight:600;flex:1;}
+.seg-radio-desc{font-size:12px;color:var(--text-muted);}
+.msg-channel-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px;}
+.msg-channel-card{border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:14px 12px;text-align:center;cursor:pointer;transition:all .15s;}
+.msg-channel-card:hover{border-color:var(--primary);background:var(--primary-light);}
+.msg-channel-card.selected{border-color:var(--primary);background:var(--primary-light);}
+.msg-channel-icon{font-size:22px;margin-bottom:6px;}
+.msg-channel-name{font-size:13px;font-weight:600;}
+.msg-channel-desc{font-size:11px;color:var(--text-muted);margin-top:3px;}
+.delete-warn-box{background:var(--danger-bg);border:1px solid #FECACA;border-radius:var(--radius-sm);padding:12px 14px;font-size:13px;color:#991B1B;margin-bottom:16px;line-height:1.6;}
+.msg-content-section{border-top:1px solid var(--border);padding-top:16px;margin-top:4px;animation:mcFadeIn .18s ease;}
+@keyframes mcFadeIn{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:none;}}
+.kakao-preview-bg{background:#B2C7D7;border-radius:var(--radius);padding:16px;margin-top:10px;}
+.kakao-sender-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.kakao-sender-avatar{width:34px;height:34px;border-radius:9px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
+.kakao-sender-name{font-size:12px;font-weight:700;color:#222;}
+.kakao-bubble{background:#fff;border-radius:4px 12px 12px 12px;padding:12px 14px;font-size:12px;line-height:1.7;color:var(--text);max-width:260px;box-shadow:0 1px 3px rgba(0,0,0,.12);}
+.kakao-cta-btn{background:#fff;border-radius:6px;padding:8px;text-align:center;font-size:12px;font-weight:600;color:var(--primary);margin-top:8px;border:1px solid #ddd;cursor:default;}
+.sms-textarea{width:100%;border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;font-size:13px;font-family:inherit;resize:vertical;outline:none;min-height:80px;color:var(--text);transition:border-color .15s;}
+.sms-textarea:focus{border-color:var(--primary);}
+.char-count-row{display:flex;justify-content:flex-end;font-size:11px;color:var(--text-muted);margin-top:4px;}
+.char-count-row.warn{color:var(--danger);font-weight:600;}
+.send-schedule-row{display:flex;gap:14px;font-size:13px;margin-top:6px;}
+.msg-send-btn{transition:all .15s;}
+.msg-send-btn:disabled{opacity:.4;cursor:not-allowed;}
+.email-preview-wrap{border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;}
+.email-preview-header{background:var(--bg);padding:10px 14px;border-bottom:1px solid var(--border);}
+.email-preview-header-row{display:flex;gap:6px;font-size:12px;color:var(--text-muted);margin-bottom:3px;}
+.email-preview-header-row:last-child{margin-bottom:0;}
+.email-preview-header-label{font-weight:600;min-width:36px;}
+.email-preview-body{padding:14px;font-size:13px;line-height:1.8;color:var(--text);min-height:70px;}
+
+/* PRODUCT MODAL */
+.prod-modal-search{width:100%;border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 12px;font-size:13px;font-family:inherit;outline:none;color:var(--text);margin-bottom:10px;}
+.prod-modal-search:focus{border-color:var(--primary);}
+.prod-modal-list{max-height:340px;overflow-y:auto;border:1px solid var(--border);border-radius:var(--radius-sm);}
+.prod-modal-item{display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s;}
+.prod-modal-item:last-child{border-bottom:none;}
+.prod-modal-item:hover{background:var(--bg);}
+.prod-modal-item.selected{background:var(--primary-light);}
+.prod-modal-check{width:16px;height:16px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.prod-modal-item.selected .prod-modal-check{border-color:var(--primary);background:var(--primary);}
+.prod-modal-item.selected .prod-modal-check::after{content:'';width:6px;height:6px;border-radius:50%;background:#fff;}
+.prod-thumb{width:46px;height:46px;border-radius:6px;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.prod-info{flex:1;min-width:0;}
+.prod-name{font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.prod-price{font-size:12px;color:var(--text-sub);margin-bottom:4px;}
+.prod-status-row{display:flex;gap:4px;}
+.prod-badge{font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px;}
+.prod-badge-on{background:var(--success-bg);color:var(--success);}
+.prod-badge-off{background:var(--bg);color:var(--text-muted);border:1px solid var(--border);}
+.prod-badge-sale{background:var(--primary-light);color:var(--primary);}
+.prod-badge-nosale{background:var(--danger-bg);color:var(--danger);}
+.prod-modal-empty{padding:32px;text-align:center;color:var(--text-muted);font-size:13px;}
+/* PRODUCT FIELD (inline) */
+.prod-btn-row{display:flex;gap:6px;}
+.prod-pick-btn{display:inline-flex;align-items:center;gap:5px;border:1.5px dashed var(--border);border-radius:6px;padding:6px 12px;font-size:12px;color:var(--text-sub);background:var(--surface);cursor:pointer;font-family:inherit;transition:all .15s;}
+.prod-pick-btn:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-light);}
+.prod-selected-chip{display:inline-flex;align-items:center;gap:6px;background:var(--primary-light);border:1px solid #BFDBFE;color:var(--primary);border-radius:6px;padding:5px 10px;font-size:12px;font-weight:600;max-width:100%;overflow:hidden;}
+.prod-selected-chip-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.prod-chip-x{cursor:pointer;font-size:16px;color:#93C5FD;line-height:1;flex-shrink:0;}
+.prod-chip-x:hover{color:var(--danger);}
+
+/* TOGGLE */
+.toggle-wrap{display:flex;align-items:center;gap:8px;}
+.toggle{position:relative;width:40px;height:22px;flex-shrink:0;}
+.toggle input{opacity:0;width:0;height:0;}
+.t-track{position:absolute;inset:0;background:#CBD5E1;border-radius:11px;cursor:pointer;transition:background .2s;}
+.t-thumb{position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:transform .2s;pointer-events:none;}
+.toggle input:checked + .t-track{background:var(--primary);}
+.toggle input:checked + .t-track .t-thumb{transform:translateX(18px);}
+
+/* MODAL */
+.backdrop{position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:200;display:none;align-items:center;justify-content:center;}
+.backdrop.open{display:flex;}
+.modal{background:var(--surface);border-radius:12px;box-shadow:0 24px 64px rgba(0,0,0,.14);width:90%;max-width:560px;max-height:90vh;overflow-y:auto;animation:mIn .2s ease;}
+.modal-wide{max-width:860px;}
+/* 엑셀 다운로드 히스토리 테이블 */
+.excel-hist-table{width:100%;border-collapse:collapse;font-size:12px;}
+.excel-hist-table th{background:var(--bg);padding:8px 10px;text-align:left;font-weight:600;color:var(--text-sub);border-bottom:1px solid var(--border);white-space:nowrap;}
+.excel-hist-table td{padding:9px 10px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle;}
+.excel-hist-table tr:last-child td{border-bottom:none;}
+.excel-hist-table tbody tr:hover{background:var(--bg);}
+.dl-badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;}
+.dl-badge.done{background:var(--success-bg);color:var(--success);}
+.dl-badge.expired{background:var(--bg);color:var(--text-muted);}
+@keyframes mIn{from{opacity:0;transform:translateY(-14px) scale(.97)}to{opacity:1;transform:none}}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--border);}
+.modal-title{font-size:16px;font-weight:700;}
+.modal-close{background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:22px;padding:0;line-height:1;}
+.modal-close:hover{color:var(--text);}
+.modal-body{padding:22px 20px;}
+.modal-foot{padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;}
+.form-group{margin-bottom:16px;}
+.form-label{display:block;font-size:13px;font-weight:600;margin-bottom:5px;}
+.req{color:var(--danger);margin-left:2px;}
+.form-input{width:100%;padding:8px 11px;font-size:13px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);outline:none;transition:border-color .15s,box-shadow .15s;font-family:inherit;}
+.form-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.12);}
+.form-hint{font-size:11px;color:var(--text-muted);margin-top:4px;}
+.form-row{display:flex;gap:12px;}
+.form-row .form-group{flex:1;}
+select.form-input{appearance:none;background:var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2394A3B8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 10px center;cursor:pointer;}
+
+/* HEALTH RING */
+.ring-svg{transform:rotate(-90deg);}
+.ring-bg{fill:none;stroke:#E2E8F0;stroke-width:6;}
+.ring-prog{fill:none;stroke-width:6;stroke-linecap:round;}
+
+/* NOTICE */
+.notice{display:flex;align-items:center;gap:8px;background:var(--warning-bg);border:1px solid #FDE68A;border-radius:var(--radius-sm);padding:10px 14px;font-size:12px;color:#92400E;margin-bottom:14px;}
+
+/* CHART PLACEHOLDER */
+.chart-ph{background:var(--bg);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:12px;border:1px dashed var(--border);}
+
+/* SECTION HEADER */
+.sec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.sec-hd-title{font-size:14px;font-weight:700;}
+</style>
+</head>
+<body>
+<main class="content">
+
+<!-- 브레드크럼 -->
+<div class="breadcrumb" id="globalBreadcrumb"></div>
+
+<!-- ══════════════════════════════════════
+     SCREEN 1: 고객 목록/검색
+══════════════════════════════════════ -->
+<div class="screen active" id="screen-list">
+  <div class="page-header">
+    <div>
+      <div class="page-title">고객 목록</div>
+      <div class="page-desc">전체 고객을 검색·필터링하고 일괄 작업을 수행합니다.</div>
+    </div>
+    <div class="page-actions">
+      <button class="btn btn-secondary btn-sm" onclick="openModal('excelHistoryModal')">📥 엑셀 다운로드</button>
+      <button class="btn btn-secondary btn-sm" onclick="openModal('addCustomerModal')">＋ 고객 추가</button>
+    </div>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-card"><div class="stat-header"><div><div class="stat-label">전체 고객</div><div class="stat-value">24,810<span class="stat-unit">명</span></div><div class="stat-change up">↑ +312명 이번 달 순증</div></div><div class="stat-icon">👥</div></div></div>
+    <div class="stat-card"><div class="stat-header"><div><div class="stat-label">신규 고객 (이번 달)</div><div class="stat-value">1,243<span class="stat-unit">명</span></div><div class="stat-change up">↑ +8.2% 전월 대비 신규 유입</div></div><div class="stat-icon">🆕</div></div></div>
+    <div class="stat-card"><div class="stat-header"><div><div class="stat-label">이탈 위험 고객</div><div class="stat-value">348<span class="stat-unit">명</span></div><div class="stat-change down">↑ +41명 전주 대비 증가</div></div><div class="stat-icon">⚠️</div></div></div>
+    <div class="stat-card"><div class="stat-header"><div><div class="stat-label">VIP 고객</div><div class="stat-value">892<span class="stat-unit">명</span></div><div class="stat-change up">↑ +23명 이번 달 신규 승급</div></div><div class="stat-icon">👑</div></div></div>
+  </div>
+
+  <div class="filter-bar">
+    <div class="filter-search"><span class="filter-ico">🔍</span><input type="text" placeholder="이름·이메일·전화번호 검색"></div>
+    <!-- 세그먼트 다중 선택 -->
+    <div class="filter-dropdown" id="fd-segment">
+      <button class="filter-dd-btn" onclick="toggleDD('fd-segment')">세그먼트 <span class="filter-dd-arrow">▾</span></button>
+      <div class="filter-dd-panel">
+        <label class="filter-dd-item"><input type="checkbox" value="VIP 고객" onchange="onFilterChange('segment',this)"> VIP 고객</label>
+        <label class="filter-dd-item"><input type="checkbox" value="이탈 위험" onchange="onFilterChange('segment',this)"> 이탈 위험</label>
+        <label class="filter-dd-item"><input type="checkbox" value="신규 고객" onchange="onFilterChange('segment',this)"> 신규 고객</label>
+        <label class="filter-dd-item"><input type="checkbox" value="휴면 고객" onchange="onFilterChange('segment',this)"> 휴면 고객</label>
+        <label class="filter-dd-item"><input type="checkbox" value="구매 예정" onchange="onFilterChange('segment',this)"> 구매 예정</label>
+        <label class="filter-dd-item"><input type="checkbox" value="고관여 잠재" onchange="onFilterChange('segment',this)"> 고관여 잠재</label>
+        <label class="filter-dd-item"><input type="checkbox" value="장바구니 이탈" onchange="onFilterChange('segment',this)"> 장바구니 이탈</label>
+      </div>
+    </div>
+    <!-- 등급 다중 선택 -->
+    <div class="filter-dropdown" id="fd-grade">
+      <button class="filter-dd-btn" onclick="toggleDD('fd-grade')">등급 <span class="filter-dd-arrow">▾</span></button>
+      <div class="filter-dd-panel">
+        <label class="filter-dd-item"><input type="checkbox" value="VIP" onchange="onFilterChange('grade',this)"> 👑 VIP</label>
+        <label class="filter-dd-item"><input type="checkbox" value="Gold" onchange="onFilterChange('grade',this)"> 🥇 Gold</label>
+        <label class="filter-dd-item"><input type="checkbox" value="Silver" onchange="onFilterChange('grade',this)"> 🥈 Silver</label>
+        <label class="filter-dd-item"><input type="checkbox" value="Bronze" onchange="onFilterChange('grade',this)"> 🥉 Bronze</label>
+        <label class="filter-dd-item"><input type="checkbox" value="일반" onchange="onFilterChange('grade',this)"> 일반</label>
+      </div>
+    </div>
+    <!-- 건강도 다중 선택 -->
+    <div class="filter-dropdown" id="fd-health">
+      <button class="filter-dd-btn" onclick="toggleDD('fd-health')">건강도 <span class="filter-dd-arrow">▾</span></button>
+      <div class="filter-dd-panel">
+        <label class="filter-dd-item"><input type="checkbox" value="챔피언" onchange="onFilterChange('health',this)"> 챔피언 (90~100)</label>
+        <label class="filter-dd-item"><input type="checkbox" value="건강" onchange="onFilterChange('health',this)"> 건강 (70~89)</label>
+        <label class="filter-dd-item"><input type="checkbox" value="주의" onchange="onFilterChange('health',this)"> 주의 (50~69)</label>
+        <label class="filter-dd-item"><input type="checkbox" value="위험" onchange="onFilterChange('health',this)"> 위험 (0~49)</label>
+      </div>
+    </div>
+    <!-- 구매 기간 단일 선택 -->
+    <div class="filter-dropdown" id="fd-period">
+      <button class="filter-dd-btn" onclick="toggleDD('fd-period')">구매 기간 <span class="filter-dd-arrow">▾</span></button>
+      <div class="filter-dd-panel" style="min-width:220px;">
+        <label class="filter-dd-item"><input type="radio" name="period" value="오늘" onchange="onFilterChange('period',this)"> 오늘</label>
+        <label class="filter-dd-item"><input type="radio" name="period" value="이번 주" onchange="onFilterChange('period',this)"> 이번 주</label>
+        <label class="filter-dd-item"><input type="radio" name="period" value="이번 달" onchange="onFilterChange('period',this)"> 이번 달</label>
+        <label class="filter-dd-item"><input type="radio" name="period" value="최근 3개월" onchange="onFilterChange('period',this)"> 최근 3개월</label>
+        <div class="filter-dd-divider"></div>
+        <label class="filter-dd-item"><input type="radio" name="period" value="직접설정" onchange="onFilterChange('period',this)"> 📅 직접설정</label>
+        <div class="period-custom-wrap" id="periodCustomWrap">
+          <div class="period-date-row">
+            <input type="date" class="period-date-input" id="periodDateFrom">
+            <span class="period-date-sep">~</span>
+            <input type="date" class="period-date-input" id="periodDateTo">
+          </div>
+          <button class="btn btn-primary btn-sm" style="width:100%;" onclick="applyCustomPeriod()">적용</button>
+        </div>
+      </div>
+    </div>
+    <div class="filter-sep"></div>
+    <button class="btn btn-secondary btn-sm" onclick="clearAllFilters()">↺ 필터 초기화</button>
+  </div>
+  <div class="filter-tags-row" id="filterTagsRow"></div>
+
+  <div class="bulk-bar" id="bulkBar">
+    <span style="color:var(--primary);font-size:13px;"><span class="bulk-count" id="bulkCount">0</span>명 선택됨</span>
+    <div style="width:1px;height:16px;background:#C7D2FE;"></div>
+    <button class="btn btn-sm btn-secondary" onclick="openBulkTag()">🏷 태그 부여</button>
+    <button class="btn btn-sm btn-secondary" onclick="openBulkSegment()">📂 세그먼트 이동</button>
+    <button class="btn btn-sm btn-secondary" onclick="openBulkMessage()">✉️ 메시지 발송</button>
+    <button class="btn btn-sm btn-ghost" style="color:var(--danger)" onclick="openBulkDelete()">🗑 선택 삭제</button>
+    <button class="btn btn-sm btn-ghost" style="margin-left:auto" onclick="clearSelection()">✕ 선택 해제</button>
+  </div>
+
+  <div class="card">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th class="cb-cell"><input type="checkbox" id="checkAll" onchange="toggleAll(this)"></th>
+            <th class="col-draggable" draggable="true">이름 <span class="sort-ico">↕</span></th>
+            <th class="col-draggable" draggable="true">연락처</th>
+            <th class="col-draggable" draggable="true">세그먼트</th>
+            <th class="col-draggable" draggable="true">태그</th>
+            <th class="col-draggable" draggable="true">등급 <span class="sort-ico">↕</span></th>
+            <th class="col-draggable" draggable="true">건강도 <span class="sort-ico">↕</span></th>
+            <th class="col-draggable" draggable="true">최근 구매일 <span class="sort-ico">↕</span></th>
+            <th class="col-draggable" draggable="true">누적 구매액 <span class="sort-ico">↕</span></th>
+          </tr>
+        </thead>
+        <tbody id="customerTbody">
+          <tr class="clickable" onclick="showScreen('detail')">
+            <td class="cb-cell" onclick="event.stopPropagation()"><input type="checkbox" class="row-cb" onchange="updateBulk()"></td>
+            <td><div class="td-name">박서연</div><div class="td-sub">spark@email.com</div></td>
+            <td><span class="td-phone" onclick="event.stopPropagation();copyPhone('010-2341-5678')">010-2341-5678</span></td>
+            <td><span class="badge b-info">기존고객</span></td>
+            <td><span class="tag">충성고객</span><span class="tag">정기구매자</span></td>
+            <td><span class="badge g-gold">Gold</span></td>
+            <td><span class="badge h-champ">챔피언 94</span></td>
+            <td>2026-05-26</td>
+            <td><strong>1,284,000원</strong></td>
+          </tr>
+          <tr class="clickable" onclick="showScreen('detail')">
+            <td class="cb-cell" onclick="event.stopPropagation()"><input type="checkbox" class="row-cb" onchange="updateBulk()"></td>
+            <td><div class="td-name">이민준</div><div class="td-sub">minjun@sample.kr</div></td>
+            <td><span class="td-phone" onclick="event.stopPropagation();copyPhone('010-9182-3344')">010-9182-3344</span></td>
+            <td><span class="badge b-success">이탈위험</span></td>
+            <td><span class="tag">이탈직전</span><span class="tag">가격민감형</span></td>
+            <td><span class="badge g-silver">Silver</span></td>
+            <td><span class="badge h-risk">위험 38</span></td>
+            <td>2026-03-12</td>
+            <td><strong>456,000원</strong></td>
+          </tr>
+          <tr class="clickable" onclick="showScreen('detail')">
+            <td class="cb-cell" onclick="event.stopPropagation()"><input type="checkbox" class="row-cb" onchange="updateBulk()"></td>
+            <td><div class="td-name">정하은</div><div class="td-sub">haeun.j@company.co.kr</div></td>
+            <td><span class="td-phone" onclick="event.stopPropagation();copyPhone('010-5577-8899')">010-5577-8899</span></td>
+            <td><span class="badge b-purple">VIP</span></td>
+            <td><span class="tag">VIP후보</span></td>
+            <td><span class="badge g-vip">VIP</span></td>
+            <td><span class="badge h-champ">챔피언 97</span></td>
+            <td>2026-05-27</td>
+            <td><strong>4,830,000원</strong></td>
+          </tr>
+          <tr class="clickable" onclick="showScreen('detail')">
+            <td class="cb-cell" onclick="event.stopPropagation()"><input type="checkbox" class="row-cb" onchange="updateBulk()"></td>
+            <td><div class="td-name">김태우</div><div class="td-sub">kimtw84@mail.net</div></td>
+            <td><span class="td-phone" onclick="event.stopPropagation();copyPhone('010-3344-2211')">010-3344-2211</span></td>
+            <td><span class="badge b-warning">주의</span></td>
+            <td><span class="tag">탐색형</span></td>
+            <td><span class="badge g-bronze">Bronze</span></td>
+            <td><span class="badge h-caution">주의 55</span></td>
+            <td>2026-04-05</td>
+            <td><strong>89,000원</strong></td>
+          </tr>
+          <tr class="clickable" onclick="showScreen('detail')">
+            <td class="cb-cell" onclick="event.stopPropagation()"><input type="checkbox" class="row-cb" onchange="updateBulk()"></td>
+            <td><div class="td-name">최유나</div><div class="td-sub">yuna.choi@naver.com</div></td>
+            <td><span class="td-phone" onclick="event.stopPropagation();copyPhone('010-6688-4422')">010-6688-4422</span></td>
+            <td><span class="badge b-info">기존고객</span></td>
+            <td><span class="tag">충성고객</span><span class="tag">신규유망</span></td>
+            <td><span class="badge g-gold">Gold</span></td>
+            <td><span class="badge h-good">건강 78</span></td>
+            <td>2026-05-20</td>
+            <td><strong>762,500원</strong></td>
+          </tr>
+          <tr class="clickable" onclick="showScreen('detail')">
+            <td class="cb-cell" onclick="event.stopPropagation()"><input type="checkbox" class="row-cb" onchange="updateBulk()"></td>
+            <td><div class="td-name">오현석</div><div class="td-sub">hyunseok.o@kakao.com</div></td>
+            <td><span class="td-phone" onclick="event.stopPropagation();copyPhone('010-1122-9900')">010-1122-9900</span></td>
+            <td><span class="badge b-gray">휴면</span></td>
+            <td><span class="tag">불만고객</span></td>
+            <td><span class="badge g-bronze">Bronze</span></td>
+            <td><span class="badge h-risk">위험 22</span></td>
+            <td>2025-11-03</td>
+            <td><strong>125,000원</strong></td>
+          </tr>
+          <tr class="clickable" onclick="showScreen('detail')">
+            <td class="cb-cell" onclick="event.stopPropagation()"><input type="checkbox" class="row-cb" onchange="updateBulk()"></td>
+            <td><div class="td-name">신아름</div><div class="td-sub">areum.shin@gmail.com</div></td>
+            <td><span class="td-phone" onclick="event.stopPropagation();copyPhone('010-7755-3311')">010-7755-3311</span></td>
+            <td><span class="badge b-info">기존고객</span></td>
+            <td><span class="tag">정기구매자</span></td>
+            <td><span class="badge g-silver">Silver</span></td>
+            <td><span class="badge h-good">건강 82</span></td>
+            <td>2026-05-15</td>
+            <td><strong>338,000원</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="pagination">
+      <div>총 <strong>24,810</strong>명 · 1–7 표시 중</div>
+      <div class="page-nums">
+        <button class="page-btn">‹</button>
+        <button class="page-btn active">1</button>
+        <button class="page-btn">2</button>
+        <button class="page-btn">3</button>
+        <button class="page-btn">…</button>
+        <button class="page-btn">248</button>
+        <button class="page-btn">›</button>
+      </div>
+      <div class="page-size">페이지당 <select class="filter-select" style="padding:4px 24px 4px 8px;"><option selected>30</option><option>50</option><option>100</option></select></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     SCREEN 2: 고객 상세 프로필 (내비게이션 히든)
+══════════════════════════════════════ -->
+<div class="screen" id="screen-detail">
+  <div class="page-header">
+    <div>
+      <div class="page-title">박서연</div>
+      <div class="page-desc">Gold · 챔피언 94점 · 기존고객 세그먼트</div>
+    </div>
+    <div class="page-actions">
+      <button class="btn btn-secondary btn-sm">✉️ 메시지 발송</button>
+      <button class="btn btn-secondary btn-sm">🔄 리텐션 시작</button>
+      <button class="btn btn-primary btn-sm">✏️ 정보 수정</button>
+    </div>
+  </div>
+
+  <div class="detail-layout">
+    <div>
+      <div class="profile-card">
+        <div class="profile-avatar">박</div>
+        <div class="profile-name">박서연</div>
+        <div class="profile-email">spark@email.com · 010-2341-5678</div>
+        <div class="profile-badges">
+          <span class="badge g-gold">Gold</span>
+          <span class="badge h-champ">챔피언</span>
+          <span class="badge b-info">기존고객</span>
+        </div>
+        <div class="profile-score">
+          <div class="score-label">고객 건강도</div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <svg class="ring-svg" width="56" height="56" viewBox="0 0 56 56">
+              <circle class="ring-bg" cx="28" cy="28" r="22"/>
+              <circle class="ring-prog" cx="28" cy="28" r="22" stroke="#2563EB" stroke-dasharray="138.2" stroke-dashoffset="8.3"/>
+            </svg>
+            <div>
+              <div style="font-size:22px;font-weight:800;color:var(--primary)">94</div>
+              <div style="font-size:11px;color:var(--text-muted)">챔피언 구간</div>
+            </div>
+          </div>
+          <div style="margin-top:8px;font-size:11px;color:var(--text-sub);">구매빈도 30점 · 참여도 24점 · 만족도 25점 · 지원 15점</div>
+        </div>
+        <div class="profile-info-list">
+          <div class="pil-row"><span class="pil-label">가입일</span><span class="pil-val">2023-08-14</span></div>
+          <div class="pil-row"><span class="pil-label">첫 구매일</span><span class="pil-val">2023-08-22</span></div>
+          <div class="pil-row"><span class="pil-label">담당자</span><span class="pil-val">이마케팅 팀장</span></div>
+          <div class="pil-row"><span class="pil-label">유입 채널</span><span class="pil-val">인스타그램 광고</span></div>
+          <div class="pil-row"><span class="pil-label">누적 구매</span><span class="pil-val">1,284,000원</span></div>
+          <div class="pil-row"><span class="pil-label">구매 횟수</span><span class="pil-val">17회</span></div>
+          <div class="pil-row"><span class="pil-label">평균 객단가</span><span class="pil-val">75,529원</span></div>
+          <div class="pil-row"><span class="pil-label">예측 LTV</span><span class="pil-val" style="color:var(--primary);">3,200,000원</span></div>
+        </div>
+        <div class="profile-actions">
+          <button class="btn btn-secondary btn-sm" style="width:100%">📱 알림톡 발송</button>
+          <button class="btn btn-secondary btn-sm" style="width:100%">📋 CS 배정</button>
+          <button class="btn btn-ghost btn-sm" style="width:100%;color:var(--danger)">🚫 수신거부 처리</button>
+        </div>
+      </div>
+      <div class="profile-card" style="margin-top:12px;">
+        <div style="font-size:13px;font-weight:700;margin-bottom:10px;">마케팅 수신 동의</div>
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;">
+          <div style="display:flex;justify-content:space-between;"><span>이메일</span><span class="badge b-success">동의</span></div>
+          <div style="display:flex;justify-content:space-between;"><span>알림톡</span><span class="badge b-success">동의</span></div>
+          <div style="display:flex;justify-content:space-between;"><span>SMS</span><span class="badge b-gray">미동의</span></div>
+          <div style="display:flex;justify-content:space-between;"><span>앱 푸시</span><span class="badge b-success">동의</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="detail-tabs">
+        <div class="detail-tab active" onclick="switchDetailTab(this,'dtab-basic')">기본 정보</div>
+        <div class="detail-tab" onclick="switchDetailTab(this,'dtab-purchase')">구매 이력</div>
+        <div class="detail-tab" onclick="switchDetailTab(this,'dtab-behavior')">행동/예측 데이터</div>
+        <div class="detail-tab" onclick="switchDetailTab(this,'dtab-consult')">상담 이력</div>
+      </div>
+      <div class="detail-panel active" id="dtab-basic">
+        <div class="info-section">
+          <div class="info-section-title">👤 개인 정보</div>
+          <div class="info-grid">
+            <div class="info-item"><div class="info-label">이름</div><div class="info-value">박서연</div></div>
+            <div class="info-item"><div class="info-label">생년월일</div><div class="info-value">1992-03-15 (만 34세)</div></div>
+            <div class="info-item"><div class="info-label">성별</div><div class="info-value">여성</div></div>
+            <div class="info-item"><div class="info-label">이메일</div><div class="info-value">spark@email.com</div></div>
+            <div class="info-item"><div class="info-label">전화번호</div><div class="info-value">010-2341-5678</div></div>
+            <div class="info-item"><div class="info-label">지역</div><div class="info-value">서울 강남구</div></div>
+          </div>
+        </div>
+        <div class="info-section">
+          <div class="info-section-title">🔗 통합 식별 정보</div>
+          <div class="info-grid">
+            <div class="info-item"><div class="info-label">온라인 계정</div><div class="info-value">연결됨 (spark@email.com)</div></div>
+            <div class="info-item"><div class="info-label">멤버십 카드</div><div class="info-value">ENT-2023-08-0041</div></div>
+            <div class="info-item"><div class="info-label">오프라인 구매</div><div class="info-value">4회 (강남점)</div></div>
+          </div>
+        </div>
+        <div class="info-section">
+          <div class="info-section-title">🏷️ 자동 태그</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;">
+            <span class="tag">충성고객</span>
+            <span class="tag">정기구매자</span>
+            <span class="tag" style="background:#EFF6FF;color:#2563EB;border-color:#BFDBFE;">화장품 선호</span>
+            <span class="tag" style="background:#ECFDF5;color:#065F46;border-color:#A7F3D0;">고빈도구매</span>
+          </div>
+          <div style="font-size:11px;color:var(--text-muted);">마지막 태그 갱신: 2026-05-27 03:00</div>
+        </div>
+      </div>
+      <div class="detail-panel" id="dtab-purchase">
+        <div class="metrics-row">
+          <div class="metric-card"><div class="metric-label">누적 구매금액</div><div class="metric-value">1,284,000원</div></div>
+          <div class="metric-card"><div class="metric-label">구매 횟수</div><div class="metric-value">17회</div></div>
+          <div class="metric-card"><div class="metric-label">평균 객단가</div><div class="metric-value">75,529원</div></div>
+          <div class="metric-card"><div class="metric-label">선호 카테고리</div><div class="metric-value" style="font-size:14px">스킨케어</div></div>
+        </div>
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>주문일</th><th>주문번호</th><th>상품명</th><th>채널</th><th>금액</th><th>상태</th></tr></thead>
+              <tbody>
+                <tr><td>2026-05-26</td><td>ORD-20260526-0041</td><td>수분 토너 200ml × 2</td><td><span class="badge b-info">온라인</span></td><td><strong>68,000원</strong></td><td><span class="badge b-success">배송완료</span></td></tr>
+                <tr><td>2026-05-03</td><td>ORD-20260503-0218</td><td>나이트 크림 50ml</td><td><span class="badge b-info">온라인</span></td><td><strong>52,000원</strong></td><td><span class="badge b-success">배송완료</span></td></tr>
+                <tr><td>2026-04-11</td><td>ORD-20260411-0509</td><td>선크림 SPF50+ × 3</td><td><span class="badge b-gray">오프라인</span></td><td><strong>87,000원</strong></td><td><span class="badge b-success">구매완료</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="pagination"><div>총 17건</div><div class="page-nums"><button class="page-btn active">1</button><button class="page-btn">2</button><button class="page-btn">›</button></div><div></div></div>
+        </div>
+      </div>
+      <div class="detail-panel" id="dtab-behavior">
+        <div class="metrics-row">
+          <div class="metric-card"><div class="metric-label">최근 30일 방문</div><div class="metric-value">23회</div><div class="metric-sub">평균 체류 4분 12초</div></div>
+          <div class="metric-card"><div class="metric-label">이탈 위험도</div><div class="metric-value" style="color:var(--success)">낮음 8%</div></div>
+          <div class="metric-card"><div class="metric-label">예측 다음 구매</div><div class="metric-value" style="font-size:14px">6월 12일</div><div class="metric-sub">구매 주기 30일</div></div>
+          <div class="metric-card"><div class="metric-label">예측 LTV</div><div class="metric-value" style="font-size:14px">3,200,000원</div></div>
+        </div>
+        <div class="info-section">
+          <div class="info-section-title">📈 소비 주기 분석</div>
+          <div class="chart-ph" style="height:160px;">📊 소비 주기 차트 (평균 구매 간격: 30일)</div>
+        </div>
+      </div>
+      <div class="detail-panel" id="dtab-consult">
+        <div class="notice">💡 다음 상담 시 참고: 지난 상담에서 배송 지연 불만 이력 있음. 보상 쿠폰 발급 완료.</div>
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <div class="tl-date">2026-05-10 · 채팅</div>
+            <div class="tl-title">배송 현황 문의</div>
+            <div class="tl-desc">주문 ORD-20260503-0218 배송 상태 확인 요청. 담당자 답변 완료(5분 이내). 만족도: ⭐⭐⭐⭐⭐</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot warn"></div>
+            <div class="tl-date">2026-03-28 · 이메일</div>
+            <div class="tl-title">배송 지연 불만 접수</div>
+            <div class="tl-desc">예정일보다 4일 지연. 고객 불만 표현. 사과 메시지 + 5,000P 보상 지급. 이후 불만 철회.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot gray"></div>
+            <div class="tl-date">2026-01-15 · 전화</div>
+            <div class="tl-title">신제품 사용 방법 문의</div>
+            <div class="tl-desc">나이트 크림 사용 순서 및 병용 제품 문의. 상담사 안내 완료. 만족도: ⭐⭐⭐⭐</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     SCREEN 3: 세그먼트 관리
+══════════════════════════════════════ -->
+<div class="screen" id="screen-segment">
+  <div class="page-header">
+    <div>
+      <div class="page-title">세그먼트 관리</div>
+      <div class="page-desc">고객을 조건별로 자동 분류합니다. 조건 변경 시 즉시 해당 고객 수를 미리 확인할 수 있습니다.</div>
+    </div>
+    <div class="page-actions">
+      <button class="btn btn-primary" onclick="openModal('addSegModal')">＋ 세그먼트 추가</button>
+    </div>
+  </div>
+  <div class="seg-grid">
+    <div class="seg-card">
+      <div class="seg-header"><div><div class="seg-name">🆕 신규</div><div style="font-size:11px;color:var(--text-muted)">가입 후 첫 구매 전</div></div><button class="btn btn-ghost btn-sm">✏️</button></div>
+      <div class="seg-count">3,241<span style="font-size:13px;font-weight:400;color:var(--text-muted)">명</span></div>
+      <div class="seg-change">↑ +312 전주 대비</div>
+      <div class="seg-bar"><div class="seg-fill" style="width:13%;background:#60A5FA;"></div></div>
+      <div style="font-size:11px;color:var(--text-muted)">전체의 13.1%</div>
+      <div class="seg-conditions">가입일 ≤ 30일 · 구매 이력 없음</div>
+      <div class="seg-actions"><button class="btn btn-secondary btn-sm" onclick="showScreen('list')">고객 보기</button><button class="btn btn-ghost btn-sm">캠페인 연결</button></div>
+    </div>
+    <div class="seg-card">
+      <div class="seg-header"><div><div class="seg-name">👀 관심</div><div style="font-size:11px;color:var(--text-muted)">방문/탐색 중, 미구매</div></div><button class="btn btn-ghost btn-sm">✏️</button></div>
+      <div class="seg-count">4,108<span style="font-size:13px;font-weight:400;color:var(--text-muted)">명</span></div>
+      <div class="seg-change">↓ −54 전주 대비</div>
+      <div class="seg-bar"><div class="seg-fill" style="width:17%;background:#A78BFA;"></div></div>
+      <div style="font-size:11px;color:var(--text-muted)">전체의 16.6%</div>
+      <div class="seg-conditions">방문 3회 이상 · 구매 이력 없음 · 가입 30일 초과</div>
+      <div class="seg-actions"><button class="btn btn-secondary btn-sm" onclick="showScreen('list')">고객 보기</button><button class="btn btn-ghost btn-sm">캠페인 연결</button></div>
+    </div>
+    <div class="seg-card">
+      <div class="seg-header"><div><div class="seg-name">🛒 구매준비</div><div style="font-size:11px;color:var(--text-muted)">장바구니 보유 / 리드 스코어 ↑</div></div><button class="btn btn-ghost btn-sm">✏️</button></div>
+      <div class="seg-count">1,894<span style="font-size:13px;font-weight:400;color:var(--text-muted)">명</span></div>
+      <div class="seg-change">↑ +201 전주 대비</div>
+      <div class="seg-bar"><div class="seg-fill" style="width:8%;background:#34D399;"></div></div>
+      <div style="font-size:11px;color:var(--text-muted)">전체의 7.6%</div>
+      <div class="seg-conditions">장바구니 상품 보유 OR 리드 스코어 50 이상 · 미결제</div>
+      <div class="seg-actions"><button class="btn btn-secondary btn-sm" onclick="showScreen('list')">고객 보기</button><button class="btn btn-ghost btn-sm">캠페인 연결</button></div>
+    </div>
+    <div class="seg-card" style="border-color:var(--primary);">
+      <div class="seg-header"><div><div class="seg-name">⭐ 기존고객</div><div style="font-size:11px;color:var(--text-muted)">활성 구매 고객</div></div><button class="btn btn-ghost btn-sm">✏️</button></div>
+      <div class="seg-count" style="color:var(--primary)">11,244<span style="font-size:13px;font-weight:400;color:var(--text-muted)">명</span></div>
+      <div class="seg-change" style="color:var(--success)">↑ +423 전주 대비</div>
+      <div class="seg-bar"><div class="seg-fill" style="width:45%;background:var(--primary);"></div></div>
+      <div style="font-size:11px;color:var(--text-muted)">전체의 45.3%</div>
+      <div class="seg-conditions">구매 이력 1회 이상 · 최근 구매 90일 이내</div>
+      <div class="seg-actions"><button class="btn btn-secondary btn-sm" onclick="showScreen('list')">고객 보기</button><button class="btn btn-ghost btn-sm">캠페인 연결</button></div>
+    </div>
+    <div class="seg-card" style="border-color:var(--warning);">
+      <div class="seg-header"><div><div class="seg-name">⚠️ 이탈위험</div><div style="font-size:11px;color:var(--text-muted)">활동 급감 감지</div></div><button class="btn btn-ghost btn-sm">✏️</button></div>
+      <div class="seg-count" style="color:var(--warning)">2,081<span style="font-size:13px;font-weight:400;color:var(--text-muted)">명</span></div>
+      <div class="seg-change" style="color:var(--danger)">↑ +134 전주 대비</div>
+      <div class="seg-bar"><div class="seg-fill" style="width:8%;background:var(--warning);"></div></div>
+      <div style="font-size:11px;color:var(--text-muted)">전체의 8.4%</div>
+      <div class="seg-conditions">건강도 점수 50 미만 OR 30일 미로그인 OR 이메일 오픈율 급감</div>
+      <div class="seg-actions"><button class="btn btn-secondary btn-sm" onclick="showScreen('list')">고객 보기</button><button class="btn btn-ghost btn-sm" style="color:var(--warning)">이탈방지 시작</button></div>
+    </div>
+    <div class="seg-card">
+      <div class="seg-header"><div><div class="seg-name">💤 휴면</div><div style="font-size:11px;color:var(--text-muted)">60일 이상 미접속</div></div><button class="btn btn-ghost btn-sm">✏️</button></div>
+      <div class="seg-count">2,242<span style="font-size:13px;font-weight:400;color:var(--text-muted)">명</span></div>
+      <div class="seg-change">↓ −88 전주 대비</div>
+      <div class="seg-bar"><div class="seg-fill" style="width:9%;background:#94A3B8;"></div></div>
+      <div style="font-size:11px;color:var(--text-muted)">전체의 9.0%</div>
+      <div class="seg-conditions">마지막 접속 60일 초과 · 구매 이력 1회 이상</div>
+      <div class="seg-actions"><button class="btn btn-secondary btn-sm" onclick="showScreen('list')">고객 보기</button><button class="btn btn-ghost btn-sm">재활성 캠페인</button></div>
+    </div>
+  </div>
+  <div class="card" style="padding:16px;">
+    <div class="sec-hd"><div class="sec-hd-title">⚙️ 자동 갱신 설정</div></div>
+    <div style="display:flex;align-items:center;gap:20px;font-size:13px;">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></label><span>세그먼트 자동 갱신 활성화</span></div>
+      <div style="display:flex;align-items:center;gap:8px;"><span style="color:var(--text-sub)">갱신 주기:</span><select class="filter-select"><option>실시간</option><option>1시간</option><option>1일</option></select></div>
+      <div style="color:var(--text-muted);font-size:12px;">마지막 갱신: 2026-05-28 14:32</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     SCREEN 4: 자동 태그 관리
+══════════════════════════════════════ -->
+<div class="screen" id="screen-autotag">
+  <div class="page-header">
+    <div>
+      <div class="page-title">자동 태그 관리</div>
+      <div class="page-desc">AI가 고객 행동 데이터를 분석해 자동으로 태그를 부여합니다. 태그별 조건과 연결 시나리오를 설정하세요.</div>
+    </div>
+    <div class="page-actions"><button class="btn btn-primary">＋ 태그 추가</button></div>
+  </div>
+  <div class="tag-grid">
+    <div class="tag-card">
+      <div class="tag-header"><span class="tag-name">💛 충성고객</span><span class="tag-count-badge" style="background:var(--primary-light);color:var(--primary)">3,241명</span></div>
+      <div class="tag-condition">구매 빈도 <strong>월 2회 이상</strong> × <strong>연속 6개월</strong> 달성<br><span style="color:var(--text-muted)">OR 누적 구매액 500,000원 이상 + 구매 이력 10회 이상</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;"><div class="tag-scenario">→ 연결된 시나리오: VIP 자동화</div><div style="display:flex;gap:6px;"><button class="btn btn-ghost btn-sm">✏️ 수정</button><div class="toggle-wrap"><label class="toggle"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></label></div></div></div>
+    </div>
+    <div class="tag-card">
+      <div class="tag-header"><span class="tag-name">🔴 이탈직전</span><span class="tag-count-badge" style="background:var(--danger-bg);color:#991B1B">348명</span></div>
+      <div class="tag-condition"><strong>30일 이상 미로그인</strong><br>OR 이메일 오픈율 <strong>최근 4주 연속 0%</strong><br>OR 구매 주기 <strong>평균의 2배 이상</strong> 초과</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;"><div class="tag-scenario" style="color:var(--danger)">→ 연결된 시나리오: 이탈 방지 시퀀스</div><div style="display:flex;gap:6px;"><button class="btn btn-ghost btn-sm">✏️ 수정</button><div class="toggle-wrap"><label class="toggle"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></label></div></div></div>
+    </div>
+    <div class="tag-card">
+      <div class="tag-header"><span class="tag-name">💰 가격민감형</span><span class="tag-count-badge" style="background:var(--warning-bg);color:#92400E">1,120명</span></div>
+      <div class="tag-condition"><strong>할인 적용 시에만 구매</strong> 패턴 3회 이상<br>OR 쿠폰 사용률 <strong>90% 이상</strong></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;"><div class="tag-scenario">→ 연결된 시나리오: 가격민감형 오퍼</div><div style="display:flex;gap:6px;"><button class="btn btn-ghost btn-sm">✏️ 수정</button><div class="toggle-wrap"><label class="toggle"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></label></div></div></div>
+    </div>
+    <div class="tag-card">
+      <div class="tag-header"><span class="tag-name">👑 VIP후보</span><span class="tag-count-badge" style="background:var(--primary-light);color:#1D4ED8">412명</span></div>
+      <div class="tag-condition">Gold 등급 + 누적 구매액 <strong>3,000,000원 이상</strong><br>OR 월 평균 구매액 <strong>200,000원 이상</strong> × 3개월</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;"><div class="tag-scenario">→ 연결된 시나리오: VIP 전환 유도</div><div style="display:flex;gap:6px;"><button class="btn btn-ghost btn-sm">✏️ 수정</button><div class="toggle-wrap"><label class="toggle"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></label></div></div></div>
+    </div>
+    <div class="tag-card">
+      <div class="tag-header"><span class="tag-name">😡 불만고객</span><span class="tag-count-badge" style="background:var(--danger-bg);color:#991B1B">89명</span></div>
+      <div class="tag-condition">CS 상담 내 <strong>부정 감정 감지</strong> 2회 이상<br>OR 낮은 별점(1~2점) 리뷰 작성 이력</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;"><div class="tag-scenario" style="color:var(--danger)">→ 연결된 시나리오: CS 우선 배정</div><div style="display:flex;gap:6px;"><button class="btn btn-ghost btn-sm">✏️ 수정</button><div class="toggle-wrap"><label class="toggle"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></label></div></div></div>
+    </div>
+    <div class="tag-card">
+      <div class="tag-header"><span class="tag-name">🔄 정기구매자</span><span class="tag-count-badge" style="background:var(--success-bg);color:#065F46">2,034명</span></div>
+      <div class="tag-condition">동일 상품 <strong>30±7일 주기</strong>로 3회 이상 반복 구매<br>OR 구독 상품 활성 상태</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;"><div class="tag-scenario">→ 연결된 시나리오: 재구매 리마인드</div><div style="display:flex;gap:6px;"><button class="btn btn-ghost btn-sm">✏️ 수정</button><div class="toggle-wrap"><label class="toggle"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></label></div></div></div>
+    </div>
+    <div class="tag-card">
+      <div class="tag-header"><span class="tag-name">🔍 탐색형</span><span class="tag-count-badge" style="background:#F5F5F5;color:var(--text-sub)">3,882명</span></div>
+      <div class="tag-condition">방문 빈도 높음 + 구매 전환 낮음<br>상품 상세 페이지 <strong>30초 이상 체류</strong> × 5회 이상 · 미구매</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;"><div class="tag-scenario">→ 연결된 시나리오: 전환 유도 쿠폰</div><div style="display:flex;gap:6px;"><button class="btn btn-ghost btn-sm">✏️ 수정</button><div class="toggle-wrap"><label class="toggle"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></label></div></div></div>
+    </div>
+    <div class="tag-card">
+      <div class="tag-header"><span class="tag-name">✨ 신규유망</span><span class="tag-count-badge" style="background:var(--success-bg);color:#065F46">891명</span></div>
+      <div class="tag-condition">가입 30일 이내 + 첫 구매 완료<br>OR 리드 스코어 <strong>70점 이상</strong>으로 전환</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;"><div class="tag-scenario">→ 연결된 시나리오: 신규 환영 시퀀스</div><div style="display:flex;gap:6px;"><button class="btn btn-ghost btn-sm">✏️ 수정</button><div class="toggle-wrap"><label class="toggle"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></label></div></div></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     SCREEN 5: 등급 관리
+══════════════════════════════════════ -->
+<div class="screen" id="screen-grade">
+  <div class="page-header">
+    <div>
+      <div class="page-title">등급 관리</div>
+      <div class="page-desc">온·오프라인 통합 구매 금액 기준으로 등급을 자동 부여합니다. 등급별 혜택과 승급 기준을 설정하세요.</div>
+    </div>
+    <div class="page-actions">
+      <button class="btn btn-secondary btn-sm">📋 등급 변경 이력</button>
+      <button class="btn btn-primary btn-sm">💾 변경사항 저장</button>
+    </div>
+  </div>
+  <div class="grade-grid">
+    <div class="grade-card">
+      <div class="grade-icon">🥉</div><div class="grade-name">Bronze</div>
+      <div class="grade-count"><div class="grade-count-num">14,218</div><div class="grade-count-label">명 (57.3%)</div></div>
+      <div class="grade-divider"></div>
+      <div style="font-size:12px;font-weight:700;margin-bottom:6px;color:var(--text-muted)">승급 기준</div>
+      <div class="grade-cond">가입 후 <span>첫 구매</span> 완료 시 자동 부여<br>누적 구매액 <span>50,000원 미만</span></div>
+      <div class="grade-divider"></div>
+      <div class="grade-benefits"><div class="benefit-item">포인트 적립 1%</div><div class="benefit-item">기본 혜택 제공</div></div>
+    </div>
+    <div class="grade-card" style="border-color:#94A3B8;">
+      <div class="grade-icon">🥈</div><div class="grade-name">Silver</div>
+      <div class="grade-count"><div class="grade-count-num">6,341</div><div class="grade-count-label">명 (25.6%)</div></div>
+      <div class="grade-divider"></div>
+      <div style="font-size:12px;font-weight:700;margin-bottom:6px;color:var(--text-muted)">승급 기준</div>
+      <div class="grade-cond">누적 구매액 <span>50,000원 이상</span><br>OR 구매 횟수 <span>3회 이상</span></div>
+      <div class="grade-divider"></div>
+      <div class="grade-benefits"><div class="benefit-item">포인트 적립 1.5%</div><div class="benefit-item">생일 쿠폰 자동 발급</div><div class="benefit-item">50,000원 이상 무료배송</div></div>
+    </div>
+    <div class="grade-card" style="border-color:#F59E0B;">
+      <div class="grade-icon">🥇</div><div class="grade-name">Gold</div>
+      <div class="grade-count"><div class="grade-count-num">3,359</div><div class="grade-count-label">명 (13.5%)</div></div>
+      <div class="grade-divider"></div>
+      <div style="font-size:12px;font-weight:700;margin-bottom:6px;color:var(--text-muted)">승급 기준</div>
+      <div class="grade-cond">누적 구매액 <span>300,000원 이상</span><br>AND 구매 횟수 <span>7회 이상</span></div>
+      <div class="grade-divider"></div>
+      <div class="grade-benefits"><div class="benefit-item">포인트 적립 2%</div><div class="benefit-item">전용 할인 5%</div><div class="benefit-item">무제한 무료배송</div><div class="benefit-item">전용 상담 채널</div></div>
+    </div>
+    <div class="grade-card" style="border-color:var(--primary);background:linear-gradient(135deg,#EFF6FF,#fff);">
+      <div class="grade-icon">👑</div><div class="grade-name" style="color:var(--primary)">VIP (Platinum)</div>
+      <div class="grade-count"><div class="grade-count-num" style="color:var(--primary)">892</div><div class="grade-count-label">명 (3.6%)</div></div>
+      <div class="grade-divider"></div>
+      <div style="font-size:12px;font-weight:700;margin-bottom:6px;color:var(--text-muted)">승급 기준</div>
+      <div class="grade-cond">누적 구매액 <span>1,000,000원 이상</span><br>AND 구매 횟수 <span>15회 이상</span></div>
+      <div class="grade-divider"></div>
+      <div class="grade-benefits"><div class="benefit-item">포인트 적립 3%</div><div class="benefit-item">전용 할인 10%</div><div class="benefit-item">VIP 전담 매니저 배정</div><div class="benefit-item">신상품 사전 초대</div><div class="benefit-item">프리미엄 패키징</div></div>
+    </div>
+  </div>
+  <div class="card" style="padding:18px;margin-bottom:14px;">
+    <div class="sec-hd"><div class="sec-hd-title">⚡ 등급 자동화 설정</div></div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;font-size:13px;">
+      <div class="form-group"><label class="form-label">등급 갱신 주기</label><select class="form-input"><option>매월 1일 자동 갱신</option><option>분기별 갱신</option><option>실시간</option></select></div>
+      <div class="form-group"><label class="form-label">등급 강등 유예 기간</label><select class="form-input"><option>30일</option><option>60일</option><option>90일</option><option>없음</option></select></div>
+      <div class="form-group"><label class="form-label">등급 전환 메시지</label><div style="display:flex;gap:8px;align-items:center;margin-top:8px;"><div class="toggle-wrap"><label class="toggle"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></label><span>승급 시 자동 발송</span></div></div></div>
+    </div>
+  </div>
+  <div class="card" style="padding:18px;">
+    <div class="sec-hd"><div class="sec-hd-title">⚠️ 등급 하락 위험 감지</div></div>
+    <div style="font-size:13px;color:var(--text-sub);margin-bottom:12px;">갱신 기준 미달 예상 고객에게 자동으로 유지 혜택 메시지를 발송합니다.</div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></label><span>등급 하락 위험 감지 활성화</span></div>
+      <div style="display:flex;align-items:center;gap:8px;font-size:13px;"><span style="color:var(--text-sub)">갱신일</span><select class="filter-select"><option>30일 전</option><option>14일 전</option><option>7일 전</option></select><span style="color:var(--text-sub)">부터 알림 발송</span></div>
+      <div style="font-size:12px;color:var(--warning);background:var(--warning-bg);padding:6px 12px;border-radius:var(--radius-sm);">⚠️ 현재 등급 하락 위험 고객: <strong>241명</strong></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     MODALS
+══════════════════════════════════════ -->
+
+<!-- 엑셀 다운로드 히스토리 -->
+<div class="backdrop" id="excelHistoryModal">
+  <div class="modal modal-wide">
+    <div class="modal-head">
+      <div class="modal-title">📥 고객 목록 엑셀 다운로드 히스토리</div>
+      <button class="modal-close" onclick="closeModal('excelHistoryModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <div style="font-size:12px;color:var(--text-muted);">최근 30건 다운로드 이력입니다. 개인정보 포함 파일은 30일 후 자동 삭제됩니다.</div>
+        <button class="btn btn-primary btn-sm" onclick="openModal('excelReasonModal')">+ 새 다운로드 요청</button>
+      </div>
+      <table class="excel-hist-table">
+        <thead>
+          <tr>
+            <th>요청일시</th>
+            <th>파일명</th>
+            <th>요청자</th>
+            <th>사유</th>
+            <th>건수</th>
+            <th>상태</th>
+            <th>파일</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2026.05.28 14:32</td>
+            <td style="color:var(--text-sub);">customers_20260528_1432.xlsx</td>
+            <td>이마케팅</td>
+            <td style="max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="5월 마케팅 성과 보고를 위한 캠페인 데이터 추출">5월 마케팅 성과 보고</td>
+            <td>12,847명</td>
+            <td><span class="dl-badge done">완료</span></td>
+            <td><button class="btn btn-ghost btn-sm" style="color:var(--primary);padding:3px 8px;">⬇ 재다운로드</button></td>
+          </tr>
+          <tr>
+            <td>2026.05.21 10:08</td>
+            <td style="color:var(--text-sub);">customers_20260521_1008.xlsx</td>
+            <td>박영업</td>
+            <td style="max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="VIP 고객 분류 기준 재정립을 위한 구매 이력 분석">VIP 고객 분류 기준 분석</td>
+            <td>342명</td>
+            <td><span class="dl-badge done">완료</span></td>
+            <td><button class="btn btn-ghost btn-sm" style="color:var(--primary);padding:3px 8px;">⬇ 재다운로드</button></td>
+          </tr>
+          <tr>
+            <td>2026.04.30 17:55</td>
+            <td style="color:var(--text-sub);">customers_20260430_1755.xlsx</td>
+            <td>이마케팅</td>
+            <td style="max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="4월 휴면 고객 재활성 캠페인 결과 분석">4월 휴면 캠페인 결과 분석</td>
+            <td>2,103명</td>
+            <td><span class="dl-badge expired">만료</span></td>
+            <td style="color:var(--text-muted);font-size:12px;">파일 만료</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeModal('excelHistoryModal')">닫기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 엑셀 다운로드 사유 입력 -->
+<div class="backdrop" id="excelReasonModal" style="z-index:300;">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">📝 다운로드 사유 입력</div>
+      <button class="modal-close" onclick="closeModal('excelReasonModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="background:var(--bg);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:20px;font-size:12px;color:var(--text-sub);">
+        <strong style="color:var(--text);">고객 목록 전체</strong>&nbsp;파일을 다운로드합니다.<br>
+        개인정보 포함 데이터는 반드시 사유를 기재해야 하며, 이력은 감사 로그에 기록됩니다.
+      </div>
+      <div class="form-group">
+        <label class="form-label">사유 분류 <span style="color:var(--danger);">*</span></label>
+        <select class="form-input" id="excelReasonCategory">
+          <option value="">-- 선택하세요 --</option>
+          <option>업무 보고 / 경영진 보고</option>
+          <option>마케팅 기획 / 캠페인 분석</option>
+          <option>개인정보 감사 / 법무 대응</option>
+          <option>개발 / QA 테스트</option>
+          <option>기타</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">상세 사유 <span style="color:var(--danger);">*</span></label>
+        <textarea class="form-input" id="excelReasonDetail" rows="3" placeholder="예: 5월 마케팅 성과 보고를 위한 캠페인 데이터 추출" style="resize:vertical;"></textarea>
+        <div class="form-hint" style="font-size:11px;color:var(--text-muted);margin-top:4px;">20자 이상 구체적으로 작성해주세요.</div>
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:12px;color:var(--text-sub);line-height:1.6;">
+          <input type="checkbox" id="excelAgree" style="margin-top:2px;flex-shrink:0;">
+          <span>다운로드 파일에 개인정보가 포함될 수 있으며, 업무 목적 외 사용 금지 및 외부 유출 금지에 동의합니다.</span>
+        </label>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeModal('excelReasonModal')">취소</button>
+      <button class="btn btn-primary" onclick="confirmExcelDownload()">⬇ 다운로드 확인</button>
+    </div>
+  </div>
+</div>
+
+<div class="backdrop" id="addCustomerModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">고객 추가</div>
+      <button class="modal-close" onclick="closeModal('addCustomerModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">이름<span class="req">*</span></label><input class="form-input" placeholder="홍길동"></div>
+        <div class="form-group"><label class="form-label">성별</label><select class="form-input"><option>미지정</option><option>남성</option><option>여성</option></select></div>
+      </div>
+      <div class="form-group"><label class="form-label">이메일<span class="req">*</span></label><input class="form-input" type="email" placeholder="example@email.com"></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">전화번호<span class="req">*</span></label><input class="form-input" placeholder="010-0000-0000" required></div>
+        <div class="form-group"><label class="form-label">생년월일</label><input class="form-input" type="date"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">유입 채널</label><select class="form-input"><option>직접 입력</option><option>인스타그램</option><option>카카오</option><option>네이버</option><option>오프라인</option><option>이벤트</option><option>기타</option></select></div>
+        <div class="form-group"><label class="form-label">담당자</label><select class="form-input"><option>미배정</option><option>이마케팅 - 마케팅팀</option><option>박영업 - 영업팀</option><option>김운영 - 운영팀</option><option>정데이터 - 데이터분석팀</option><option>최CS - 고객지원팀</option></select></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">마케팅 수신 동의</label>
+        <div style="display:flex;gap:14px;font-size:13px;margin-top:6px;">
+          <label style="display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="checkbox" checked> 이메일</label>
+          <label style="display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="checkbox" checked> 알림톡</label>
+          <label style="display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="checkbox"> SMS</label>
+          <label style="display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="checkbox" checked> 앱 푸시</label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeModal('addCustomerModal')">취소</button>
+      <button class="btn btn-primary" onclick="closeModal('addCustomerModal');showToast('success','완료','고객이 추가되었습니다.')">고객 추가</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── 벌크: 태그 부여 ── -->
+<div class="backdrop" id="modal-bulk-tag">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">🏷 태그 부여</div>
+      <button class="modal-close" onclick="closeModal('modal-bulk-tag')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="bulk-info-banner">📋 <span id="bulkTagCount">0</span>명에게 태그를 부여합니다.</div>
+      <div class="form-group">
+        <label class="form-label" style="margin-bottom:8px;">태그 선택 <span style="font-weight:400;color:var(--text-muted);">(복수 선택 가능)</span></label>
+        <div class="tag-chip-grid" id="tagChipGrid">
+          <span class="tag-chip" onclick="toggleTagChip(this)">충성고객</span>
+          <span class="tag-chip" onclick="toggleTagChip(this)">정기구매자</span>
+          <span class="tag-chip" onclick="toggleTagChip(this)">VIP후보</span>
+          <span class="tag-chip" onclick="toggleTagChip(this)">이탈직전</span>
+          <span class="tag-chip" onclick="toggleTagChip(this)">가격민감형</span>
+          <span class="tag-chip" onclick="toggleTagChip(this)">장바구니이탈</span>
+          <span class="tag-chip" onclick="toggleTagChip(this)">쿠폰반응형</span>
+          <span class="tag-chip" onclick="toggleTagChip(this)">신규유입</span>
+          <span class="tag-chip" onclick="toggleTagChip(this)">재구매유도</span>
+          <span class="tag-chip" onclick="toggleTagChip(this)">키즈맘</span>
+          <span class="tag-chip" onclick="toggleTagChip(this)">여름시즌</span>
+          <span class="tag-chip" onclick="toggleTagChip(this)">오프라인전환</span>
+        </div>
+        <label class="form-label" style="margin-bottom:6px;">새 태그 추가</label>
+        <div class="tag-new-row">
+          <input class="tag-new-input" id="tagNewInput" placeholder="태그명 입력 후 추가" maxlength="20">
+          <button class="btn btn-secondary btn-sm" onclick="addNewTagChip()">+ 추가</button>
+        </div>
+      </div>
+      <div id="bulkTagSelectedWrap" style="display:none;margin-top:12px;">
+        <label class="form-label" style="margin-bottom:6px;color:var(--primary);">선택된 태그</label>
+        <div id="bulkTagSelectedList" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeModal('modal-bulk-tag')">취소</button>
+      <button class="btn btn-primary" onclick="saveBulkTag()">태그 부여</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── 벌크: 세그먼트 이동 ── -->
+<div class="backdrop" id="modal-bulk-segment">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">📂 세그먼트 이동</div>
+      <button class="modal-close" onclick="closeModal('modal-bulk-segment')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="bulk-info-banner">📋 <span id="bulkSegCount">0</span>명을 선택한 세그먼트로 이동합니다.</div>
+      <div class="form-group">
+        <label class="form-label" style="margin-bottom:8px;">세그먼트 선택</label>
+        <div class="seg-radio-list" id="segRadioList">
+          <label class="seg-radio-item" onclick="selectSegRadio(this)">
+            <input type="radio" name="bulkSeg" value="VIP 고객">
+            <div style="flex:1;"><div class="seg-radio-label">👑 VIP 고객</div><div class="seg-radio-desc">892명 · 누적 구매 300만원 이상</div></div>
+          </label>
+          <label class="seg-radio-item" onclick="selectSegRadio(this)">
+            <input type="radio" name="bulkSeg" value="이탈 위험">
+            <div style="flex:1;"><div class="seg-radio-label">⚠️ 이탈 위험</div><div class="seg-radio-desc">348명 · 60일 이상 미구매</div></div>
+          </label>
+          <label class="seg-radio-item" onclick="selectSegRadio(this)">
+            <input type="radio" name="bulkSeg" value="신규 고객">
+            <div style="flex:1;"><div class="seg-radio-label">🆕 신규 고객</div><div class="seg-radio-desc">1,243명 · 최근 30일 내 첫 구매</div></div>
+          </label>
+          <label class="seg-radio-item" onclick="selectSegRadio(this)">
+            <input type="radio" name="bulkSeg" value="휴면 고객">
+            <div style="flex:1;"><div class="seg-radio-label">💤 휴면 고객</div><div class="seg-radio-desc">2,104명 · 90일 이상 미접속</div></div>
+          </label>
+          <label class="seg-radio-item" onclick="selectSegRadio(this)">
+            <input type="radio" name="bulkSeg" value="구매 예정">
+            <div style="flex:1;"><div class="seg-radio-label">🛒 구매 예정</div><div class="seg-radio-desc">567명 · 장바구니 담기 후 미결제</div></div>
+          </label>
+          <label class="seg-radio-item" onclick="selectSegRadio(this)">
+            <input type="radio" name="bulkSeg" value="고관여 잠재">
+            <div style="flex:1;"><div class="seg-radio-label">🔍 고관여 잠재</div><div class="seg-radio-desc">1,089명 · 고빈도 방문, 구매 미전환</div></div>
+          </label>
+          <label class="seg-radio-item" onclick="selectSegRadio(this)">
+            <input type="radio" name="bulkSeg" value="장바구니 이탈">
+            <div style="flex:1;"><div class="seg-radio-label">🛍 장바구니 이탈</div><div class="seg-radio-desc">743명 · 7일 내 장바구니 이탈</div></div>
+          </label>
+        </div>
+        <label class="form-label" style="margin-bottom:6px;">이동 방식</label>
+        <div style="display:flex;gap:14px;font-size:13px;">
+          <label style="display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="radio" name="segMoveMode" value="add" checked> 기존 세그먼트에 추가</label>
+          <label style="display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="radio" name="segMoveMode" value="replace"> 기존 세그먼트 교체</label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeModal('modal-bulk-segment')">취소</button>
+      <button class="btn btn-primary" onclick="saveBulkSegment()">이동</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── 벌크: 메시지 발송 ── -->
+<div class="backdrop" id="modal-bulk-message">
+  <div class="modal" style="max-width:580px;">
+    <div class="modal-head">
+      <div class="modal-title">✉️ 메시지 발송</div>
+      <button class="modal-close" onclick="closeModal('modal-bulk-message')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="bulk-info-banner">📋 <span id="bulkMsgCount">0</span>명에게 메시지를 발송합니다.</div>
+
+      <!-- 채널 선택 -->
+      <div class="form-group" style="margin-bottom:0;">
+        <label class="form-label" style="margin-bottom:10px;">발송 채널</label>
+        <div class="msg-channel-grid">
+          <div class="msg-channel-card" onclick="selectMsgChannel(this,'kakao')">
+            <div class="msg-channel-icon">💬</div>
+            <div class="msg-channel-name">카카오 알림톡</div>
+            <div class="msg-channel-desc">수신동의 불필요</div>
+          </div>
+          <div class="msg-channel-card" onclick="selectMsgChannel(this,'sms')">
+            <div class="msg-channel-icon">📱</div>
+            <div class="msg-channel-name">SMS</div>
+            <div class="msg-channel-desc">최대 90자</div>
+          </div>
+          <div class="msg-channel-card" onclick="selectMsgChannel(this,'email')">
+            <div class="msg-channel-icon">📧</div>
+            <div class="msg-channel-name">이메일</div>
+            <div class="msg-channel-desc">HTML 템플릿</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 카카오 알림톡 설정 -->
+      <div id="msgContent-kakao" class="msg-content-section" style="display:none;">
+        <div style="display:flex;align-items:center;gap:6px;background:#FFFBEB;border:1px solid #FDE68A;border-radius:var(--radius-sm);padding:8px 12px;font-size:12px;color:#92400E;margin-bottom:14px;">
+          💡 카카오 비즈니스 포털에서 승인된 템플릿입니다. 템플릿 추가/수정은 <strong style="color:var(--primary);cursor:pointer;" onclick="closeModal('modal-bulk-message')">설정 &gt; 채널 연동</strong>에서 관리하세요.
+        </div>
+        <div class="form-group">
+          <label class="form-label">템플릿 선택 <span style="color:var(--danger);">*</span></label>
+          <select class="form-input" id="kakaoTemplate" onchange="onKakaoTplChange()">
+            <option value="">-- 템플릿을 선택하세요 --</option>
+          </select>
+        </div>
+        <!-- 변수 입력 영역 (동적) -->
+        <div id="kakaoVarsWrap" style="display:none;background:var(--bg);border-radius:var(--radius-sm);padding:12px;margin-bottom:14px;">
+          <div style="font-size:12px;font-weight:600;color:var(--text-sub);margin-bottom:8px;">변수 설정</div>
+          <div id="kakaoVarFields"></div>
+        </div>
+        <!-- 미리보기 -->
+        <div id="kakaoPreviewWrap" style="display:none;">
+          <label class="form-label" style="margin-bottom:6px;">미리보기</label>
+          <div class="kakao-preview-bg">
+            <div class="kakao-sender-row">
+              <div class="kakao-sender-avatar">E</div>
+              <div class="kakao-sender-name">ENTWIZ</div>
+            </div>
+            <div class="kakao-bubble" id="kakaoPreviewText"></div>
+            <div class="kakao-cta-btn" id="kakaoPreviewCta"></div>
+          </div>
+        </div>
+        <div class="form-group" style="margin-top:14px;margin-bottom:0;">
+          <label class="form-label" style="margin-bottom:6px;">발송 시점</label>
+          <div class="send-schedule-row">
+            <label style="display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="radio" name="kakaoSchedule" value="now" checked> 즉시 발송</label>
+            <label style="display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="radio" name="kakaoSchedule" value="reserve"> 예약 발송</label>
+          </div>
+          <div id="kakaoReserveWrap" style="display:none;margin-top:8px;">
+            <input type="datetime-local" class="form-input" id="kakaoReserveTime" style="max-width:220px;">
+          </div>
+        </div>
+      </div>
+
+      <!-- SMS 설정 -->
+      <div id="msgContent-sms" class="msg-content-section" style="display:none;">
+        <div class="form-group">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+            <label class="form-label" style="margin-bottom:0;">메시지 내용 <span style="color:var(--danger);">*</span></label>
+            <button class="btn btn-ghost btn-sm" onclick="toggleSmsTplPanel()" style="font-size:11px;">📋 템플릿 불러오기</button>
+          </div>
+          <!-- 문자 템플릿 패널 -->
+          <div id="smsTplPanel" style="display:none;border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:8px;max-height:160px;overflow-y:auto;">
+            <div id="smsTplPanelList"></div>
+          </div>
+          <textarea class="sms-textarea" id="smsBody" maxlength="90" placeholder="[ENTWIZ] 내용을 직접 입력하거나 위에서 템플릿을 불러오세요." oninput="updateSmsCount()"></textarea>
+          <div class="char-count-row" id="smsCharRow"><span id="smsCharCount">0</span>/90자</div>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label" style="margin-bottom:6px;">발송 시점</label>
+          <div class="send-schedule-row">
+            <label style="display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="radio" name="smsSchedule" value="now" checked> 즉시 발송</label>
+            <label style="display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="radio" name="smsSchedule" value="reserve"> 예약 발송</label>
+          </div>
+          <div id="smsReserveWrap" style="display:none;margin-top:8px;">
+            <input type="datetime-local" class="form-input" id="smsReserveTime" style="max-width:220px;">
+          </div>
+        </div>
+      </div>
+
+      <!-- 이메일 설정 -->
+      <div id="msgContent-email" class="msg-content-section" style="display:none;">
+        <div style="display:flex;align-items:center;gap:6px;background:#FFFBEB;border:1px solid #FDE68A;border-radius:var(--radius-sm);padding:8px 12px;font-size:12px;color:#92400E;margin-bottom:14px;">
+          💡 이메일 템플릿은 <strong style="color:var(--primary);cursor:pointer;" onclick="closeModal('modal-bulk-message')">설정 &gt; 채널 연동 &gt; 이메일</strong>에서 관리합니다.
+        </div>
+        <div class="form-group">
+          <label class="form-label">이메일 템플릿</label>
+          <select class="form-input" id="emailTemplate" onchange="onEmailTplChange()">
+            <option value="">직접 작성 (빈 템플릿)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">이메일 제목 <span style="color:var(--danger);">*</span></label>
+          <input type="text" class="form-input" id="emailSubject" placeholder="예: 이번 달 특별 혜택을 확인해보세요 🎁" oninput="updateEmailPreview()">
+        </div>
+        <!-- 변수 입력 영역 (동적) -->
+        <div id="emailVarsWrap" style="display:none;background:var(--bg);border-radius:var(--radius-sm);padding:12px;margin-bottom:14px;">
+          <div style="font-size:12px;font-weight:600;color:var(--text-sub);margin-bottom:8px;">변수 설정</div>
+          <div id="emailVarFields"></div>
+        </div>
+        <!-- 이메일 미리보기 -->
+        <div id="emailPreviewWrap" style="display:none;margin-bottom:14px;">
+          <label class="form-label" style="margin-bottom:6px;">미리보기</label>
+          <div class="email-preview-wrap open">
+            <div class="email-preview-header">
+              <div class="email-preview-header-row"><span class="email-preview-header-label">발신:</span><span>ENTWIZ &lt;no-reply@entwiz.com&gt;</span></div>
+              <div class="email-preview-header-row"><span class="email-preview-header-label">제목:</span><span id="emailPreviewSubjectDisp" style="font-weight:600;color:var(--text);"></span></div>
+            </div>
+            <div class="email-preview-body" id="emailPreviewBodyDisp"></div>
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label" style="margin-bottom:6px;">발송 시점</label>
+          <div class="send-schedule-row">
+            <label style="display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="radio" name="emailSchedule" value="now" checked> 즉시 발송</label>
+            <label style="display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="radio" name="emailSchedule" value="reserve"> 예약 발송</label>
+          </div>
+          <div id="emailReserveWrap" style="display:none;margin-top:8px;">
+            <input type="datetime-local" class="form-input" id="emailReserveTime" style="max-width:220px;">
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeModal('modal-bulk-message')">취소</button>
+      <button class="btn btn-primary msg-send-btn" id="msgSendBtn" onclick="sendBulkMessage()" disabled>발송</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── 상품 선택 팝업 ── -->
+<div class="backdrop" id="modal-product-select">
+  <div class="modal" style="max-width:480px;">
+    <div class="modal-head">
+      <div class="modal-title">📦 상품 선택</div>
+      <button class="modal-close" onclick="closeModal('modal-product-select')">×</button>
+    </div>
+    <div class="modal-body">
+      <input class="prod-modal-search" id="prodModalSearch" type="text" placeholder="🔍 상품명 검색..." oninput="renderProductModalList(this.value)">
+      <div class="prod-modal-list" id="prodModalList"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeModal('modal-product-select')">취소</button>
+      <button class="btn btn-primary" id="prodModalApplyBtn" onclick="applyProductSelect()" disabled>선택 완료</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── 벌크: 선택 삭제 확인 ── -->
+<div class="backdrop" id="modal-bulk-delete">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" style="color:var(--danger);">🗑 고객 삭제</div>
+      <button class="modal-close" onclick="closeModal('modal-bulk-delete')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="delete-warn-box">
+        ⚠️ <strong>선택한 <span id="bulkDelCount">0</span>명의 고객 데이터를 영구 삭제합니다.</strong><br>
+        삭제된 데이터는 복구할 수 없으며, 구매 이력·캠페인 연동 정보도 함께 제거됩니다.<br>
+        개인정보 삭제 요청(GDPR/개인정보보호법)에 따른 경우에만 사용하세요.
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label style="display:flex;align-items:flex-start;gap:9px;font-size:13px;cursor:pointer;color:var(--text-sub);">
+          <input type="checkbox" id="deleteConfirmCheck" style="margin-top:2px;flex-shrink:0;accent-color:var(--danger);">
+          <span>삭제 대상 고객 목록을 확인했으며, 이 작업이 되돌릴 수 없음을 인지하고 있습니다.</span>
+        </label>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeModal('modal-bulk-delete')">취소</button>
+      <button class="btn btn-danger" onclick="confirmBulkDelete()">삭제</button>
+    </div>
+  </div>
+</div>
+
+<div class="backdrop" id="addSegModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">세그먼트 추가</div>
+      <button class="modal-close" onclick="closeModal('addSegModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">세그먼트 이름<span class="req">*</span></label><input class="form-input" placeholder="예) 고빈도 구매 고객"></div>
+      <div class="form-group"><label class="form-label">설명</label><input class="form-input" placeholder="세그먼트 설명"></div>
+      <div class="form-group">
+        <label class="form-label">편입 조건<span class="req">*</span></label>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;font-size:13px;">
+          <div style="display:flex;gap:8px;margin-bottom:10px;align-items:center;">
+            <select class="form-input" style="width:auto;flex:1"><option>구매 횟수</option><option>누적 구매액</option><option>마지막 접속</option><option>건강도 점수</option></select>
+            <select class="form-input" style="width:auto;"><option>이상</option><option>이하</option><option>초과</option><option>미만</option></select>
+            <input class="form-input" style="width:80px;" placeholder="값">
+          </div>
+          <button class="btn btn-ghost btn-sm" style="color:var(--primary)">＋ 조건 추가 (AND)</button>
+        </div>
+        <div class="form-hint">조건 설정 후 예상 고객 수가 표시됩니다.</div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeModal('addSegModal')">취소</button>
+      <button class="btn btn-primary" onclick="closeModal('addSegModal')">세그먼트 저장</button>
+    </div>
+  </div>
+</div>
+
+</main>
+<script src="crm-layout.js"></script>
+<script src="crm-common.js"></script>
+<script>
+// ── 화면 메타 ──────────────────────────────────────────────────────
+const SCREEN_META = {
+  list: {
+    lnb: 0,
+    crumbs: [{ label: '홈' }, { label: '고객 관리' }, { label: '고객 목록/검색', curr: true }]
+  },
+  detail: {
+    lnb: null,
+    crumbs: [{ label: '홈' }, { label: '고객 관리' }, { label: '고객 목록/검색', screen: 'list' }, { label: '박서연', curr: true }]
+  },
+  segment: {
+    lnb: 1,
+    crumbs: [{ label: '홈' }, { label: '고객 관리' }, { label: '세그먼트 관리', curr: true }]
+  },
+  autotag: {
+    lnb: 2,
+    crumbs: [{ label: '홈' }, { label: '고객 관리' }, { label: '자동 태그 관리', curr: true }]
+  },
+  grade: {
+    lnb: 3,
+    crumbs: [{ label: '홈' }, { label: '고객 관리' }, { label: '등급 관리', curr: true }]
+  }
+};
+
+// ── 브레드크럼 렌더 ────────────────────────────────────────────────
+function renderBreadcrumb(name) {
+  const meta = SCREEN_META[name];
+  if (!meta) return;
+  const bc = document.getElementById('globalBreadcrumb');
+  bc.innerHTML = meta.crumbs.map((c, i) => {
+    const isLast = i === meta.crumbs.length - 1;
+    let item = c.curr || isLast
+      ? `<span class="curr">${c.label}</span>`
+      : c.screen
+        ? `<span class="bc-link" onclick="showScreen('${c.screen}')">${c.label}</span>`
+        : `<span>${c.label}</span>`;
+    return isLast ? item : item + '<span class="sep">›</span>';
+  }).join('');
+}
+
+// ── 화면 전환 (shell의 loadPage에서도 직접 호출됨) ─────────────────
+function showScreen(name, pushState = true) {
+  if (!SCREEN_META[name]) return;
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById('screen-' + name);
+  if (target) { target.classList.add('active'); document.querySelector('.content')?.scrollTo({ top: 0 }); }
+  renderBreadcrumb(name);
+  if (pushState) {
+    history.pushState({ screen: name }, '', '#' + name);
+  } else {
+    history.replaceState({ screen: name }, '', '#' + name);
+  }
+  if (typeof crmSetActiveSidebar === 'function') crmSetActiveSidebar();
+}
+
+// ── 브라우저 뒤로/앞으로 ────────────────────────────────────────────
+window.addEventListener('popstate', e => {
+  showScreen(e.state?.screen || 'list', false);
+});
+
+// ── 최초 로드 ────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  const hash = location.hash.replace('#', '');
+  showScreen(SCREEN_META[hash] ? hash : 'list', false);
+
+  // 모달 backdrop 클릭 닫기
+  document.querySelectorAll('.backdrop').forEach(b => {
+    b.addEventListener('click', e => { if (e.target === b) b.classList.remove('open'); });
+  });
+  // ESC 닫기
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') document.querySelectorAll('.backdrop.open').forEach(b => b.classList.remove('open'));
+  });
+});
+
+// ── 상세 탭 전환 ─────────────────────────────────────────────────────
+function switchDetailTab(el, panelId) {
+  el.closest('.detail-tabs').querySelectorAll('.detail-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  el.closest('.detail-layout').querySelectorAll('.detail-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(panelId).classList.add('active');
+}
+
+// ── 체크박스 / 벌크 ──────────────────────────────────────────────────
+function toggleAll(cb) {
+  document.querySelectorAll('#customerTbody .row-cb').forEach(c => c.checked = cb.checked);
+  updateBulk();
+}
+function updateBulk() {
+  const cbs = [...document.querySelectorAll('#customerTbody .row-cb')];
+  const checked = cbs.filter(c => c.checked);
+  const bar = document.getElementById('bulkBar');
+  bar.classList.toggle('on', checked.length > 0);
+  document.getElementById('bulkCount').textContent = checked.length;
+  const allCb = document.getElementById('checkAll');
+  if (allCb) {
+    allCb.checked = checked.length > 0 && checked.length === cbs.length;
+    allCb.indeterminate = checked.length > 0 && checked.length < cbs.length;
+  }
+  document.querySelectorAll('#customerTbody tr').forEach(tr => tr.classList.remove('selected'));
+  cbs.forEach(c => { if (c.checked) c.closest('tr').classList.add('selected'); });
+}
+function clearSelection() {
+  document.querySelectorAll('#customerTbody .row-cb').forEach(c => c.checked = false);
+  const allCb = document.getElementById('checkAll');
+  if (allCb) { allCb.checked = false; allCb.indeterminate = false; }
+  document.querySelectorAll('#customerTbody tr').forEach(tr => tr.classList.remove('selected'));
+  document.getElementById('bulkBar').classList.remove('on');
+}
+function getCheckedCount() {
+  return [...document.querySelectorAll('#customerTbody .row-cb')].filter(c => c.checked).length;
+}
+
+// ── 벌크 액션: 태그 부여 ──────────────────────────────────────────
+function openBulkTag() {
+  document.getElementById('bulkTagCount').textContent = getCheckedCount();
+  document.querySelectorAll('#tagChipGrid .tag-chip').forEach(c => c.classList.remove('selected'));
+  document.getElementById('tagNewInput').value = '';
+  renderBulkTagSelected();
+  openModal('modal-bulk-tag');
+}
+function toggleTagChip(el) {
+  el.classList.toggle('selected');
+  renderBulkTagSelected();
+}
+function addNewTagChip() {
+  const inp = document.getElementById('tagNewInput');
+  const val = inp.value.trim();
+  if (!val) return;
+  const grid = document.getElementById('tagChipGrid');
+  const exists = [...grid.querySelectorAll('.tag-chip')].some(c => c.textContent === val);
+  if (!exists) {
+    const chip = document.createElement('span');
+    chip.className = 'tag-chip selected';
+    chip.textContent = val;
+    chip.onclick = function() { toggleTagChip(this); };
+    grid.appendChild(chip);
+  } else {
+    const existing = [...grid.querySelectorAll('.tag-chip')].find(c => c.textContent === val);
+    if (existing) existing.classList.add('selected');
+  }
+  inp.value = '';
+  renderBulkTagSelected();
+}
+function renderBulkTagSelected() {
+  const selected = [...document.querySelectorAll('#tagChipGrid .tag-chip.selected')].map(c => c.textContent);
+  const wrap = document.getElementById('bulkTagSelectedWrap');
+  const list = document.getElementById('bulkTagSelectedList');
+  wrap.style.display = selected.length > 0 ? 'block' : 'none';
+  list.innerHTML = selected.map(t => `<span class="tag">${t}</span>`).join('');
+}
+function saveBulkTag() {
+  const selected = [...document.querySelectorAll('#tagChipGrid .tag-chip.selected')].map(c => c.textContent);
+  if (!selected.length) { showToast('warning','태그 선택 필요','부여할 태그를 하나 이상 선택해주세요.'); return; }
+  const n = getCheckedCount();
+  closeModal('modal-bulk-tag');
+  clearSelection();
+  showToast('success','태그 부여 완료', `${n}명에게 [${selected.join(', ')}] 태그가 부여되었습니다.`);
+}
+
+// ── 벌크 액션: 세그먼트 이동 ─────────────────────────────────────
+function openBulkSegment() {
+  document.getElementById('bulkSegCount').textContent = getCheckedCount();
+  document.querySelectorAll('.seg-radio-item').forEach(el => el.classList.remove('selected'));
+  document.querySelectorAll('input[name="bulkSeg"]').forEach(r => r.checked = false);
+  document.querySelector('input[name="segMoveMode"][value="add"]').checked = true;
+  openModal('modal-bulk-segment');
+}
+function selectSegRadio(el) {
+  document.querySelectorAll('.seg-radio-item').forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
+  const radio = el.querySelector('input[type=radio]');
+  if (radio) radio.checked = true;
+}
+function saveBulkSegment() {
+  const sel = document.querySelector('input[name="bulkSeg"]:checked');
+  if (!sel) { showToast('warning','세그먼트 선택 필요','이동할 세그먼트를 선택해주세요.'); return; }
+  const mode = document.querySelector('input[name="segMoveMode"]:checked')?.value;
+  const n = getCheckedCount();
+  const modeLabel = mode === 'replace' ? '교체' : '추가';
+  closeModal('modal-bulk-segment');
+  clearSelection();
+  showToast('success','세그먼트 이동 완료', `${n}명이 [${sel.value}] 세그먼트로 ${modeLabel}되었습니다.`);
+}
+
+// ── 벌크 액션: 메시지 발송 ───────────────────────────────────────
+// 설정 파일과 동일한 템플릿 데이터 (단일 출처 기준)
+const KAKAO_TPL_DATA = [
+  { id:'thanks',  name:'구매 감사 안내',      category:'거래/알림', vars:[],                                                                    content:'안녕하세요 {고객명}님,\nENTWIZ를 이용해주셔서 감사합니다.\n주문하신 상품이 정상 처리되었습니다.\n언제나 최고의 서비스로 보답하겠습니다.', cta:'주문 내역 확인하기' },
+  { id:'coupon',  name:'이탈 방지 쿠폰 발송', category:'마케팅',    vars:[{key:'쿠폰',   label:'쿠폰 선택',       type:'select', options:['15% 할인 쿠폰','20% 할인 쿠폰','무료배송 쿠폰','3,000원 즉시할인']}], content:'{고객명}님을 위한 특별 혜택!\n\n{쿠폰}을 드립니다.\n유효기간: 발급일로부터 7일\n\n지금 바로 사용해보세요!', cta:'쿠폰 사용하기' },
+  { id:'newitem', name:'신상품 안내',          category:'마케팅',    vars:[{key:'상품명', label:'상품명',          type:'product'}],                                          content:'안녕하세요 {고객명}님! 🎉\n\n신상품 [{상품명}]이 출시되었습니다.\n지금 바로 확인해보세요!',                   cta:'신상품 보러가기' },
+  { id:'vip',     name:'VIP 혜택 안내',        category:'멤버십',    vars:[],                                                                    content:'{고객명}님은 ENTWIZ VIP 회원입니다. 👑\n\n이번 달 VIP 전용 혜택을 확인해보세요.\n\n무료배송 · 적립금 2배 · 우선 CS',                     cta:'VIP 혜택 확인' },
+  { id:'reorder', name:'재구매 유도',          category:'마케팅',    vars:[{key:'상품명', label:'이전 구매 상품', type:'product'}],                                                  content:'{고객명}님, 지난번 구매하신\n[{상품명}] 어떠셨나요?\n\n다시 구매 시 10% 할인 적용됩니다!',                cta:'재구매 하기' },
+];
+
+const EMAIL_TPL_DATA = [
+  { id:'promo',     name:'이번 달 특가 안내', vars:[{key:'할인율',type:'text',placeholder:'예: 20%'},{key:'종료일',type:'text',placeholder:'예: 5/31'}], subject:'[ENTWIZ] {할인율} 특가 혜택이 {종료일}까지 진행됩니다!', body:'안녕하세요 {고객명}님,\n\n이번 달 한정 특가 행사를 안내드립니다.\n할인율: {할인율} / 행사 종료일: {종료일}\n\n지금 바로 쇼핑을 즐겨보세요!' },
+  { id:'welcome',   name:'신규 멤버 웰컴',   vars:[], subject:'[ENTWIZ] 환영합니다, {고객명}님! 🎉', body:'안녕하세요 {고객명}님,\n\nENTWIZ의 새 멤버가 되신 것을 환영합니다!\n가입 혜택으로 첫 구매 시 10% 할인 쿠폰을 드립니다.\n\n지금 쇼핑을 시작해보세요!' },
+  { id:'recommend', name:'맞춤 상품 추천',   vars:[{key:'상품명',type:'product'}], subject:'[ENTWIZ] {고객명}님께 딱 맞는 상품을 추천해드려요', body:'안녕하세요 {고객명}님,\n\n고객님의 취향을 분석한 맞춤 상품을 추천해드립니다.\n\n추천 상품: {상품명}\n\n지금 확인해보세요!' },
+  { id:'review',    name:'리뷰 작성 요청',   vars:[{key:'상품명',type:'product'}], subject:'[ENTWIZ] {상품명} 사용 후기를 남겨주세요!', body:'안녕하세요 {고객명}님,\n\n최근 구매하신 [{상품명}] 잘 사용하고 계신가요?\n\n간단한 리뷰를 남겨주시면 500 포인트를 드립니다!' },
+];
+
+const PRODUCT_LIST = [
+  { id:'p01', name:'봄봄 수분 크림 50ml',      price:28000, thumb:'🧴', visible:true,  sale:true  },
+  { id:'p02', name:'비타민 브라이트닝 세럼',    price:42000, thumb:'💊', visible:true,  sale:true  },
+  { id:'p03', name:'선크림 SPF50+ PA++++',     price:19000, thumb:'☀️', visible:true,  sale:true  },
+  { id:'p04', name:'여름 신상 린넨 원피스',      price:58000, thumb:'👗', visible:true,  sale:false },
+  { id:'p05', name:'에코 코튼 반팔 티셔츠',     price:24000, thumb:'👕', visible:true,  sale:true  },
+  { id:'p06', name:'핸드크림 3종 선물 세트',    price:35000, thumb:'🎁', visible:false, sale:false },
+  { id:'p07', name:'리페어 헤어 마스크',        price:31000, thumb:'💆', visible:true,  sale:true  },
+  { id:'p08', name:'클렌징 폼 150ml',           price:15000, thumb:'🫧', visible:true,  sale:true  },
+  { id:'p09', name:'토닝 앰플 30ml',            price:67000, thumb:'🔬', visible:true,  sale:false },
+  { id:'p10', name:'슬리밍 레깅스',             price:39000, thumb:'🩳', visible:false, sale:false },
+];
+
+// 문자 템플릿 (설정 파일의 SMS_TPL_DATA와 동일 초기값)
+const SMS_TPL_REF = [
+  { id:'sms1', name:'주문 확인',   content:'[ENTWIZ] 주문이 완료되었습니다. 감사합니다.' },
+  { id:'sms2', name:'배송 출발',   content:'[ENTWIZ] 주문하신 상품이 발송되었습니다. 빠른 배송으로 만나뵙겠습니다.' },
+  { id:'sms3', name:'할인 안내',   content:'[ENTWIZ] 지금 구매하시면 10% 할인! 오늘까지만 적용됩니다.' },
+  { id:'sms4', name:'이벤트 안내', content:'[ENTWIZ] 특별 이벤트가 진행 중입니다. 앱에서 확인하세요!' },
+];
+
+let _selectedMsgChannel = null;
+
+function openBulkMessage() {
+  _selectedMsgChannel = null;
+  document.getElementById('bulkMsgCount').textContent = getCheckedCount();
+  document.querySelectorAll('.msg-channel-card').forEach(c => c.classList.remove('selected'));
+  ['kakao','sms','email'].forEach(ch => document.getElementById('msgContent-' + ch).style.display = 'none');
+  document.getElementById('msgSendBtn').disabled = true;
+  // 카카오 select 옵션 채우기
+  const kakaoSel = document.getElementById('kakaoTemplate');
+  kakaoSel.innerHTML = '<option value="">-- 템플릿을 선택하세요 --</option>' +
+    KAKAO_TPL_DATA.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
+  kakaoSel.value = '';
+  document.getElementById('kakaoPreviewWrap').style.display = 'none';
+  document.getElementById('kakaoVarsWrap').style.display = 'none';
+  // 이메일 select 옵션 채우기
+  const emailSel = document.getElementById('emailTemplate');
+  emailSel.innerHTML = '<option value="">직접 작성 (빈 템플릿)</option>' +
+    EMAIL_TPL_DATA.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
+  emailSel.value = '';
+  document.getElementById('emailSubject').value = '';
+  document.getElementById('emailVarsWrap').style.display = 'none';
+  document.getElementById('emailPreviewWrap').style.display = 'none';
+  // SMS
+  document.getElementById('smsBody').value = '';
+  document.getElementById('smsCharCount').textContent = '0';
+  document.getElementById('smsCharRow').classList.remove('warn');
+  document.getElementById('smsTplPanel').style.display = 'none';
+  ['kakaoReserveWrap','smsReserveWrap','emailReserveWrap'].forEach(id => document.getElementById(id).style.display = 'none');
+  document.querySelectorAll('input[name="kakaoSchedule"],input[name="smsSchedule"],input[name="emailSchedule"]').forEach(r => { if(r.value==='now') r.checked=true; });
+  openModal('modal-bulk-message');
+}
+
+function selectMsgChannel(el, ch) {
+  document.querySelectorAll('.msg-channel-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  _selectedMsgChannel = ch;
+  ['kakao','sms','email'].forEach(c => document.getElementById('msgContent-' + c).style.display = 'none');
+  document.getElementById('msgContent-' + ch).style.display = 'block';
+  document.getElementById('msgSendBtn').disabled = false;
+  document.querySelectorAll(`input[name="${ch}Schedule"]`).forEach(r => r.onchange = () => {
+    const wrap = document.getElementById(ch + 'ReserveWrap');
+    if (wrap) wrap.style.display = r.value === 'reserve' && r.checked ? 'block' : 'none';
+  });
+}
+
+// ── 카카오 템플릿 변수/프리뷰 ──────────────────────────────────
+// ── 변수 필드 렌더 헬퍼 ──────────────────────────────────────────
+function renderVarField(v, prefix, channel) {
+  const fieldId   = prefix + v.key;
+  const previewFn = channel === 'kakao' ? 'renderKakaoPreview' : 'updateEmailPreview';
+  const label     = v.label || v.key;
+
+  if (v.type === 'select') {
+    return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:13px;">
+      <label style="min-width:100px;font-weight:600;color:var(--text-sub);">${label}</label>
+      <select class="form-input" style="flex:1;" id="${fieldId}" onchange="${previewFn}()">
+        <option value="">선택하세요</option>
+        ${v.options.map(o=>`<option value="${o}">${o}</option>`).join('')}
+      </select></div>`;
+  }
+
+  if (v.type === 'product') {
+    return `<div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;font-size:13px;">
+      <label style="min-width:100px;font-weight:600;color:var(--text-sub);padding-top:6px;">${label}</label>
+      <div style="flex:1;" id="${fieldId}_wrap">
+        <input type="hidden" id="${fieldId}_val" value="">
+        <div id="${fieldId}_emptyState" class="prod-btn-row">
+          <button class="prod-pick-btn" onclick="openProductModal('${fieldId}','${channel}')">📦 상품 목록에서 선택</button>
+          <button class="prod-pick-btn" onclick="setProductDirect('${fieldId}','${channel}')">✏️ 직접 입력</button>
+        </div>
+        <div id="${fieldId}_selectedState" style="display:none;align-items:center;gap:6px;flex-wrap:wrap;">
+          <span class="prod-selected-chip">
+            <span class="prod-selected-chip-name" id="${fieldId}_selectedName"></span>
+            <span class="prod-chip-x" onclick="clearProductField('${fieldId}','${channel}')">×</span>
+          </span>
+          <button class="prod-pick-btn" onclick="openProductModal('${fieldId}','${channel}')">🔄 다시 선택</button>
+        </div>
+        <div id="${fieldId}_directState" style="display:none;">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <input type="text" id="${fieldId}" class="form-input" style="flex:1;" placeholder="상품명을 직접 입력하세요" oninput="${previewFn}()">
+            <button class="btn btn-ghost btn-sm" onclick="clearProductField('${fieldId}','${channel}')" style="font-size:11px;white-space:nowrap;flex-shrink:0;">× 취소</button>
+          </div>
+        </div>
+      </div></div>`;
+  }
+
+  return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:13px;">
+    <label style="min-width:100px;font-weight:600;color:var(--text-sub);">${label}</label>
+    <input type="text" class="form-input" style="flex:1;" id="${fieldId}" placeholder="${v.placeholder||''}" oninput="${previewFn}()">
+  </div>`;
+}
+
+// ── 상품 선택 팝업 ──────────────────────────────────────────────
+let _productModalTarget = { fieldId: null, channel: null };
+let _productModalSelected = null;
+
+function openProductModal(fieldId, channel) {
+  _productModalTarget = { fieldId, channel };
+  _productModalSelected = null;
+  document.getElementById('prodModalSearch').value = '';
+  document.getElementById('prodModalApplyBtn').disabled = true;
+  renderProductModalList('');
+  openModal('modal-product-select');
+}
+
+function renderProductModalList(query) {
+  const q = (query || '').trim().toLowerCase();
+  const filtered = PRODUCT_LIST.filter(p => p.name.toLowerCase().includes(q));
+  if (!filtered.length) {
+    document.getElementById('prodModalList').innerHTML =
+      `<div class="prod-modal-empty">검색 결과가 없습니다.</div>`;
+    return;
+  }
+  document.getElementById('prodModalList').innerHTML = filtered.map(p => `
+    <div class="prod-modal-item${_productModalSelected === p.id ? ' selected' : ''}"
+         data-id="${p.id}" data-name="${p.name}"
+         onclick="toggleProductItem(this,'${p.id}')">
+      <div class="prod-modal-check"></div>
+      <div class="prod-thumb">${p.thumb}</div>
+      <div class="prod-info">
+        <div class="prod-name">${p.name}</div>
+        <div class="prod-price">${p.price.toLocaleString()}원</div>
+        <div class="prod-status-row">
+          <span class="prod-badge ${p.visible ? 'prod-badge-on' : 'prod-badge-off'}">${p.visible ? '노출중' : '비노출'}</span>
+          <span class="prod-badge ${p.sale ? 'prod-badge-sale' : 'prod-badge-nosale'}">${p.sale ? '판매중' : '판매중지'}</span>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function toggleProductItem(el, id) {
+  document.querySelectorAll('#prodModalList .prod-modal-item').forEach(i => i.classList.remove('selected'));
+  el.classList.add('selected');
+  _productModalSelected = id;
+  document.getElementById('prodModalApplyBtn').disabled = false;
+}
+
+function applyProductSelect() {
+  if (!_productModalSelected) return;
+  const { fieldId, channel } = _productModalTarget;
+  const prod = PRODUCT_LIST.find(p => p.id === _productModalSelected);
+  if (!prod) return;
+
+  document.getElementById(fieldId + '_val').value = prod.name;
+  document.getElementById(fieldId + '_selectedName').textContent = prod.name;
+  document.getElementById(fieldId + '_emptyState').style.display = 'none';
+  document.getElementById(fieldId + '_selectedState').style.display = 'flex';
+  document.getElementById(fieldId + '_directState').style.display = 'none';
+
+  closeModal('modal-product-select');
+  if (channel === 'kakao') renderKakaoPreview();
+  else if (channel === 'email') updateEmailPreview();
+}
+
+function setProductDirect(fieldId, channel) {
+  document.getElementById(fieldId + '_emptyState').style.display = 'none';
+  document.getElementById(fieldId + '_selectedState').style.display = 'none';
+  document.getElementById(fieldId + '_directState').style.display = 'block';
+  const inp = document.getElementById(fieldId);
+  if (inp) { inp.value = ''; inp.focus(); }
+}
+
+function clearProductField(fieldId, channel) {
+  document.getElementById(fieldId + '_val').value = '';
+  const inp = document.getElementById(fieldId);
+  if (inp) inp.value = '';
+  document.getElementById(fieldId + '_emptyState').style.display = 'flex';
+  document.getElementById(fieldId + '_selectedState').style.display = 'none';
+  document.getElementById(fieldId + '_directState').style.display = 'none';
+  if (channel === 'kakao') renderKakaoPreview();
+  else if (channel === 'email') updateEmailPreview();
+}
+
+// ── 카카오 변수/프리뷰 ────────────────────────────────────────────
+function onKakaoTplChange() {
+  const id  = document.getElementById('kakaoTemplate').value;
+  const tpl = KAKAO_TPL_DATA.find(t => t.id === id);
+  const varsWrap    = document.getElementById('kakaoVarsWrap');
+  const previewWrap = document.getElementById('kakaoPreviewWrap');
+  if (!tpl) { varsWrap.style.display = 'none'; previewWrap.style.display = 'none'; return; }
+  if (tpl.vars.length) {
+    document.getElementById('kakaoVarFields').innerHTML = tpl.vars.map(v => renderVarField(v, 'kv_', 'kakao')).join('');
+    varsWrap.style.display = 'block';
+  } else {
+    varsWrap.style.display = 'none';
+  }
+  previewWrap.style.display = 'block';
+  renderKakaoPreview();
+}
+
+function getVarValue(prefix, v) {
+  if (v.type === 'product') {
+    const valInput = document.getElementById(prefix + v.key + '_val');
+    const txtInput = document.getElementById(prefix + v.key);
+    if (valInput && valInput.value) return valInput.value;
+    return txtInput ? txtInput.value : '';
+  }
+  const el = document.getElementById(prefix + v.key);
+  return el ? el.value : '';
+}
+
+function renderKakaoPreview() {
+  const id  = document.getElementById('kakaoTemplate').value;
+  const tpl = KAKAO_TPL_DATA.find(t => t.id === id);
+  if (!tpl) return;
+  let text = tpl.content;
+  tpl.vars.forEach(v => {
+    const val   = getVarValue('kv_', v);
+    const label = v.label || v.key;
+    const display = val
+      ? `<span style="background:#D1FAE5;color:#065F46;border-radius:3px;padding:0 3px;">${val}</span>`
+      : `<span style="background:#DBEAFE;color:#1D4ED8;border-radius:3px;padding:0 3px;">[${label}]</span>`;
+    text = text.replaceAll('{'+v.key+'}', display);
+  });
+  text = text.replace('{고객명}', '<span style="background:#D1FAE5;color:#065F46;border-radius:3px;padding:0 3px;">고객명</span>');
+  document.getElementById('kakaoPreviewText').innerHTML = text.replace(/\n/g,'<br>');
+  document.getElementById('kakaoPreviewCta').textContent = tpl.cta;
+}
+
+// ── 이메일 템플릿 변수/프리뷰 ────────────────────────────────────
+function onEmailTplChange() {
+  const id  = document.getElementById('emailTemplate').value;
+  const tpl = EMAIL_TPL_DATA.find(t => t.id === id);
+  const varsWrap    = document.getElementById('emailVarsWrap');
+  const previewWrap = document.getElementById('emailPreviewWrap');
+  if (!tpl) {
+    varsWrap.style.display = 'none';
+    previewWrap.style.display = 'none';
+    document.getElementById('emailSubject').value = '';
+    return;
+  }
+  document.getElementById('emailSubject').value = tpl.subject.replace(/\{[^}]+\}/g, '');
+  if (tpl.vars.length) {
+    document.getElementById('emailVarFields').innerHTML = tpl.vars.map(v => renderVarField(v, 'ev_', 'email')).join('');
+    varsWrap.style.display = 'block';
+  } else {
+    varsWrap.style.display = 'none';
+  }
+  previewWrap.style.display = 'block';
+  updateEmailPreview();
+}
+
+function updateEmailPreview() {
+  const id  = document.getElementById('emailTemplate').value;
+  const tpl = EMAIL_TPL_DATA.find(t => t.id === id);
+  const subjectInput = document.getElementById('emailSubject').value;
+  const previewWrap  = document.getElementById('emailPreviewWrap');
+  if (!subjectInput && !tpl) { previewWrap.style.display = 'none'; return; }
+  previewWrap.style.display = 'block';
+  let subject = subjectInput || (tpl ? tpl.subject : '');
+  let body    = tpl ? tpl.body : '(이메일 본문을 직접 작성합니다)';
+  if (tpl) {
+    tpl.vars.forEach(v => {
+      const val = getVarValue('ev_', v);
+      subject = subject.replaceAll('{'+v.key+'}', val || '['+v.key+']');
+      body    = body.replaceAll('{'+v.key+'}', val
+        ? `<span style="background:#D1FAE5;color:#065F46;border-radius:3px;padding:0 3px;">${val}</span>`
+        : `<span style="background:#DBEAFE;color:#1D4ED8;border-radius:3px;padding:0 3px;">[${v.key}]</span>`);
+    });
+    subject = subject.replace('{고객명}','고객명');
+    body = body.replace('{고객명}','<span style="background:#D1FAE5;color:#065F46;border-radius:3px;padding:0 3px;">고객명</span>');
+  }
+  document.getElementById('emailPreviewSubjectDisp').textContent = subject;
+  document.getElementById('emailPreviewBodyDisp').innerHTML = body.replace(/\n/g,'<br>');
+}
+
+// ── SMS 문자 템플릿 패널 ─────────────────────────────────────────
+function toggleSmsTplPanel() {
+  const panel = document.getElementById('smsTplPanel');
+  const isOpen = panel.style.display !== 'none';
+  if (!isOpen) {
+    panel.innerHTML = SMS_TPL_REF.map(t =>
+      `<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border-bottom:1px solid var(--border);cursor:pointer;font-size:12px;" onmouseenter="this.style.background='var(--bg)'" onmouseleave="this.style.background=''" onclick="loadSmsTpl('${t.id}')">
+        <div><strong style="color:var(--text);">${t.name}</strong><div style="color:var(--text-muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:380px;">${t.content}</div></div>
+        <span style="font-size:11px;color:var(--text-muted);flex-shrink:0;margin-left:8px;">${t.content.length}자</span>
+      </div>`
+    ).join('') || '<div style="padding:12px;font-size:12px;color:var(--text-muted);text-align:center;">저장된 문자 템플릿이 없습니다.</div>';
+  }
+  panel.style.display = isOpen ? 'none' : 'block';
+}
+
+function loadSmsTpl(id) {
+  const tpl = SMS_TPL_REF.find(t => t.id === id);
+  if (!tpl) return;
+  document.getElementById('smsBody').value = tpl.content;
+  updateSmsCount();
+  document.getElementById('smsTplPanel').style.display = 'none';
+}
+
+function updateSmsCount() {
+  const len = document.getElementById('smsBody').value.length;
+  document.getElementById('smsCharCount').textContent = len;
+  document.getElementById('smsCharRow').classList.toggle('warn', len >= 80);
+}
+
+function sendBulkMessage() {
+  if (!_selectedMsgChannel) { showToast('warning','채널 선택 필요','발송 채널을 선택해주세요.'); return; }
+  if (_selectedMsgChannel === 'kakao' && !document.getElementById('kakaoTemplate').value) {
+    showToast('warning','템플릿 선택 필요','알림톡 템플릿을 선택해주세요.'); return;
+  }
+  if (_selectedMsgChannel === 'sms' && !document.getElementById('smsBody').value.trim()) {
+    showToast('warning','내용 입력 필요','메시지 내용을 입력해주세요.'); return;
+  }
+  if (_selectedMsgChannel === 'email' && !document.getElementById('emailSubject').value.trim()) {
+    showToast('warning','제목 입력 필요','이메일 제목을 입력해주세요.'); return;
+  }
+  const chLabel = { kakao:'카카오 알림톡', sms:'SMS', email:'이메일' }[_selectedMsgChannel];
+  const n = getCheckedCount();
+  closeModal('modal-bulk-message');
+  clearSelection();
+  showToast('success','발송 완료', `${chLabel}으로 ${n}명에게 메시지를 발송했습니다.`);
+}
+
+// ── 벌크 액션: 선택 삭제 ─────────────────────────────────────────
+function openBulkDelete() {
+  document.getElementById('bulkDelCount').textContent = getCheckedCount();
+  document.getElementById('deleteConfirmCheck').checked = false;
+  openModal('modal-bulk-delete');
+}
+function confirmBulkDelete() {
+  if (!document.getElementById('deleteConfirmCheck').checked) {
+    showToast('warning','확인 필요','삭제 전 동의 체크박스를 체크해주세요.'); return;
+  }
+  const n = getCheckedCount();
+  closeModal('modal-bulk-delete');
+  clearSelection();
+  showToast('success','삭제 완료', `${n}명의 고객 데이터가 삭제되었습니다.`);
+}
+
+// ── 컬럼 드래그앤드롭 순서 변경 ─────────────────────────────────────
+(function initColDragSort() {
+  let dragColIdx = null;
+  const table = () => document.querySelector('#screen-list table');
+
+  document.addEventListener('dragstart', e => {
+    const th = e.target.closest('th.col-draggable');
+    if (!th) { e.preventDefault(); return; }
+    dragColIdx = th.cellIndex;
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', '');
+    requestAnimationFrame(() => th.classList.add('col-dragging'));
+  });
+
+  document.addEventListener('dragover', e => {
+    const th = e.target.closest('th.col-draggable');
+    if (!th || dragColIdx === null || th.cellIndex === dragColIdx) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    table().querySelectorAll('th').forEach(t => t.classList.remove('col-drag-over'));
+    th.classList.add('col-drag-over');
+  });
+
+  document.addEventListener('dragleave', e => {
+    const th = e.target.closest('th.col-draggable');
+    if (th && !th.contains(e.relatedTarget)) th.classList.remove('col-drag-over');
+  });
+
+  document.addEventListener('drop', e => {
+    const th = e.target.closest('th.col-draggable');
+    if (!th || dragColIdx === null) return;
+    e.preventDefault();
+    const targetIdx = th.cellIndex;
+    if (targetIdx === dragColIdx) return;
+    // 모든 행(thead + tbody)에서 같은 인덱스 셀을 동시에 이동
+    table().querySelectorAll('tr').forEach(row => {
+      const cells = Array.from(row.cells);
+      const moving = cells[dragColIdx];
+      const target = cells[targetIdx];
+      if (!moving || !target) return;
+      if (dragColIdx < targetIdx) {
+        row.insertBefore(moving, target.nextSibling);
+      } else {
+        row.insertBefore(moving, target);
+      }
+    });
+    table().querySelectorAll('th').forEach(t => t.classList.remove('col-drag-over', 'col-dragging'));
+    dragColIdx = null;
+  });
+
+  document.addEventListener('dragend', () => {
+    const t = table();
+    if (t) t.querySelectorAll('th').forEach(th => th.classList.remove('col-dragging', 'col-drag-over'));
+    dragColIdx = null;
+  });
+})();
+
+// ── 전화번호 클립보드 복사 ───────────────────────────────────────────
+function copyPhone(num) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(num).then(() => alert('복사되었습니다.')).catch(() => fallbackCopy(num));
+  } else {
+    fallbackCopy(num);
+  }
+}
+function fallbackCopy(num) {
+  const el = document.createElement('textarea');
+  el.value = num; el.style.position = 'fixed'; el.style.opacity = '0';
+  document.body.appendChild(el); el.select();
+  document.execCommand('copy'); document.body.removeChild(el);
+  alert('복사되었습니다.');
+}
+
+// ── 커스텀 다중 필터 ─────────────────────────────────────────────────
+const activeFilters = { segment:[], grade:[], health:[], period:[] };
+
+function toggleDD(id) {
+  const dd = document.getElementById(id);
+  const panel = dd.querySelector('.filter-dd-panel');
+  const isOpen = panel.classList.contains('open');
+  document.querySelectorAll('.filter-dd-panel').forEach(p => {
+    p.classList.remove('open');
+    p.closest('.filter-dropdown').querySelector('.filter-dd-btn').classList.remove('active');
+  });
+  if (!isOpen) {
+    panel.classList.add('open');
+    dd.querySelector('.filter-dd-btn').classList.add('active');
+  }
+}
+
+function onFilterChange(group, input) {
+  const val = input.value;
+  if (input.type === 'radio') {
+    if (group === 'period' && val === '직접설정') {
+      document.getElementById('periodCustomWrap').classList.add('open');
+      activeFilters[group] = [];
+    } else {
+      document.getElementById('periodCustomWrap')?.classList.remove('open');
+      activeFilters[group] = [{value: val, label: val}];
+    }
+  } else {
+    const idx = activeFilters[group].findIndex(f => f.value === val);
+    if (input.checked && idx < 0) activeFilters[group].push({value: val, label: val});
+    else if (!input.checked && idx >= 0) activeFilters[group].splice(idx, 1);
+  }
+  renderFilterTags();
+  updateFilterBtnState();
+}
+
+function applyCustomPeriod() {
+  const from = document.getElementById('periodDateFrom').value;
+  const to   = document.getElementById('periodDateTo').value;
+  if (!from || !to) { alert('시작일과 종료일을 모두 선택해주세요.'); return; }
+  if (from > to) { alert('시작일은 종료일보다 이전이어야 합니다.'); return; }
+  const label = from.replace(/-/g,'.') + ' ~ ' + to.replace(/-/g,'.');
+  activeFilters['period'] = [{value: '직접설정', label}];
+  renderFilterTags();
+  updateFilterBtnState();
+  document.querySelectorAll('.filter-dd-panel').forEach(p => {
+    p.classList.remove('open');
+    p.closest('.filter-dropdown').querySelector('.filter-dd-btn').classList.remove('active');
+  });
+}
+
+function removeFilter(group, val) {
+  activeFilters[group] = activeFilters[group].filter(f => f.value !== val);
+  const el = document.querySelector(`#fd-${group} input[value="${val}"]`);
+  if (el) el.checked = false;
+  if (group === 'period' && val === '직접설정') {
+    document.getElementById('periodCustomWrap')?.classList.remove('open');
+  }
+  renderFilterTags();
+  updateFilterBtnState();
+}
+
+function renderFilterTags() {
+  const row = document.getElementById('filterTagsRow');
+  const tags = [];
+  Object.entries(activeFilters).forEach(([group, items]) => {
+    items.forEach(item => {
+      const safe = item.value.replace(/'/g, "\\'");
+      tags.push(`<span class="filter-tag">${item.label}<span class="filter-tag-x" onclick="removeFilter('${group}','${safe}')">×</span></span>`);
+    });
+  });
+  row.innerHTML = tags.join('');
+  row.style.display = tags.length ? 'flex' : 'none';
+}
+
+function updateFilterBtnState() {
+  ['segment','grade','health','period'].forEach(group => {
+    const btn = document.querySelector(`#fd-${group} .filter-dd-btn`);
+    if (btn) btn.classList.toggle('has-filter', activeFilters[group].length > 0);
+  });
+}
+
+function clearAllFilters() {
+  Object.keys(activeFilters).forEach(k => activeFilters[k] = []);
+  document.querySelectorAll('.filter-dd-panel input').forEach(i => i.checked = false);
+  document.getElementById('periodDateFrom').value = '';
+  document.getElementById('periodDateTo').value = '';
+  document.getElementById('periodCustomWrap')?.classList.remove('open');
+  document.querySelector('#screen-list .filter-search input').value = '';
+  document.querySelectorAll('.filter-dd-btn').forEach(b => b.classList.remove('has-filter','active'));
+  renderFilterTags();
+}
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.filter-dropdown')) {
+    document.querySelectorAll('.filter-dd-panel').forEach(p => {
+      p.classList.remove('open');
+      p.closest('.filter-dropdown').querySelector('.filter-dd-btn').classList.remove('active');
+    });
+  }
+});
+
+// ── 엑셀 다운로드 사유 확인 ─────────────────────────────────────────
+function confirmExcelDownload() {
+  const category = document.getElementById('excelReasonCategory').value;
+  const detail   = document.getElementById('excelReasonDetail').value.trim();
+  const agree    = document.getElementById('excelAgree').checked;
+  if (!category) { alert('사유 분류를 선택해주세요.'); return; }
+  if (detail.length < 20) { alert('상세 사유를 20자 이상 입력해주세요.'); return; }
+  if (!agree) { alert('개인정보 처리 동의가 필요합니다.'); return; }
+  closeModal('excelReasonModal');
+  showToast('success', '다운로드 시작', '고객 목록 파일을 준비 중입니다. 잠시 후 자동 다운로드됩니다.');
+}
+</script>
+</body>
+</html>

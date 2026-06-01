@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRM 어드민 | 로그인</title>
+<style>
+:root {
+  --primary:      #4F6EF7;
+  --primary-dark: #3B5BEB;
+  --bg:           #F1F5F9;
+  --surface:      #FFFFFF;
+  --border:       #E2E8F0;
+  --text:         #1E293B;
+  --text-sub:     #64748B;
+  --text-muted:   #94A3B8;
+  --danger:       #EF4444;
+  --radius:       8px;
+  --radius-sm:    4px;
+  --shadow-md:    0 8px 32px rgba(0,0,0,.10);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Malgun Gothic','맑은 고딕',-apple-system,sans-serif;
+  font-size: 14px; color: var(--text);
+  background: var(--bg);
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.login-wrap {
+  width: 100%; max-width: 400px; padding: 20px;
+}
+
+.login-logo {
+  text-align: center; margin-bottom: 32px;
+}
+.login-brand-icon {
+  width: 48px; height: 48px; border-radius: 12px;
+  background: var(--primary);
+  display: inline-flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 22px; font-weight: 900;
+  margin-bottom: 12px;
+}
+.login-brand-name { font-size: 22px; font-weight: 800; color: var(--text); letter-spacing: -.4px; }
+.login-brand-sub  { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+
+.login-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: var(--shadow-md);
+}
+.login-title { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+.login-desc  { font-size: 13px; color: var(--text-sub); margin-bottom: 24px; }
+
+.form-group  { margin-bottom: 16px; }
+.form-label  { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+.form-input  {
+  width: 100%; padding: 10px 12px; font-size: 14px;
+  border: 1px solid var(--border); border-radius: var(--radius);
+  outline: none; transition: border-color .15s; font-family: inherit;
+  color: var(--text);
+}
+.form-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,110,247,.1); }
+.form-input::placeholder { color: var(--text-muted); }
+
+.login-options {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px; font-size: 13px;
+}
+.remember-wrap { display: flex; align-items: center; gap: 6px; cursor: pointer; color: var(--text-sub); }
+.remember-wrap input { accent-color: var(--primary); width: 14px; height: 14px; cursor: pointer; }
+.forgot-pw { color: var(--primary); cursor: pointer; }
+.forgot-pw:hover { text-decoration: underline; }
+
+.btn-login {
+  width: 100%; padding: 11px;
+  background: var(--primary); color: #fff;
+  border: none; border-radius: var(--radius);
+  font-size: 15px; font-weight: 700;
+  cursor: pointer; font-family: inherit;
+  transition: background .15s;
+}
+.btn-login:hover { background: var(--primary-dark); }
+.btn-login:active { transform: scale(.99); }
+
+.login-error {
+  display: none;
+  background: #FEF2F2; border: 1px solid #FECACA;
+  border-radius: var(--radius-sm);
+  padding: 10px 12px; font-size: 13px; color: #B91C1C;
+  margin-bottom: 16px;
+}
+.login-error.show { display: flex; align-items: center; gap: 7px; }
+
+.login-footer {
+  text-align: center; margin-top: 24px;
+  font-size: 12px; color: var(--text-muted);
+}
+</style>
+</head>
+<body>
+
+<div class="login-wrap">
+  <div class="login-logo">
+    <div class="login-brand-icon">E</div>
+    <div class="login-brand-name">ENTWIZ CRM</div>
+    <div class="login-brand-sub">전사 고객관계관리 시스템</div>
+  </div>
+
+  <div class="login-card">
+    <div class="login-title">로그인</div>
+    <div class="login-desc">관리자 계정으로 로그인하세요.</div>
+
+    <div class="login-error" id="loginError">
+      <span>⚠️</span>
+      <span id="loginErrorMsg">이메일 또는 비밀번호를 확인해주세요.</span>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">이메일</label>
+      <input class="form-input" id="inputEmail" type="email" placeholder="example@entwiz.com" value="">
+    </div>
+    <div class="form-group">
+      <label class="form-label">비밀번호</label>
+      <input class="form-input" id="inputPw" type="password" placeholder="비밀번호를 입력하세요"
+             onkeydown="if(event.key==='Enter') doLogin()">
+    </div>
+
+    <div class="login-options">
+      <label class="remember-wrap">
+        <input type="checkbox" id="remember"> 로그인 상태 유지
+      </label>
+      <span class="forgot-pw">비밀번호 찾기</span>
+    </div>
+
+    <button class="btn-login" onclick="doLogin()">로그인</button>
+  </div>
+
+  <div class="login-footer">© 2026 ENTWIZ Corp. · 프로젝트운영본부</div>
+</div>
+
+<script>
+function doLogin() {
+  const email = document.getElementById('inputEmail').value.trim();
+  const pw    = document.getElementById('inputPw').value;
+  const err   = document.getElementById('loginError');
+
+  if (!email || !pw) {
+    document.getElementById('loginErrorMsg').textContent = '이메일과 비밀번호를 모두 입력해주세요.';
+    err.classList.add('show');
+    return;
+  }
+
+  err.classList.remove('show');
+  // 프로토타입: 입력값 무관하게 어드민으로 이동
+  window.location.href = 'CRM_어드민_공통UI.html';
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="crm-layout.css">
+<title>홈 | ENTWIZ CRM</title>
+<style>
+:root {
+  --primary:#2563EB; --primary-dark:#1D4ED8; --primary-light:#EFF6FF;
+  --bg:#F8FAFC; --surface:#FFFFFF; --border:#E2E8F0;
+  --text:#0F172A; --text-sub:#475569; --text-muted:#94A3B8;
+  --success:#059669; --success-bg:#ECFDF5;
+  --warning:#D97706; --warning-bg:#FFFBEB;
+  --danger:#DC2626; --danger-bg:#FEF2F2;
+  --info:#2563EB; --info-bg:#EFF6FF;
+  --radius:8px; --radius-sm:5px;
+  --shadow:0 1px 3px rgba(0,0,0,.08); --shadow-md:0 4px 16px rgba(0,0,0,.10);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Pretendard','Malgun Gothic','맑은 고딕',-apple-system,sans-serif;font-size:14px;color:var(--text);background:var(--bg);}
+a{text-decoration:none;} button{font-family:inherit;cursor:pointer;}
+
+/* BREADCRUMB */
+.breadcrumb{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-muted);margin-bottom:14px;}
+.breadcrumb .sep{color:var(--border);font-size:14px;}
+.breadcrumb .curr{color:var(--text-sub);font-weight:600;}
+
+/* PAGE HEADER */
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;}
+.page-title{font-size:20px;font-weight:800;}
+.page-desc{font-size:13px;color:var(--text-sub);margin-top:3px;}
+.page-actions{display:flex;gap:8px;align-items:center;}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--radius);font-size:13px;font-weight:600;border:1px solid transparent;transition:all .15s;white-space:nowrap;}
+.btn-primary{background:var(--primary);color:#fff;border-color:var(--primary);}
+.btn-primary:hover{background:var(--primary-dark);}
+.btn-secondary{background:var(--surface);color:var(--text-sub);border-color:var(--border);}
+.btn-secondary:hover{background:var(--bg);}
+.btn-sm{padding:5px 10px;font-size:12px;border-radius:var(--radius-sm);}
+
+/* KPI GRID */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);position:relative;overflow:hidden;}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.kpi-card.blue::before{background:var(--primary);}
+.kpi-card.green::before{background:var(--success);}
+.kpi-card.orange::before{background:var(--warning);}
+.kpi-card.red::before{background:var(--danger);}
+.kpi-label{font-size:12px;color:var(--text-muted);margin-bottom:8px;}
+.kpi-row{display:flex;align-items:flex-end;justify-content:space-between;}
+.kpi-value{font-size:26px;font-weight:800;line-height:1;}
+.kpi-icon{font-size:24px;opacity:.3;}
+.kpi-change{display:flex;align-items:center;gap:4px;font-size:12px;margin-top:8px;}
+.kpi-change.up{color:var(--success);}
+.kpi-change.down{color:var(--danger);}
+.kpi-change .kpi-sub{color:var(--text-muted);}
+
+/* GRID LAYOUT */
+.grid-2{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px;}
+.grid-2-rev{display:grid;grid-template-columns:1fr 2fr;gap:16px;margin-bottom:16px;}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+.card-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.card-title{font-size:14px;font-weight:700;display:flex;align-items:center;gap:6px;}
+.card-body{padding:16px 18px;}
+.card-link{font-size:12px;color:var(--primary);cursor:pointer;}
+.card-link:hover{text-decoration:underline;}
+
+/* ALERT BANNER */
+.alert-list{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.alert-item{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:var(--radius);border:1px solid;}
+.alert-item.danger{background:var(--danger-bg);border-color:#FECACA;color:var(--danger);}
+.alert-item.warning{background:var(--warning-bg);border-color:#FDE68A;color:var(--warning);}
+.alert-item.info{background:var(--info-bg);border-color:#BFDBFE;color:var(--info);}
+.alert-icon{font-size:18px;flex-shrink:0;}
+.alert-body{flex:1;}
+.alert-title{font-size:13px;font-weight:700;margin-bottom:1px;}
+.alert-desc{font-size:12px;opacity:.8;}
+.alert-action{font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;text-decoration:underline;}
+
+/* CHART PLACEHOLDER */
+.chart-placeholder{background:linear-gradient(135deg,#F1F5F9 0%,#E2E8F0 100%);border-radius:var(--radius-sm);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;}
+.chart-bar-group{display:flex;align-items:flex-end;gap:6px;height:100%;width:100%;padding:0 8px 8px;}
+.chart-bar{background:var(--primary);opacity:.7;border-radius:3px 3px 0 0;flex:1;transition:opacity .15s;}
+.chart-bar:hover{opacity:1;}
+.chart-bar.accent{background:var(--success);}
+
+/* MINI METRIC */
+.mini-metric-list{display:flex;flex-direction:column;gap:0;}
+.mini-metric{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);}
+.mini-metric:last-child{border-bottom:none;}
+.mini-metric-left{display:flex;align-items:center;gap:8px;}
+.mini-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.mini-label{font-size:13px;color:var(--text-sub);}
+.mini-value{font-size:13px;font-weight:700;}
+.mini-change{font-size:11px;margin-left:6px;}
+.mini-change.up{color:var(--success);}
+.mini-change.down{color:var(--danger);}
+
+/* CAMPAIGN TABLE */
+.table{width:100%;border-collapse:collapse;}
+.table th{font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;padding:8px 12px;text-align:left;border-bottom:2px solid var(--border);}
+.table td{padding:10px 12px;border-bottom:1px solid var(--border);font-size:13px;}
+.table tr:last-child td{border-bottom:none;}
+.table tr:hover td{background:var(--bg);}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;}
+.badge-success{background:var(--success-bg);color:var(--success);}
+.badge-warning{background:var(--warning-bg);color:var(--warning);}
+.badge-info{background:var(--info-bg);color:var(--info);}
+.badge-muted{background:var(--bg);color:var(--text-muted);}
+
+/* PROGRESS BAR */
+.progress{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:4px;}
+.progress-fill{height:100%;background:var(--primary);border-radius:3px;}
+.progress-fill.green{background:var(--success);}
+.progress-fill.orange{background:var(--warning);}
+
+/* FUNNEL */
+.funnel-list{display:flex;flex-direction:column;gap:8px;}
+.funnel-row{display:flex;align-items:center;gap:10px;}
+.funnel-label{font-size:12px;color:var(--text-sub);width:80px;flex-shrink:0;text-align:right;}
+.funnel-bar-wrap{flex:1;background:var(--bg);border-radius:3px;height:22px;position:relative;}
+.funnel-bar{height:100%;border-radius:3px;display:flex;align-items:center;padding:0 8px;}
+.funnel-val{font-size:11px;font-weight:700;color:#fff;}
+.funnel-pct{font-size:11px;color:var(--text-muted);margin-left:6px;}
+
+/* QUICK ACTION */
+.quick-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;}
+.qa-btn{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center;cursor:pointer;transition:all .15s;box-shadow:var(--shadow);}
+.qa-btn:hover{border-color:var(--primary);background:var(--primary-light);transform:translateY(-1px);}
+.qa-icon{font-size:22px;margin-bottom:6px;}
+.qa-label{font-size:12px;font-weight:600;color:var(--text-sub);}
+
+/* CUSTOMER HEALTH */
+.health-donut{display:flex;align-items:center;gap:20px;}
+.donut-wrap{width:90px;height:90px;position:relative;flex-shrink:0;}
+.donut-svg{width:100%;height:100%;}
+.donut-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;}
+.donut-pct{font-size:20px;font-weight:800;color:var(--text);}
+.donut-sub{font-size:10px;color:var(--text-muted);}
+.health-legend{flex:1;}
+.legend-item{display:flex;align-items:center;gap:7px;margin-bottom:8px;}
+.legend-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.legend-label{font-size:12px;color:var(--text-sub);flex:1;}
+.legend-count{font-size:12px;font-weight:700;}
+
+/* 모달 공통 */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:#fff;border-radius:12px;max-width:100%;max-height:calc(100vh - 60px);overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.22);animation:mFadeUp .18s ease;}
+@keyframes mFadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.modal-head{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#fff;z-index:1;}
+.modal-title{font-size:16px;font-weight:700;}
+.modal-close{background:none;border:none;font-size:24px;line-height:1;color:var(--text-muted);cursor:pointer;padding:0 2px;}
+.modal-body{padding:24px;}
+.modal-foot{padding:14px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;position:sticky;bottom:0;background:#fff;}
+.form-label{font-size:12px;font-weight:600;color:var(--text-sub);display:block;margin-bottom:5px;}
+.form-hint{font-size:11px;color:var(--text-muted);margin-top:4px;}
+/* 기간 프리셋 */
+.date-preset-grid{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:18px;}
+.date-preset-btn{padding:6px 14px;border:1px solid var(--border);border-radius:20px;font-size:12px;font-weight:600;color:var(--text-sub);background:#fff;cursor:pointer;transition:all .15s;}
+.date-preset-btn:hover,.date-preset-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+/* 리포트 히스토리 테이블 */
+.rpt-table{width:100%;border-collapse:collapse;font-size:12px;}
+.rpt-table th{background:var(--bg);padding:8px 10px;text-align:left;font-weight:600;color:var(--text-sub);border-bottom:1px solid var(--border);white-space:nowrap;}
+.rpt-table td{padding:9px 10px;border-bottom:1px solid var(--border);color:var(--text);}
+.rpt-table tbody tr:last-child td{border-bottom:none;}
+.rpt-table tbody tr:hover td{background:var(--bg);}
+</style>
+</head>
+<body>
+<main class="content">
+
+<div class="breadcrumb">
+  <span>ENTWIZ CRM</span>
+  <span class="sep">›</span>
+  <span class="curr">홈</span>
+</div>
+
+<div class="page-header">
+  <div>
+    <div class="page-title">📊 오늘의 CRM 현황</div>
+    <div class="page-desc">2026년 5월 28일 (수) · 마지막 업데이트 09:35</div>
+  </div>
+  <div class="page-actions">
+    <button class="btn btn-secondary btn-sm" onclick="openModal('modal-date-range')">📅 기간 설정</button>
+    <button class="btn btn-secondary btn-sm" onclick="openModal('modal-report-history')">⬇️ 리포트 다운로드</button>
+    <button class="btn btn-primary btn-sm" onclick="location.href='CRM_캠페인시작하기.html'">🚀 캠페인 시작</button>
+  </div>
+</div>
+
+<!-- 긴급 알림 배너 -->
+<div class="alert-list">
+  <div class="alert-item danger">
+    <span class="alert-icon">🚨</span>
+    <div class="alert-body">
+      <div class="alert-title">이탈 위험 고객 41명 감지</div>
+      <div class="alert-desc">30일 이상 미구매 + 이메일 미오픈 고객이 전주 대비 18% 증가했습니다.</div>
+    </div>
+    <span class="alert-action" onclick="location.href='CRM_메시지캠페인.html#list'" style="cursor:pointer;">리텐션 캠페인 발송 →</span>
+  </div>
+  <div class="alert-item warning">
+    <span class="alert-icon">⚠️</span>
+    <div class="alert-body">
+      <div class="alert-title">미처리 CS 문의 5건</div>
+      <div class="alert-desc">긴급 문의 2건이 24시간 이상 미처리 상태입니다.</div>
+    </div>
+    <span class="alert-action" onclick="location.href='CRM_고객지원.html'" style="cursor:pointer;">문의 확인하기 →</span>
+  </div>
+</div>
+
+<!-- KPI 카드 -->
+<div class="kpi-grid">
+  <div class="kpi-card blue">
+    <div class="kpi-label">이번 달 매출</div>
+    <div class="kpi-row">
+      <div class="kpi-value" style="font-size:18px;">47,200,000원</div>
+      <div class="kpi-icon">💰</div>
+    </div>
+    <div class="kpi-change up">▲ +12.4% <span class="kpi-sub">전월 대비</span></div>
+    <div class="progress" style="margin-top:10px;">
+      <div class="progress-fill" style="width:78%;"></div>
+    </div>
+    <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">목표 대비 78% · 목표 60,500,000원</div>
+  </div>
+  <div class="kpi-card green">
+    <div class="kpi-label">전체 고객 수</div>
+    <div class="kpi-row">
+      <div class="kpi-value">12,847</div>
+      <div class="kpi-icon">👥</div>
+    </div>
+    <div class="kpi-change up">▲ +234명 <span class="kpi-sub">이번 달 신규</span></div>
+    <div class="progress" style="margin-top:10px;">
+      <div class="progress-fill green" style="width:65%;"></div>
+    </div>
+    <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">활성 고객 8,431명 (65.6%)</div>
+  </div>
+  <div class="kpi-card orange">
+    <div class="kpi-label">캠페인 전환율</div>
+    <div class="kpi-row">
+      <div class="kpi-value">3.8%</div>
+      <div class="kpi-icon">📣</div>
+    </div>
+    <div class="kpi-change up">▲ +0.6%p <span class="kpi-sub">전주 대비</span></div>
+    <div class="progress" style="margin-top:10px;">
+      <div class="progress-fill orange" style="width:76%;"></div>
+    </div>
+    <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">목표 5.0% · 진행 중 캠페인 7개</div>
+  </div>
+  <div class="kpi-card red">
+    <div class="kpi-label">이탈 위험 고객</div>
+    <div class="kpi-row">
+      <div class="kpi-value">41명</div>
+      <div class="kpi-icon">⚠️</div>
+    </div>
+    <div class="kpi-change down">▲ +18% <span class="kpi-sub">전주 대비</span></div>
+    <div style="margin-top:10px;">
+      <button class="btn btn-sm" style="background:var(--danger-bg);color:var(--danger);border:1px solid #FECACA;font-size:11px;">자동 리텐션 발송</button>
+    </div>
+  </div>
+</div>
+
+<!-- 빠른 실행 -->
+<div class="quick-actions">
+  <div class="qa-btn" onclick="location.href='CRM_캠페인시작하기.html'">
+    <div class="qa-icon">🚀</div>
+    <div class="qa-label">캠페인 만들기</div>
+  </div>
+  <div class="qa-btn" onclick="location.href='CRM_설정.html'">
+    <div class="qa-icon">🎯</div>
+    <div class="qa-label">세그먼트 설정</div>
+  </div>
+  <div class="qa-btn" onclick="location.href='CRM_워크플로우.html'">
+    <div class="qa-icon">⚡</div>
+    <div class="qa-label">자동화 설정</div>
+  </div>
+  <div class="qa-btn" onclick="location.href='CRM_애널리틱스.html'">
+    <div class="qa-icon">📈</div>
+    <div class="qa-label">리포트 보기</div>
+  </div>
+</div>
+
+<!-- 매출 트렌드 + 고객 건강도 -->
+<div class="grid-2" style="margin-bottom:16px;">
+  <!-- 매출 차트 -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title">📈 매출 트렌드 (최근 6개월)</span>
+      <div style="display:flex;gap:12px;align-items:center;">
+        <span style="font-size:11px;display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:var(--primary);display:inline-block;opacity:.7;"></span>월 매출</span>
+        <a class="card-link" onclick="location.href='CRM_애널리틱스.html'">상세 →</a>
+      </div>
+    </div>
+    <div class="card-body" style="padding-bottom:8px;">
+      <div style="display:flex;align-items:flex-end;gap:6px;height:160px;padding-bottom:0;">
+        <!-- 12월 -->
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px;">
+          <span style="font-size:9px;color:var(--text-muted);font-weight:600;white-space:nowrap;">2,840만</span>
+          <div style="width:100%;background:var(--primary);opacity:.5;border-radius:3px 3px 0 0;height:78px;"></div>
+          <span style="font-size:10px;color:var(--text-muted);padding-top:4px;">12월</span>
+        </div>
+        <!-- 1월 -->
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px;">
+          <span style="font-size:9px;color:var(--text-muted);font-weight:600;white-space:nowrap;">3,150만</span>
+          <div style="width:100%;background:var(--primary);opacity:.6;border-radius:3px 3px 0 0;height:87px;"></div>
+          <span style="font-size:10px;color:var(--text-muted);padding-top:4px;">1월</span>
+        </div>
+        <!-- 2월 -->
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px;">
+          <span style="font-size:9px;color:var(--text-muted);font-weight:600;white-space:nowrap;">3,670만</span>
+          <div style="width:100%;background:var(--primary);opacity:.7;border-radius:3px 3px 0 0;height:101px;"></div>
+          <span style="font-size:10px;color:var(--text-muted);padding-top:4px;">2월</span>
+        </div>
+        <!-- 3월 -->
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px;">
+          <span style="font-size:9px;color:var(--text-muted);font-weight:600;white-space:nowrap;">4,120만</span>
+          <div style="width:100%;background:var(--primary);opacity:.8;border-radius:3px 3px 0 0;height:113px;"></div>
+          <span style="font-size:10px;color:var(--text-muted);padding-top:4px;">3월</span>
+        </div>
+        <!-- 4월 -->
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px;">
+          <span style="font-size:9px;color:var(--text-muted);font-weight:600;white-space:nowrap;">4,440만</span>
+          <div style="width:100%;background:var(--primary);opacity:.9;border-radius:3px 3px 0 0;height:122px;"></div>
+          <span style="font-size:10px;color:var(--text-muted);padding-top:4px;">4월</span>
+        </div>
+        <!-- 5월 (현재) -->
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px;">
+          <span style="font-size:9px;color:var(--primary);font-weight:800;white-space:nowrap;">4,720만</span>
+          <div style="width:100%;background:var(--primary);border-radius:3px 3px 0 0;height:130px;position:relative;">
+            <span style="position:absolute;top:6px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:700;color:#fff;white-space:nowrap;">현재</span>
+          </div>
+          <span style="font-size:10px;color:var(--primary);font-weight:700;padding-top:4px;">5월</span>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);padding-top:8px;border-top:1px solid var(--border);margin-top:4px;">
+        <span>6개월 합계: <strong style="color:var(--text);">229,400,000원</strong></span>
+        <span>월평균: <strong style="color:var(--text);">38,200,000원</strong></span>
+        <span>YoY: <strong style="color:var(--success);">+24.7%</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 고객 건강도 -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title">💚 고객 건강도 분포</span>
+      <a class="card-link" onclick="location.href='CRM_고객지원.html#health'">상세 →</a>
+    </div>
+    <div class="card-body">
+      <div class="health-donut">
+        <div class="donut-wrap">
+          <svg class="donut-svg" viewBox="0 0 36 36">
+            <circle cx="18" cy="18" r="15.9" fill="none" stroke="#E2E8F0" stroke-width="3"/>
+            <!-- 챔피언 12% -->
+            <circle cx="18" cy="18" r="15.9" fill="none" stroke="#7C3AED" stroke-width="3" stroke-dasharray="12 88" stroke-dashoffset="25" transform="rotate(-90 18 18)"/>
+            <!-- 건강 55% -->
+            <circle cx="18" cy="18" r="15.9" fill="none" stroke="#059669" stroke-width="3" stroke-dasharray="55 45" stroke-dashoffset="13" transform="rotate(-90 18 18)"/>
+            <!-- 주의 22% -->
+            <circle cx="18" cy="18" r="15.9" fill="none" stroke="#D97706" stroke-width="3" stroke-dasharray="22 78" stroke-dashoffset="-42" transform="rotate(-90 18 18)"/>
+            <!-- 위험 11% -->
+            <circle cx="18" cy="18" r="15.9" fill="none" stroke="#DC2626" stroke-width="3" stroke-dasharray="11 89" stroke-dashoffset="-64" transform="rotate(-90 18 18)"/>
+          </svg>
+          <div class="donut-center">
+            <div class="donut-pct" style="font-size:16px;">72.4</div>
+            <div class="donut-sub">평균점수</div>
+          </div>
+        </div>
+        <div class="health-legend">
+          <div class="legend-item">
+            <div class="legend-dot" style="background:#7C3AED;"></div>
+            <span class="legend-label">챔피언 (90~100점)</span>
+            <span class="legend-count">1,541명</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background:#059669;"></div>
+            <span class="legend-label">건강 (70~89점)</span>
+            <span class="legend-count">7,066명</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background:#D97706;"></div>
+            <span class="legend-label">주의 (50~69점)</span>
+            <span class="legend-count">2,826명</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background:#DC2626;"></div>
+            <span class="legend-label">위험 (0~49점)</span>
+            <span class="legend-count">1,414명</span>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);">
+        <div style="display:flex;justify-content:space-between;font-size:12px;">
+          <span style="color:var(--text-muted);">평균 건강도 점수</span>
+          <span style="font-weight:700;color:var(--success);">72.4점</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin-top:4px;">
+          <span style="color:var(--text-muted);">전주 대비</span>
+          <span style="font-weight:700;color:var(--success);">▲ +1.8점</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 활성 캠페인 + 고객 퍼널 -->
+<div class="grid-2" style="margin-bottom:16px;">
+  <!-- 활성 캠페인 -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title">📣 진행 중인 캠페인</span>
+      <a class="card-link" onclick="location.href='CRM_메시지캠페인.html#list'">전체 보기 →</a>
+    </div>
+    <div class="card-body" style="padding:0;">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>캠페인</th>
+            <th>상태</th>
+            <th>발송/목표</th>
+            <th>전환율</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div style="font-weight:600;font-size:13px;">봄 시즌 업셀</div>
+              <div style="font-size:11px;color:var(--text-muted);">알림톡 · 자동화</div>
+            </td>
+            <td><span class="badge badge-success">진행중</span></td>
+            <td>
+              <div style="font-size:12px;">2,847 / 3,200</div>
+              <div class="progress"><div class="progress-fill" style="width:89%;"></div></div>
+            </td>
+            <td style="font-weight:700;color:var(--success);">4.2%</td>
+          </tr>
+          <tr>
+            <td>
+              <div style="font-weight:600;font-size:13px;">장바구니 이탈 복구</div>
+              <div style="font-size:11px;color:var(--text-muted);">이메일 · 자동화</div>
+            </td>
+            <td><span class="badge badge-success">진행중</span></td>
+            <td>
+              <div style="font-size:12px;">1,203 / 1,500</div>
+              <div class="progress"><div class="progress-fill" style="width:80%;"></div></div>
+            </td>
+            <td style="font-weight:700;color:var(--success);">7.8%</td>
+          </tr>
+          <tr>
+            <td>
+              <div style="font-weight:600;font-size:13px;">VIP 감사 메시지</div>
+              <div style="font-size:11px;color:var(--text-muted);">카카오채널 · 수동</div>
+            </td>
+            <td><span class="badge badge-warning">예약됨</span></td>
+            <td>
+              <div style="font-size:12px;">0 / 342</div>
+              <div class="progress"><div class="progress-fill" style="width:0%;"></div></div>
+            </td>
+            <td style="color:var(--text-muted);">-</td>
+          </tr>
+          <tr>
+            <td>
+              <div style="font-weight:600;font-size:13px;">휴면 고객 재활성</div>
+              <div style="font-size:11px;color:var(--text-muted);">SMS · 자동화</div>
+            </td>
+            <td><span class="badge badge-info">대기중</span></td>
+            <td>
+              <div style="font-size:12px;">0 / 601</div>
+              <div class="progress"><div class="progress-fill" style="width:0%;"></div></div>
+            </td>
+            <td style="color:var(--text-muted);">-</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 구매 퍼널 -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title">🔽 이번 달 구매 퍼널</span>
+      <a class="card-link" onclick="location.href='CRM_애널리틱스.html'">분석 →</a>
+    </div>
+    <div class="card-body">
+      <div class="funnel-list">
+        <div class="funnel-row">
+          <div class="funnel-label">방문</div>
+          <div class="funnel-bar-wrap">
+            <div class="funnel-bar" style="width:100%;background:#2563EB;">
+              <span class="funnel-val">42,810명</span>
+            </div>
+          </div>
+          <span class="funnel-pct" style="font-size:11px;color:var(--text-muted);width:36px;">100%</span>
+        </div>
+        <div class="funnel-row">
+          <div class="funnel-label">상품 조회</div>
+          <div class="funnel-bar-wrap">
+            <div class="funnel-bar" style="width:74%;background:#3B82F6;">
+              <span class="funnel-val">31,680명</span>
+            </div>
+          </div>
+          <span class="funnel-pct" style="font-size:11px;color:var(--text-muted);width:36px;">74%</span>
+        </div>
+        <div class="funnel-row">
+          <div class="funnel-label">장바구니</div>
+          <div class="funnel-bar-wrap">
+            <div class="funnel-bar" style="width:42%;background:#60A5FA;">
+              <span class="funnel-val">17,980명</span>
+            </div>
+          </div>
+          <span class="funnel-pct" style="font-size:11px;color:var(--text-muted);width:36px;">42%</span>
+        </div>
+        <div class="funnel-row">
+          <div class="funnel-label">결제 시작</div>
+          <div class="funnel-bar-wrap">
+            <div class="funnel-bar" style="width:26%;background:#93C5FD;">
+              <span class="funnel-val">11,130명</span>
+            </div>
+          </div>
+          <span class="funnel-pct" style="font-size:11px;color:var(--text-muted);width:36px;">26%</span>
+        </div>
+        <div class="funnel-row">
+          <div class="funnel-label">구매 완료</div>
+          <div class="funnel-bar-wrap">
+            <div class="funnel-bar" style="width:14%;background:#059669;">
+              <span class="funnel-val">5,993명</span>
+            </div>
+          </div>
+          <span class="funnel-pct" style="font-size:11px;color:var(--text-muted);width:36px;">14%</span>
+        </div>
+      </div>
+      <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);">
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;">
+          <span style="color:var(--text-muted);">장바구니 이탈률</span>
+          <span style="font-weight:700;color:var(--danger);">38%</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;">
+          <span style="color:var(--text-muted);">CRM 자동화 복구율</span>
+          <span style="font-weight:700;color:var(--success);">7.8%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 채널별 성과 + 세그먼트별 매출 -->
+<div class="grid-3">
+  <!-- 채널별 성과 -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title">📱 채널별 성과</span>
+      <span style="font-size:11px;color:var(--text-muted);">이번 달 전환율</span>
+    </div>
+    <div class="card-body" style="padding:0 18px 4px;">
+      <div class="mini-metric-list">
+        <div class="mini-metric">
+          <div class="mini-metric-left" style="gap:8px;">
+            <div class="mini-dot" style="background:#FEE500;border:1px solid #E2C400;flex-shrink:0;"></div>
+            <div>
+              <div class="mini-label">카카오 알림톡</div>
+              <div style="font-size:10px;color:var(--text-muted);">발송 8,240건 · 오픈율 62%</div>
+            </div>
+          </div>
+          <div style="text-align:right;flex-shrink:0;">
+            <div style="font-size:13px;font-weight:700;">4.2%</div>
+            <div style="font-size:10px;color:var(--success);">▲ +0.4%p</div>
+          </div>
+        </div>
+        <div class="mini-metric">
+          <div class="mini-metric-left" style="gap:8px;">
+            <div class="mini-dot" style="background:#2563EB;flex-shrink:0;"></div>
+            <div>
+              <div class="mini-label">이메일</div>
+              <div style="font-size:10px;color:var(--text-muted);">발송 5,810건 · 오픈율 28%</div>
+            </div>
+          </div>
+          <div style="text-align:right;flex-shrink:0;">
+            <div style="font-size:13px;font-weight:700;">2.8%</div>
+            <div style="font-size:10px;color:var(--success);">▲ +0.2%p</div>
+          </div>
+        </div>
+        <div class="mini-metric">
+          <div class="mini-metric-left" style="gap:8px;">
+            <div class="mini-dot" style="background:#F97316;flex-shrink:0;"></div>
+            <div>
+              <div class="mini-label">SMS</div>
+              <div style="font-size:10px;color:var(--text-muted);">발송 3,120건 · 클릭율 9%</div>
+            </div>
+          </div>
+          <div style="text-align:right;flex-shrink:0;">
+            <div style="font-size:13px;font-weight:700;">1.4%</div>
+            <div style="font-size:10px;color:var(--danger);">▼ -0.3%p</div>
+          </div>
+        </div>
+        <div class="mini-metric">
+          <div class="mini-metric-left" style="gap:8px;">
+            <div class="mini-dot" style="background:#8B5CF6;flex-shrink:0;"></div>
+            <div>
+              <div class="mini-label">앱 푸시</div>
+              <div style="font-size:10px;color:var(--text-muted);">발송 6,470건 · 오픈율 41%</div>
+            </div>
+          </div>
+          <div style="text-align:right;flex-shrink:0;">
+            <div style="font-size:13px;font-weight:700;">3.1%</div>
+            <div style="font-size:10px;color:var(--success);">▲ +0.5%p</div>
+          </div>
+        </div>
+        <div class="mini-metric">
+          <div class="mini-metric-left" style="gap:8px;">
+            <div class="mini-dot" style="background:#0EA5E9;flex-shrink:0;"></div>
+            <div>
+              <div class="mini-label">웹 팝업</div>
+              <div style="font-size:10px;color:var(--text-muted);">발송 2,890건 · 클릭율 18%</div>
+            </div>
+          </div>
+          <div style="text-align:right;flex-shrink:0;">
+            <div style="font-size:13px;font-weight:700;">5.7%</div>
+            <div style="font-size:10px;color:var(--success);">▲ +1.1%p</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 세그먼트별 매출 -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title">🎯 세그먼트별 매출</span>
+    </div>
+    <div class="card-body" style="padding:0 18px 4px;">
+      <div class="mini-metric-list">
+        <div class="mini-metric">
+          <div class="mini-metric-left">
+            <div class="mini-dot" style="background:#7C3AED;"></div>
+            <span class="mini-label">VIP 고객</span>
+          </div>
+          <div style="text-align:right;">
+            <span class="mini-value">22,400,000원</span>
+            <span class="mini-change up" style="font-size:10px;">47.5%</span>
+          </div>
+        </div>
+        <div class="mini-metric">
+          <div class="mini-metric-left">
+            <div class="mini-dot" style="background:#2563EB;"></div>
+            <span class="mini-label">충성 고객</span>
+          </div>
+          <div style="text-align:right;">
+            <span class="mini-value">13,100,000원</span>
+            <span class="mini-change up" style="font-size:10px;">27.8%</span>
+          </div>
+        </div>
+        <div class="mini-metric">
+          <div class="mini-metric-left">
+            <div class="mini-dot" style="background:#059669;"></div>
+            <span class="mini-label">일반 고객</span>
+          </div>
+          <div style="text-align:right;">
+            <span class="mini-value">8,900,000원</span>
+            <span class="mini-change up" style="font-size:10px;">18.9%</span>
+          </div>
+        </div>
+        <div class="mini-metric">
+          <div class="mini-metric-left">
+            <div class="mini-dot" style="background:#94A3B8;"></div>
+            <span class="mini-label">신규 고객</span>
+          </div>
+          <div style="text-align:right;">
+            <span class="mini-value">2,800,000원</span>
+            <span class="mini-change up" style="font-size:10px;">5.9%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 자동화 성과 요약 -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title">⚡ 자동화 성과 요약</span>
+    </div>
+    <div class="card-body" style="padding:0 18px 4px;">
+      <div class="mini-metric-list">
+        <div class="mini-metric">
+          <div class="mini-metric-left">
+            <div class="mini-dot" style="background:#2563EB;"></div>
+            <span class="mini-label">자동 발송 건</span>
+          </div>
+          <div style="text-align:right;">
+            <span class="mini-value">18,430건</span>
+          </div>
+        </div>
+        <div class="mini-metric">
+          <div class="mini-metric-left">
+            <div class="mini-dot" style="background:#059669;"></div>
+            <span class="mini-label">자동화 전환 매출</span>
+          </div>
+          <div style="text-align:right;">
+            <span class="mini-value">12,700,000원</span>
+          </div>
+        </div>
+        <div class="mini-metric">
+          <div class="mini-metric-left">
+            <div class="mini-dot" style="background:#D97706;"></div>
+            <span class="mini-label">복구된 장바구니</span>
+          </div>
+          <div style="text-align:right;">
+            <span class="mini-value">94건</span>
+          </div>
+        </div>
+        <div class="mini-metric">
+          <div class="mini-metric-left">
+            <div class="mini-dot" style="background:#8B5CF6;"></div>
+            <span class="mini-label">재활성 고객</span>
+          </div>
+          <div style="text-align:right;">
+            <span class="mini-value">47명</span>
+          </div>
+        </div>
+        <div class="mini-metric">
+          <div class="mini-metric-left">
+            <div class="mini-dot" style="background:#DC2626;"></div>
+            <span class="mini-label">이탈 방지 성공</span>
+          </div>
+          <div style="text-align:right;">
+            <span class="mini-value">23명</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 모달: 기간 설정 ══ -->
+<div id="modal-date-range" class="modal-overlay">
+  <div class="modal-box" style="width:460px;">
+    <div class="modal-head">
+      <span class="modal-title">📅 대시보드 기간 설정</span>
+      <button class="modal-close" onclick="closeModal('modal-date-range')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-label" style="margin-bottom:8px;">빠른 선택</div>
+      <div class="date-preset-grid">
+        <button class="date-preset-btn" onclick="applyPreset(this,'오늘')">오늘</button>
+        <button class="date-preset-btn" onclick="applyPreset(this,'이번 주')">이번 주</button>
+        <button class="date-preset-btn active" onclick="applyPreset(this,'이번 달')">이번 달</button>
+        <button class="date-preset-btn" onclick="applyPreset(this,'이번 분기')">이번 분기</button>
+        <button class="date-preset-btn" onclick="applyPreset(this,'최근 30일')">최근 30일</button>
+        <button class="date-preset-btn" onclick="applyPreset(this,'최근 90일')">최근 90일</button>
+        <button class="date-preset-btn" onclick="applyPreset(this,'올해')">올해</button>
+      </div>
+      <div style="border-top:1px solid var(--border);padding-top:18px;">
+        <div class="form-label" style="margin-bottom:10px;">직접 입력</div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="flex:1;">
+            <div class="form-label">시작일</div>
+            <input type="date" id="dateStart" value="2026-05-01" style="width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:5px;font-size:13px;font-family:inherit;">
+          </div>
+          <span style="font-size:16px;color:var(--text-muted);margin-top:18px;">~</span>
+          <div style="flex:1;">
+            <div class="form-label">종료일</div>
+            <input type="date" id="dateEnd" value="2026-05-29" style="width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:5px;font-size:13px;font-family:inherit;">
+          </div>
+        </div>
+        <div class="form-hint" style="margin-top:8px;">최대 조회 기간은 365일입니다.</div>
+      </div>
+      <div id="dateRangePreview" style="margin-top:14px;padding:10px 14px;background:var(--bg);border-radius:6px;font-size:13px;color:var(--text-sub);">
+        선택 기간: <strong id="dateRangeLabel" style="color:var(--primary);">2026.05.01 ~ 2026.05.29 (29일)</strong>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary btn-sm" onclick="closeModal('modal-date-range')">취소</button>
+      <button class="btn btn-primary btn-sm" onclick="applyDateRange()">적용</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 모달: 리포트 다운로드 히스토리 ══ -->
+<div id="modal-report-history" class="modal-overlay">
+  <div class="modal-box" style="width:960px;">
+    <div class="modal-head">
+      <span class="modal-title">📊 리포트 다운로드 히스토리</span>
+      <button class="modal-close" onclick="closeModal('modal-report-history')">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <div style="font-size:12px;color:var(--text-muted);">최근 30건 다운로드 이력입니다. 파일은 생성 후 30일간 보관됩니다.</div>
+        <button class="btn btn-primary btn-sm" onclick="openReportReason()">+ 새 리포트 다운로드</button>
+      </div>
+      <table class="rpt-table">
+        <thead>
+          <tr>
+            <th>요청일시</th>
+            <th>파일명</th>
+            <th>조회 기간</th>
+            <th>요청자</th>
+            <th>상태</th>
+            <th>파일</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color:var(--text-muted);white-space:nowrap;">2026-05-28 17:10</td>
+            <td style="font-size:11px;font-family:monospace;color:var(--text-sub);">dashboard_report_202605_monthly.xlsx</td>
+            <td style="white-space:nowrap;">2026.05.01 ~ 2026.05.28</td>
+            <td><strong>김운영</strong></td>
+            <td><span class="badge badge-success">완료</span></td>
+            <td><button class="btn btn-sm" style="background:var(--bg);border:1px solid var(--border);color:var(--text-sub);font-size:11px;" onclick="openReportReason()">📥 재다운로드</button></td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-muted);white-space:nowrap;">2026-05-01 09:05</td>
+            <td style="font-size:11px;font-family:monospace;color:var(--text-sub);">dashboard_report_202604_monthly.xlsx</td>
+            <td style="white-space:nowrap;">2026.04.01 ~ 2026.04.30</td>
+            <td><strong>김운영</strong></td>
+            <td><span class="badge badge-success">완료</span></td>
+            <td><button class="btn btn-sm" style="background:var(--bg);border:1px solid var(--border);color:var(--text-sub);font-size:11px;" onclick="openReportReason()">📥 재다운로드</button></td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-muted);white-space:nowrap;">2026-04-15 14:22</td>
+            <td style="font-size:11px;font-family:monospace;color:var(--text-sub);">dashboard_report_202604_weekly.xlsx</td>
+            <td style="white-space:nowrap;">2026.04.07 ~ 2026.04.13</td>
+            <td><strong>이마케터</strong></td>
+            <td><span class="badge badge-success">완료</span></td>
+            <td><button class="btn btn-sm" style="background:var(--bg);border:1px solid var(--border);color:var(--text-sub);font-size:11px;" onclick="openReportReason()">📥 재다운로드</button></td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-muted);white-space:nowrap;">2026-04-01 08:50</td>
+            <td style="font-size:11px;font-family:monospace;color:var(--text-sub);">dashboard_report_202603_monthly.xlsx</td>
+            <td style="white-space:nowrap;">2026.03.01 ~ 2026.03.31</td>
+            <td><strong>박분석</strong></td>
+            <td><span class="badge badge-success">완료</span></td>
+            <td><span style="font-size:11px;color:var(--text-muted);">만료됨</span></td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-muted);white-space:nowrap;">2026-03-10 11:34</td>
+            <td style="font-size:11px;font-family:monospace;color:var(--text-sub);">dashboard_report_202603_weekly_kpi.xlsx</td>
+            <td style="white-space:nowrap;">2026.03.03 ~ 2026.03.09</td>
+            <td><strong>이마케터</strong></td>
+            <td><span class="badge badge-success">완료</span></td>
+            <td><span style="font-size:11px;color:var(--text-muted);">만료됨</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary btn-sm" onclick="closeModal('modal-report-history')">닫기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 모달: 리포트 다운로드 사유 입력 ══ -->
+<div id="modal-report-reason" class="modal-overlay" style="z-index:2100;">
+  <div class="modal-box" style="width:480px;">
+    <div class="modal-head">
+      <span class="modal-title">📝 다운로드 사유 입력</span>
+      <button class="modal-close" onclick="closeModal('modal-report-reason')">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="background:var(--bg);border-radius:6px;padding:10px 14px;margin-bottom:20px;font-size:12px;color:var(--text-sub);">
+        대시보드 리포트 파일을 다운로드합니다.<br>
+        다운로드 이력은 감사 로그에 기록되며 업무 목적 외 사용은 금지됩니다.
+      </div>
+      <div style="margin-bottom:14px;">
+        <label class="form-label">사유 분류 <span style="color:var(--danger);">*</span></label>
+        <select id="reportReasonCategory" style="width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:5px;font-size:13px;font-family:inherit;">
+          <option value="">-- 선택하세요 --</option>
+          <option>업무 보고 / 경영진 보고</option>
+          <option>마케팅 기획 / 성과 분석</option>
+          <option>정기 리포팅</option>
+          <option>개인정보 감사 / 법무 대응</option>
+          <option>기타</option>
+        </select>
+      </div>
+      <div style="margin-bottom:16px;">
+        <label class="form-label">상세 사유 <span style="color:var(--danger);">*</span></label>
+        <textarea id="reportReasonDetail" rows="3" placeholder="예: 5월 CRM 성과 경영진 월간 보고를 위한 대시보드 리포트 추출" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:5px;font-size:13px;font-family:inherit;resize:vertical;"></textarea>
+        <div class="form-hint">20자 이상 구체적으로 작성해주세요.</div>
+      </div>
+      <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:12px;color:var(--text-sub);line-height:1.5;">
+        <input type="checkbox" id="reportAgree" style="margin-top:2px;flex-shrink:0;">
+        <span>다운로드 파일을 업무 목적 외 사용 및 외부 유출 금지에 동의합니다.</span>
+      </label>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary btn-sm" onclick="closeModal('modal-report-reason')">취소</button>
+      <button class="btn btn-primary btn-sm" onclick="confirmReportDownload()">⬇ 다운로드 확인</button>
+    </div>
+  </div>
+</div>
+
+</main>
+<script src="crm-layout.js"></script>
+<script src="crm-common.js"></script>
+<script>
+// ── 기간 설정
+function applyPreset(btn, label) {
+  document.querySelectorAll('.date-preset-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const today = new Date();
+  const fmt = d => d.toISOString().slice(0,10);
+  let s, e = fmt(today);
+  if (label === '오늘')       { s = e; }
+  else if (label === '이번 주')  { const d = new Date(today); d.setDate(d.getDate() - d.getDay() + 1); s = fmt(d); }
+  else if (label === '이번 달')  { s = fmt(new Date(today.getFullYear(), today.getMonth(), 1)); }
+  else if (label === '이번 분기'){ const q = Math.floor(today.getMonth()/3); s = fmt(new Date(today.getFullYear(), q*3, 1)); }
+  else if (label === '최근 30일'){ const d = new Date(today); d.setDate(d.getDate()-29); s = fmt(d); }
+  else if (label === '최근 90일'){ const d = new Date(today); d.setDate(d.getDate()-89); s = fmt(d); }
+  else if (label === '올해')     { s = fmt(new Date(today.getFullYear(), 0, 1)); }
+  document.getElementById('dateStart').value = s;
+  document.getElementById('dateEnd').value   = e;
+  updateDatePreview();
+}
+
+function updateDatePreview() {
+  const s = document.getElementById('dateStart').value;
+  const e = document.getElementById('dateEnd').value;
+  if (!s || !e) return;
+  const days = Math.round((new Date(e)-new Date(s))/(1000*60*60*24)) + 1;
+  const fmt = v => v.replace(/-/g,'.');
+  document.getElementById('dateRangeLabel').textContent = `${fmt(s)} ~ ${fmt(e)} (${days}일)`;
+}
+
+function applyDateRange() {
+  const s = document.getElementById('dateStart').value;
+  const e = document.getElementById('dateEnd').value;
+  if (!s || !e) { showToast('warning','날짜 선택 필요','시작일과 종료일을 모두 선택해주세요.'); return; }
+  if (new Date(s) > new Date(e)) { showToast('warning','날짜 오류','시작일이 종료일보다 늦을 수 없습니다.'); return; }
+  const fmt = v => v.replace(/-/g,'.');
+  const days = Math.round((new Date(e)-new Date(s))/(1000*60*60*24)) + 1;
+  closeModal('modal-date-range');
+  document.querySelector('.page-desc').textContent = `${fmt(s)} ~ ${fmt(e)} (${days}일) · 마지막 업데이트 09:35`;
+  showToast('success','기간 적용','대시보드 데이터가 선택 기간으로 업데이트되었습니다.');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('dateStart').addEventListener('change', () => {
+    document.querySelectorAll('.date-preset-btn').forEach(b => b.classList.remove('active'));
+    updateDatePreview();
+  });
+  document.getElementById('dateEnd').addEventListener('change', () => {
+    document.querySelectorAll('.date-preset-btn').forEach(b => b.classList.remove('active'));
+    updateDatePreview();
+  });
+});
+
+// ── 리포트 다운로드
+function openReportReason() {
+  document.getElementById('reportReasonCategory').value = '';
+  document.getElementById('reportReasonDetail').value   = '';
+  document.getElementById('reportAgree').checked        = false;
+  openModal('modal-report-reason');
+}
+
+function confirmReportDownload() {
+  const cat    = document.getElementById('reportReasonCategory').value;
+  const detail = document.getElementById('reportReasonDetail').value.trim();
+  const agree  = document.getElementById('reportAgree').checked;
+  if (!cat)              { showToast('warning','입력 필요','사유 분류를 선택해주세요.'); return; }
+  if (detail.length < 20){ showToast('warning','입력 필요','상세 사유를 20자 이상 입력해주세요.'); return; }
+  if (!agree)            { showToast('warning','동의 필요','동의 체크박스에 체크해주세요.'); return; }
+  closeModal('modal-report-reason');
+  closeModal('modal-report-history');
+  showToast('success','다운로드 시작','리포트 파일 생성 중입니다. 완료 시 알림을 드립니다.');
+}
+</script>
+</body>
+</html>

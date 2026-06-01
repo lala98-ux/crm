@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="crm-layout.css">
+<title>리텐션 | ENTWIZ CRM</title>
+<style>
+:root {
+  --primary:#2563EB; --primary-dark:#1D4ED8; --primary-light:#EFF6FF;
+  --bg:#F8FAFC; --surface:#FFFFFF; --border:#E2E8F0;
+  --text:#0F172A; --text-sub:#475569; --text-muted:#94A3B8;
+  --success:#059669; --success-bg:#ECFDF5;
+  --warning:#D97706; --warning-bg:#FFFBEB;
+  --danger:#DC2626; --danger-bg:#FEF2F2;
+  --radius:8px; --radius-sm:5px;
+  --shadow:0 1px 3px rgba(0,0,0,.08); --shadow-md:0 4px 16px rgba(0,0,0,.10);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Pretendard','Malgun Gothic','맑은 고딕',-apple-system,sans-serif;font-size:14px;color:var(--text);background:var(--bg);padding:0;}
+a{text-decoration:none;} button{font-family:inherit;cursor:pointer;}
+
+.screen{display:none;} .screen.active{display:block;}
+
+/* 브레드크럼 */
+.breadcrumb{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-muted);margin-bottom:14px;}
+.breadcrumb .sep{color:var(--border);font-size:14px;}
+.breadcrumb .curr{color:var(--text-sub);font-weight:600;}
+.breadcrumb .bc-link{cursor:pointer;color:var(--text-muted);}
+.breadcrumb .bc-link:hover{color:var(--primary);}
+
+/* 페이지 헤더 */
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;}
+.page-title{font-size:20px;font-weight:800;}
+.page-desc{font-size:13px;color:var(--text-sub);margin-top:3px;}
+.page-actions{display:flex;gap:8px;align-items:center;}
+
+/* 버튼 */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--radius);font-size:13px;font-weight:600;border:1px solid transparent;transition:all .15s;white-space:nowrap;cursor:pointer;}
+.btn-primary{background:var(--primary);color:#fff;}
+.btn-primary:hover{background:var(--primary-dark);}
+.btn-secondary{background:var(--surface);color:var(--text-sub);border-color:var(--border);}
+.btn-secondary:hover{background:var(--bg);}
+.btn-danger{background:var(--danger);color:#fff;}
+.btn-danger:hover{background:#b91c1c;}
+.btn-ghost{background:none;border-color:transparent;color:var(--text-sub);}
+.btn-ghost:hover{background:var(--bg);}
+.btn-sm{padding:5px 10px;font-size:12px;border-radius:var(--radius-sm);}
+
+/* KPI 그리드 */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);}
+.kpi-label{font-size:12px;color:var(--text-muted);font-weight:600;margin-bottom:8px;}
+.kpi-value{font-size:24px;font-weight:800;color:var(--text);line-height:1.1;}
+.kpi-trend{font-size:12px;color:var(--text-muted);margin-top:6px;}
+.kpi-trend.up{color:var(--success);}
+.kpi-trend.down{color:var(--danger);}
+.kpi-value.warn{color:var(--warning);}
+
+/* 설정 카드 */
+.settings-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:16px;overflow:hidden;}
+.settings-card-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.settings-card-title{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px;}
+.settings-card-body{padding:20px;}
+
+/* 데이터 테이블 */
+.data-table{width:100%;border-collapse:collapse;}
+.data-table th{padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:.05em;text-transform:uppercase;border-bottom:2px solid var(--border);background:var(--bg);}
+.data-table td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle;}
+.data-table tr:last-child td{border-bottom:none;}
+.data-table tr:hover td{background:var(--bg);}
+
+/* 배지 */
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;}
+.badge-success{background:var(--success-bg);color:var(--success);}
+.badge-muted{background:var(--bg);color:var(--text-muted);border:1px solid var(--border);}
+.badge-warning{background:var(--warning-bg);color:var(--warning);}
+.badge-danger{background:var(--danger-bg);color:var(--danger);}
+.badge-primary{background:var(--primary-light);color:var(--primary);}
+
+/* 토글 스위치 */
+.toggle{position:relative;width:44px;height:24px;flex-shrink:0;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-track{position:absolute;inset:0;background:var(--border);border-radius:12px;cursor:pointer;transition:background .2s;}
+.toggle input:checked+.toggle-track{background:var(--primary);}
+.toggle-track::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.toggle input:checked+.toggle-track::before{transform:translateX(20px);}
+.toggle-wrap{display:flex;align-items:center;gap:10px;}
+.toggle-label{font-size:13px;font-weight:500;}
+
+/* 포인트 규칙 행 */
+.rule-status{display:flex;align-items:center;gap:8px;}
+
+/* 멤버십 플랜 그리드 */
+.plan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px;}
+.plan-card{border:1px solid var(--border);border-radius:var(--radius);padding:20px;background:var(--surface);box-shadow:var(--shadow);position:relative;}
+.plan-card.featured{border-color:var(--primary);box-shadow:0 0 0 2px var(--primary-light),var(--shadow-md);}
+.plan-card-head{margin-bottom:14px;}
+.plan-name{font-size:16px;font-weight:800;margin-bottom:2px;}
+.plan-price{font-size:22px;font-weight:800;color:var(--primary);margin-bottom:4px;}
+.plan-price span{font-size:13px;font-weight:500;color:var(--text-muted);}
+.plan-benefits{list-style:none;margin-bottom:14px;}
+.plan-benefits li{font-size:12px;color:var(--text-sub);padding:3px 0;display:flex;align-items:center;gap:6px;}
+.plan-benefits li::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--primary);flex-shrink:0;}
+.plan-meta{display:flex;justify-content:space-between;align-items:center;padding-top:14px;border-top:1px solid var(--border);}
+.plan-sub-count{font-size:12px;color:var(--text-muted);}
+.plan-sub-count strong{color:var(--text);font-size:14px;}
+.plan-revenue{font-size:12px;color:var(--success);font-weight:700;}
+.featured-badge{position:absolute;top:-1px;right:16px;background:var(--primary);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:0 0 6px 6px;}
+
+/* 필터 탭 */
+.filter-tabs{display:flex;gap:4px;margin-bottom:16px;border-bottom:2px solid var(--border);}
+.filter-tab{padding:8px 16px;font-size:13px;font-weight:600;color:var(--text-muted);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;}
+.filter-tab.active{color:var(--primary);border-bottom-color:var(--primary);}
+.filter-tab:hover:not(.active){color:var(--text-sub);}
+.tab-count{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;border-radius:9px;font-size:10px;font-weight:800;margin-left:4px;background:var(--warning-bg);color:var(--warning);}
+
+/* 별점 */
+.star-rating{display:inline-flex;align-items:center;gap:1px;font-size:13px;}
+.star-rating .s-filled{color:#F59E0B;}
+.star-rating .s-empty{color:#E2E8F0;}
+
+/* 해지 이유 바 */
+.reason-list{display:flex;flex-direction:column;gap:12px;}
+.reason-item{display:grid;grid-template-columns:160px 1fr 44px;align-items:center;gap:12px;}
+.reason-label{font-size:13px;color:var(--text-sub);}
+.reason-bar-wrap{height:8px;background:var(--border);border-radius:4px;overflow:hidden;}
+.reason-bar{height:100%;border-radius:4px;transition:width .4s ease;}
+.reason-pct{font-size:13px;font-weight:700;text-align:right;}
+
+/* 포인트 구분색 */
+.pt-earn{color:var(--success);font-weight:700;}
+.pt-use{color:var(--primary);font-weight:700;}
+.pt-expire{color:var(--danger);font-weight:700;}
+
+/* 설정 행 */
+.settings-row{display:flex;align-items:flex-start;gap:24px;padding:14px 0;border-bottom:1px solid var(--border);}
+.settings-row:last-child{border-bottom:none;padding-bottom:0;}
+.settings-label-col{width:220px;flex-shrink:0;}
+.settings-label{font-size:13px;font-weight:600;margin-bottom:3px;}
+.settings-hint{font-size:12px;color:var(--text-muted);line-height:1.5;}
+.settings-control{flex:1;}
+
+/* 인기 추천인 순위 */
+.rank-num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;font-size:11px;font-weight:800;background:var(--bg);color:var(--text-muted);}
+.rank-num.gold{background:#FEF3C7;color:#D97706;}
+.rank-num.silver{background:#F1F5F9;color:#64748B;}
+.rank-num.bronze{background:#FEF2F2;color:#92400E;}
+
+/* 리뷰 내용 truncate */
+.review-content{max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-sub);}
+</style>
+</head>
+<body>
+<main class="content">
+
+<div class="breadcrumb" id="globalBreadcrumb">
+  <span class="bc-link">ENTWIZ CRM</span>
+  <span class="sep">›</span>
+  <span>리텐션</span>
+  <span class="sep">›</span>
+  <span class="curr" id="bcCurr">포인트 관리</span>
+</div>
+
+<!-- ══ SCREEN: 포인트 관리 ══ -->
+<div id="screen-point" class="screen active">
+  <div class="page-header">
+    <div>
+      <div class="page-title">포인트 관리</div>
+      <div class="page-desc">고객 포인트 적립·사용·소멸 현황을 관리합니다.</div>
+    </div>
+    <div class="page-actions">
+      <button class="btn btn-secondary" onclick="navWIP('포인트 수동 지급')">수동 지급</button>
+      <button class="btn btn-primary" onclick="navWIP('포인트 규칙 추가')">+ 규칙 추가</button>
+    </div>
+  </div>
+
+  <!-- KPI 카드 -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">총 발행 포인트</div>
+      <div class="kpi-value">128,450,000<small style="font-size:14px;font-weight:600;color:var(--text-muted);">P</small></div>
+      <div class="kpi-trend up">전월 대비 +8.4%</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">사용된 포인트</div>
+      <div class="kpi-value">89,230,000<small style="font-size:14px;font-weight:600;color:var(--text-muted);">P</small></div>
+      <div class="kpi-trend">사용률 69.5%</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">소멸 예정 (30일)</div>
+      <div class="kpi-value warn">4,820,000<small style="font-size:14px;font-weight:600;color:var(--warning);">P</small></div>
+      <div class="kpi-trend">2,147명 고객 대상</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">포인트 보유 고객</div>
+      <div class="kpi-value">8,247<small style="font-size:14px;font-weight:600;color:var(--text-muted);">명</small></div>
+      <div class="kpi-trend up">이번 달 +312명</div>
+    </div>
+  </div>
+
+  <!-- 포인트 적립 규칙 -->
+  <div class="settings-card">
+    <div class="settings-card-head">
+      <span class="settings-card-title">포인트 적립 규칙</span>
+      <button class="btn btn-secondary btn-sm" onclick="navWIP('규칙 추가')">+ 규칙 추가</button>
+    </div>
+    <table class="data-table">
+      <thead><tr>
+        <th>적립 조건</th><th>적립량</th><th>유효기간</th><th style="text-align:center;">상태</th><th style="text-align:right;">관리</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>구매금액 1원당</strong></td>
+          <td>1P</td>
+          <td>12개월</td>
+          <td style="text-align:center;">
+            <label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label>
+          </td>
+          <td style="text-align:right;"><button class="btn btn-ghost btn-sm" onclick="navWIP('규칙 편집')">편집</button></td>
+        </tr>
+        <tr>
+          <td><strong>리뷰 작성</strong></td>
+          <td>500P</td>
+          <td>6개월</td>
+          <td style="text-align:center;">
+            <label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label>
+          </td>
+          <td style="text-align:right;"><button class="btn btn-ghost btn-sm" onclick="navWIP('규칙 편집')">편집</button></td>
+        </tr>
+        <tr>
+          <td><strong>친구 추천</strong></td>
+          <td>2,000P</td>
+          <td>3개월</td>
+          <td style="text-align:center;">
+            <label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label>
+          </td>
+          <td style="text-align:right;"><button class="btn btn-ghost btn-sm" onclick="navWIP('규칙 편집')">편집</button></td>
+        </tr>
+        <tr>
+          <td><strong>생일 (당월)</strong></td>
+          <td>500P</td>
+          <td>해당 월 말일</td>
+          <td style="text-align:center;">
+            <label class="toggle"><input type="checkbox"><span class="toggle-track"></span></label>
+          </td>
+          <td style="text-align:right;"><button class="btn btn-ghost btn-sm" onclick="navWIP('규칙 편집')">편집</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 소멸 알림 설정 -->
+  <div class="settings-card">
+    <div class="settings-card-head">
+      <span class="settings-card-title">포인트 소멸 예정 알림 설정</span>
+    </div>
+    <div class="settings-card-body">
+      <div class="settings-row">
+        <div class="settings-label-col">
+          <div class="settings-label">소멸 30일 전 알림</div>
+          <div class="settings-hint">소멸 예정일 30일 전 카카오 알림톡 자동 발송</div>
+        </div>
+        <div class="settings-control">
+          <div class="toggle-wrap">
+            <label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label>
+            <span class="toggle-label">카카오 알림톡</span>
+          </div>
+        </div>
+      </div>
+      <div class="settings-row">
+        <div class="settings-label-col">
+          <div class="settings-label">소멸 7일 전 알림</div>
+          <div class="settings-hint">소멸 예정일 7일 전 SMS 자동 발송</div>
+        </div>
+        <div class="settings-control">
+          <div class="toggle-wrap">
+            <label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label>
+            <span class="toggle-label">SMS</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 최근 포인트 이력 -->
+  <div class="settings-card">
+    <div class="settings-card-head">
+      <span class="settings-card-title">최근 포인트 이력</span>
+      <button class="btn btn-ghost btn-sm" onclick="navWIP('전체 이력 보기')">전체 보기</button>
+    </div>
+    <table class="data-table">
+      <thead><tr>
+        <th>고객명</th><th>구분</th><th>포인트</th><th>사유</th><th>일시</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>김지수</strong></td>
+          <td><span class="badge badge-success">적립</span></td>
+          <td class="pt-earn">+2,340P</td>
+          <td>구매 적립 (주문 #2847)</td>
+          <td style="color:var(--text-muted);">2026-05-28 14:22</td>
+        </tr>
+        <tr>
+          <td><strong>이민준</strong></td>
+          <td><span class="badge badge-primary">사용</span></td>
+          <td class="pt-use">-5,000P</td>
+          <td>포인트 결제 사용</td>
+          <td style="color:var(--text-muted);">2026-05-28 13:47</td>
+        </tr>
+        <tr>
+          <td><strong>박서연</strong></td>
+          <td><span class="badge badge-success">적립</span></td>
+          <td class="pt-earn">+500P</td>
+          <td>리뷰 작성 보상</td>
+          <td style="color:var(--text-muted);">2026-05-28 12:30</td>
+        </tr>
+        <tr>
+          <td><strong>최현우</strong></td>
+          <td><span class="badge badge-danger">소멸</span></td>
+          <td class="pt-expire">-3,200P</td>
+          <td>유효기간 만료</td>
+          <td style="color:var(--text-muted);">2026-05-28 00:00</td>
+        </tr>
+        <tr>
+          <td><strong>정유나</strong></td>
+          <td><span class="badge badge-success">적립</span></td>
+          <td class="pt-earn">+2,000P</td>
+          <td>친구 추천 보상</td>
+          <td style="color:var(--text-muted);">2026-05-27 18:55</td>
+        </tr>
+        <tr>
+          <td><strong>강도현</strong></td>
+          <td><span class="badge badge-primary">사용</span></td>
+          <td class="pt-use">-10,000P</td>
+          <td>포인트 결제 사용</td>
+          <td style="color:var(--text-muted);">2026-05-27 17:12</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ SCREEN: 레퍼럴 관리 ══ -->
+<div id="screen-referral" class="screen">
+  <div class="page-header">
+    <div>
+      <div class="page-title">레퍼럴 관리</div>
+      <div class="page-desc">친구 추천 프로그램 현황 및 설정을 관리합니다.</div>
+    </div>
+    <div class="page-actions">
+      <button class="btn btn-secondary" onclick="navWIP('레퍼럴 리포트')">리포트 내보내기</button>
+      <button class="btn btn-primary" onclick="navWIP('레퍼럴 설정')">설정 저장</button>
+    </div>
+  </div>
+
+  <!-- KPI 카드 -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">총 레퍼럴 링크</div>
+      <div class="kpi-value">2,847<small style="font-size:14px;font-weight:600;color:var(--text-muted);">개</small></div>
+      <div class="kpi-trend up">활성 링크 1,923개</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">이번 달 신규 추천</div>
+      <div class="kpi-value">384<small style="font-size:14px;font-weight:600;color:var(--text-muted);">건</small></div>
+      <div class="kpi-trend up">전월 대비 +22.3%</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">레퍼럴 전환율</div>
+      <div class="kpi-value">28.4<small style="font-size:14px;font-weight:600;color:var(--text-muted);">%</small></div>
+      <div class="kpi-trend up">업계 평균 대비 +8.4%p</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">레퍼럴 발생 매출</div>
+      <div class="kpi-value" style="font-size:20px;">12,840,000<small style="font-size:12px;font-weight:600;color:var(--text-muted);">원</small></div>
+      <div class="kpi-trend up">전월 대비 +31.2%</div>
+    </div>
+  </div>
+
+  <!-- 레퍼럴 프로그램 설정 -->
+  <div class="settings-card">
+    <div class="settings-card-head">
+      <span class="settings-card-title">레퍼럴 프로그램 설정</span>
+    </div>
+    <div class="settings-card-body">
+      <div class="settings-row">
+        <div class="settings-label-col">
+          <div class="settings-label">추천인 보상</div>
+          <div class="settings-hint">추천받은 친구가 가입 후 첫 구매 완료 시 지급</div>
+        </div>
+        <div class="settings-control" style="display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:13px;font-weight:600;">가입+첫구매 시 <span style="color:var(--primary);">3,000P</span> 적립</span>
+          <button class="btn btn-ghost btn-sm" onclick="navWIP('추천인 보상 편집')">편집</button>
+        </div>
+      </div>
+      <div class="settings-row">
+        <div class="settings-label-col">
+          <div class="settings-label">피추천인 보상</div>
+          <div class="settings-hint">추천 링크를 통해 가입한 신규 고객에게 지급</div>
+        </div>
+        <div class="settings-control" style="display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:13px;font-weight:600;">첫 구매 <span style="color:var(--primary);">10% 할인</span> 쿠폰</span>
+          <button class="btn btn-ghost btn-sm" onclick="navWIP('피추천인 보상 편집')">편집</button>
+        </div>
+      </div>
+      <div class="settings-row">
+        <div class="settings-label-col">
+          <div class="settings-label">쿠폰 유효기간</div>
+          <div class="settings-hint">피추천인 쿠폰의 사용 가능 기간</div>
+        </div>
+        <div class="settings-control" style="display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:13px;font-weight:600;"><span style="color:var(--primary);">7일</span></span>
+          <button class="btn btn-ghost btn-sm" onclick="navWIP('쿠폰 유효기간 편집')">편집</button>
+        </div>
+      </div>
+      <div class="settings-row">
+        <div class="settings-label-col">
+          <div class="settings-label">최대 추천 인원</div>
+          <div class="settings-hint">1인당 추천 가능한 최대 친구 수</div>
+        </div>
+        <div class="settings-control" style="display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:13px;font-weight:600;"><span style="color:var(--primary);">무제한</span></span>
+          <button class="btn btn-ghost btn-sm" onclick="navWIP('최대 추천 편집')">편집</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 인기 추천인 -->
+  <div class="settings-card">
+    <div class="settings-card-head">
+      <span class="settings-card-title">인기 추천인 TOP 5</span>
+      <button class="btn btn-ghost btn-sm" onclick="navWIP('전체 추천인 보기')">전체 보기</button>
+    </div>
+    <table class="data-table">
+      <thead><tr>
+        <th style="width:48px;">순위</th><th>고객명</th><th>등급</th><th>추천 수</th><th>전환 수</th><th>전환율</th><th>적립 포인트</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="rank-num gold">1</span></td>
+          <td><strong>김지은</strong></td>
+          <td><span class="badge badge-primary">VIP</span></td>
+          <td>48건</td>
+          <td>36건</td>
+          <td><strong style="color:var(--success);">75.0%</strong></td>
+          <td><strong>96,000P</strong></td>
+        </tr>
+        <tr>
+          <td><span class="rank-num silver">2</span></td>
+          <td><strong>박민석</strong></td>
+          <td><span class="badge badge-warning">Gold</span></td>
+          <td>35건</td>
+          <td>24건</td>
+          <td><strong style="color:var(--success);">68.6%</strong></td>
+          <td><strong>72,000P</strong></td>
+        </tr>
+        <tr>
+          <td><span class="rank-num bronze">3</span></td>
+          <td><strong>이수현</strong></td>
+          <td><span class="badge badge-warning">Gold</span></td>
+          <td>29건</td>
+          <td>18건</td>
+          <td><strong>62.1%</strong></td>
+          <td><strong>54,000P</strong></td>
+        </tr>
+        <tr>
+          <td><span class="rank-num">4</span></td>
+          <td><strong>최준호</strong></td>
+          <td><span class="badge badge-muted">Silver</span></td>
+          <td>22건</td>
+          <td>12건</td>
+          <td>54.5%</td>
+          <td>36,000P</td>
+        </tr>
+        <tr>
+          <td><span class="rank-num">5</span></td>
+          <td><strong>정하늘</strong></td>
+          <td><span class="badge badge-muted">Silver</span></td>
+          <td>18건</td>
+          <td>9건</td>
+          <td>50.0%</td>
+          <td>27,000P</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 최근 레퍼럴 이력 -->
+  <div class="settings-card">
+    <div class="settings-card-head">
+      <span class="settings-card-title">최근 레퍼럴 이력</span>
+      <button class="btn btn-ghost btn-sm" onclick="navWIP('전체 이력 보기')">전체 보기</button>
+    </div>
+    <table class="data-table">
+      <thead><tr>
+        <th>추천인</th><th>피추천인</th><th>추천일</th><th>전환 여부</th><th>보상 지급</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>김지은</strong></td>
+          <td>오세린</td>
+          <td style="color:var(--text-muted);">2026-05-28</td>
+          <td><span class="badge badge-success">전환 완료</span></td>
+          <td><span class="badge badge-success">지급 완료</span></td>
+        </tr>
+        <tr>
+          <td><strong>박민석</strong></td>
+          <td>한승민</td>
+          <td style="color:var(--text-muted);">2026-05-27</td>
+          <td><span class="badge badge-warning">가입 대기</span></td>
+          <td><span class="badge badge-muted">미지급</span></td>
+        </tr>
+        <tr>
+          <td><strong>이수현</strong></td>
+          <td>임지현</td>
+          <td style="color:var(--text-muted);">2026-05-27</td>
+          <td><span class="badge badge-success">전환 완료</span></td>
+          <td><span class="badge badge-success">지급 완료</span></td>
+        </tr>
+        <tr>
+          <td><strong>최준호</strong></td>
+          <td>이동우</td>
+          <td style="color:var(--text-muted);">2026-05-26</td>
+          <td><span class="badge badge-danger">기간 만료</span></td>
+          <td><span class="badge badge-muted">미지급</span></td>
+        </tr>
+        <tr>
+          <td><strong>정하늘</strong></td>
+          <td>윤채원</td>
+          <td style="color:var(--text-muted);">2026-05-26</td>
+          <td><span class="badge badge-success">전환 완료</span></td>
+          <td><span class="badge badge-success">지급 완료</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ SCREEN: 구독/멤버십 ══ -->
+<div id="screen-membership" class="screen">
+  <div class="page-header">
+    <div>
+      <div class="page-title">구독/멤버십</div>
+      <div class="page-desc">구독 플랜 운영 현황 및 해지 분석을 관리합니다.</div>
+    </div>
+    <div class="page-actions">
+      <button class="btn btn-secondary" onclick="navWIP('구독 리포트')">리포트 내보내기</button>
+      <button class="btn btn-primary" onclick="navWIP('플랜 추가')">+ 플랜 추가</button>
+    </div>
+  </div>
+
+  <!-- KPI 카드 -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">총 구독자</div>
+      <div class="kpi-value">1,284<small style="font-size:14px;font-weight:600;color:var(--text-muted);">명</small></div>
+      <div class="kpi-trend up">전월 대비 +5.2%</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">이번 달 신규</div>
+      <div class="kpi-value">89<small style="font-size:14px;font-weight:600;color:var(--text-muted);">명</small></div>
+      <div class="kpi-trend up">전월 대비 +14.1%</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">이번 달 해지</div>
+      <div class="kpi-value">23<small style="font-size:14px;font-weight:600;color:var(--text-muted);">명</small></div>
+      <div class="kpi-trend">해지율 1.8%</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">월 구독 매출</div>
+      <div class="kpi-value" style="font-size:20px;">38,520,000<small style="font-size:12px;font-weight:600;color:var(--text-muted);">원</small></div>
+      <div class="kpi-trend up">전월 대비 +6.8%</div>
+    </div>
+  </div>
+
+  <!-- 멤버십 플랜 -->
+  <div class="plan-grid">
+    <div class="plan-card">
+      <div class="plan-card-head">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+          <span class="badge badge-muted">베이직</span>
+        </div>
+        <div class="plan-name">베이직</div>
+        <div class="plan-price">9,900<span>원/월</span></div>
+      </div>
+      <ul class="plan-benefits">
+        <li>무료배송 2회/월</li>
+        <li>전 상품 5% 할인</li>
+      </ul>
+      <div class="plan-meta">
+        <div>
+          <div class="plan-sub-count">구독자 <strong>847명</strong></div>
+          <div class="plan-revenue">월 매출 8,384,300원</div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="navWIP('베이직 편집')">편집</button>
+      </div>
+    </div>
+
+    <div class="plan-card featured">
+      <div class="featured-badge">인기</div>
+      <div class="plan-card-head">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+          <span class="badge badge-primary">프리미엄</span>
+        </div>
+        <div class="plan-name">프리미엄</div>
+        <div class="plan-price">19,900<span>원/월</span></div>
+      </div>
+      <ul class="plan-benefits">
+        <li>무료배송 무제한</li>
+        <li>전 상품 10% 할인</li>
+        <li>생일 혜택 (500P 추가 적립)</li>
+      </ul>
+      <div class="plan-meta">
+        <div>
+          <div class="plan-sub-count">구독자 <strong>312명</strong></div>
+          <div class="plan-revenue">월 매출 6,208,800원</div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="navWIP('프리미엄 편집')">편집</button>
+      </div>
+    </div>
+
+    <div class="plan-card">
+      <div class="plan-card-head">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+          <span class="badge badge-warning">VIP클럽</span>
+        </div>
+        <div class="plan-name">VIP클럽</div>
+        <div class="plan-price">49,900<span>원/월</span></div>
+      </div>
+      <ul class="plan-benefits">
+        <li>무료배송 무제한</li>
+        <li>전 상품 15% 할인</li>
+        <li>전담 CS 담당자 배정</li>
+        <li>월 1회 선물 박스 증정</li>
+      </ul>
+      <div class="plan-meta">
+        <div>
+          <div class="plan-sub-count">구독자 <strong>125명</strong></div>
+          <div class="plan-revenue">월 매출 6,237,500원</div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="navWIP('VIP클럽 편집')">편집</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 해지 이유 분석 -->
+  <div class="settings-card">
+    <div class="settings-card-head">
+      <span class="settings-card-title">구독 해지 이유 분석</span>
+      <span style="font-size:12px;color:var(--text-muted);">이번 달 해지 23건 기준</span>
+    </div>
+    <div class="settings-card-body">
+      <div class="reason-list">
+        <div class="reason-item">
+          <span class="reason-label">비용 부담</span>
+          <div class="reason-bar-wrap"><div class="reason-bar" style="width:42%;background:var(--danger);"></div></div>
+          <span class="reason-pct" style="color:var(--danger);">42%</span>
+        </div>
+        <div class="reason-item">
+          <span class="reason-label">혜택 부족</span>
+          <div class="reason-bar-wrap"><div class="reason-bar" style="width:28%;background:var(--warning);"></div></div>
+          <span class="reason-pct" style="color:var(--warning);">28%</span>
+        </div>
+        <div class="reason-item">
+          <span class="reason-label">서비스 불만족</span>
+          <div class="reason-bar-wrap"><div class="reason-bar" style="width:18%;background:var(--primary);"></div></div>
+          <span class="reason-pct" style="color:var(--primary);">18%</span>
+        </div>
+        <div class="reason-item">
+          <span class="reason-label">기타</span>
+          <div class="reason-bar-wrap"><div class="reason-bar" style="width:12%;background:var(--text-muted);"></div></div>
+          <span class="reason-pct" style="color:var(--text-muted);">12%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 최근 구독 이력 -->
+  <div class="settings-card">
+    <div class="settings-card-head">
+      <span class="settings-card-title">최근 구독 이력</span>
+      <button class="btn btn-ghost btn-sm" onclick="navWIP('전체 이력 보기')">전체 보기</button>
+    </div>
+    <table class="data-table">
+      <thead><tr>
+        <th>고객명</th><th>플랜</th><th>구분</th><th>일시</th><th>처리 상태</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>신다인</strong></td>
+          <td>프리미엄</td>
+          <td><span class="badge badge-success">신규</span></td>
+          <td style="color:var(--text-muted);">2026-05-28 15:04</td>
+          <td><span class="badge badge-success">완료</span></td>
+        </tr>
+        <tr>
+          <td><strong>홍승기</strong></td>
+          <td>베이직 → 프리미엄</td>
+          <td><span class="badge badge-primary">플랜변경</span></td>
+          <td style="color:var(--text-muted);">2026-05-28 11:22</td>
+          <td><span class="badge badge-success">완료</span></td>
+        </tr>
+        <tr>
+          <td><strong>윤지민</strong></td>
+          <td>베이직</td>
+          <td><span class="badge badge-danger">해지</span></td>
+          <td style="color:var(--text-muted);">2026-05-27 19:38</td>
+          <td><span class="badge badge-success">완료</span></td>
+        </tr>
+        <tr>
+          <td><strong>임재원</strong></td>
+          <td>VIP클럽</td>
+          <td><span class="badge badge-success">신규</span></td>
+          <td style="color:var(--text-muted);">2026-05-27 14:15</td>
+          <td><span class="badge badge-success">완료</span></td>
+        </tr>
+        <tr>
+          <td><strong>강예은</strong></td>
+          <td>프리미엄</td>
+          <td><span class="badge badge-danger">해지</span></td>
+          <td style="color:var(--text-muted);">2026-05-26 09:50</td>
+          <td><span class="badge badge-warning">환불 처리 중</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ SCREEN: 리뷰 & 커뮤니티 ══ -->
+<div id="screen-review" class="screen">
+  <div class="page-header">
+    <div>
+      <div class="page-title">리뷰 &amp; 커뮤니티</div>
+      <div class="page-desc">고객 리뷰 승인·관리 및 커뮤니티 게시글을 관리합니다.</div>
+    </div>
+    <div class="page-actions">
+      <button class="btn btn-secondary" onclick="navWIP('리뷰 일괄 승인')">일괄 승인</button>
+      <button class="btn btn-primary" onclick="navWIP('리뷰 설정')">리뷰 설정</button>
+    </div>
+  </div>
+
+  <!-- KPI 카드 -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">총 리뷰</div>
+      <div class="kpi-value">14,382<small style="font-size:14px;font-weight:600;color:var(--text-muted);">건</small></div>
+      <div class="kpi-trend up">누적 전체</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">평균 평점</div>
+      <div class="kpi-value">4.3<small style="font-size:14px;font-weight:600;color:#F59E0B;">★</small></div>
+      <div class="kpi-trend up">업계 평균 3.8 대비 +0.5</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">이번 달 신규</div>
+      <div class="kpi-value">847<small style="font-size:14px;font-weight:600;color:var(--text-muted);">건</small></div>
+      <div class="kpi-trend up">전월 대비 +12.4%</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">승인 대기</div>
+      <div class="kpi-value warn">34<small style="font-size:14px;font-weight:600;color:var(--warning);">건</small></div>
+      <div class="kpi-trend" style="color:var(--warning);">즉시 처리 필요</div>
+    </div>
+  </div>
+
+  <!-- 리뷰 필터 탭 -->
+  <div class="settings-card">
+    <div class="settings-card-head">
+      <span class="settings-card-title">리뷰 현황</span>
+    </div>
+    <div style="padding:0 20px;">
+      <div class="filter-tabs" id="reviewTabs">
+        <button class="filter-tab active" onclick="setReviewTab(this)">전체</button>
+        <button class="filter-tab" onclick="setReviewTab(this)">승인 대기<span class="tab-count">34</span></button>
+        <button class="filter-tab" onclick="setReviewTab(this)">공개</button>
+        <button class="filter-tab" onclick="setReviewTab(this)">숨김</button>
+        <button class="filter-tab" onclick="setReviewTab(this)">삭제</button>
+      </div>
+    </div>
+    <table class="data-table">
+      <thead><tr>
+        <th>작성자</th><th>상품명</th><th>평점</th><th>리뷰 내용</th><th>작성일</th><th style="text-align:center;">상태</th><th style="text-align:right;">관리</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>김지수</strong></td>
+          <td style="color:var(--text-sub);">데일리 모이스처라이저</td>
+          <td>
+            <div class="star-rating">
+              <span class="s-filled">★</span><span class="s-filled">★</span><span class="s-filled">★</span><span class="s-filled">★</span><span class="s-filled">★</span>
+            </div>
+          </td>
+          <td><div class="review-content">발림성이 정말 좋아요. 끈적임 없이 촉촉하게 마무리되고 향도 은은해서 아침에 쓰기 딱입니다!</div></td>
+          <td style="color:var(--text-muted);">2026-05-28</td>
+          <td style="text-align:center;"><span class="badge badge-success">공개</span></td>
+          <td style="text-align:right;"><div style="display:flex;gap:4px;justify-content:flex-end;"><button class="btn btn-ghost btn-sm" onclick="navWIP('숨김')">숨김</button><button class="btn btn-ghost btn-sm btn-danger" onclick="navWIP('삭제')">삭제</button></div></td>
+        </tr>
+        <tr>
+          <td><strong>이민준</strong></td>
+          <td style="color:var(--text-sub);">비타민C 세럼 30ml</td>
+          <td>
+            <div class="star-rating">
+              <span class="s-filled">★</span><span class="s-filled">★</span><span class="s-filled">★</span><span class="s-filled">★</span><span class="s-empty">★</span>
+            </div>
+          </td>
+          <td><div class="review-content">3주 사용 후 피부 톤이 확실히 밝아진 게 느껴져요. 다음 달에도 재구매할 예정입니다.</div></td>
+          <td style="color:var(--text-muted);">2026-05-28</td>
+          <td style="text-align:center;"><span class="badge badge-warning">대기</span></td>
+          <td style="text-align:right;"><div style="display:flex;gap:4px;justify-content:flex-end;"><button class="btn btn-secondary btn-sm" onclick="navWIP('승인')">승인</button><button class="btn btn-ghost btn-sm btn-danger" onclick="navWIP('삭제')">삭제</button></div></td>
+        </tr>
+        <tr>
+          <td><strong>박서연</strong></td>
+          <td style="color:var(--text-sub);">선크림 SPF50+</td>
+          <td>
+            <div class="star-rating">
+              <span class="s-filled">★</span><span class="s-filled">★</span><span class="s-filled">★</span><span class="s-filled">★</span><span class="s-filled">★</span>
+            </div>
+          </td>
+          <td><div class="review-content">백탁 없이 자연스럽게 발려요. 지성 피부인데 전혀 번들거리지 않고 하루 종일 유지됩니다.</div></td>
+          <td style="color:var(--text-muted);">2026-05-27</td>
+          <td style="text-align:center;"><span class="badge badge-success">공개</span></td>
+          <td style="text-align:right;"><div style="display:flex;gap:4px;justify-content:flex-end;"><button class="btn btn-ghost btn-sm" onclick="navWIP('숨김')">숨김</button><button class="btn btn-ghost btn-sm btn-danger" onclick="navWIP('삭제')">삭제</button></div></td>
+        </tr>
+        <tr>
+          <td><strong>최현우</strong></td>
+          <td style="color:var(--text-sub);">클렌징 폼 150ml</td>
+          <td>
+            <div class="star-rating">
+              <span class="s-filled">★</span><span class="s-filled">★</span><span class="s-filled">★</span><span class="s-empty">★</span><span class="s-empty">★</span>
+            </div>
+          </td>
+          <td><div class="review-content">세정력은 좋은데 세안 후 당김이 좀 있어요. 건성 피부에는 추천하기가 어렵겠네요.</div></td>
+          <td style="color:var(--text-muted);">2026-05-27</td>
+          <td style="text-align:center;"><span class="badge badge-warning">대기</span></td>
+          <td style="text-align:right;"><div style="display:flex;gap:4px;justify-content:flex-end;"><button class="btn btn-secondary btn-sm" onclick="navWIP('승인')">승인</button><button class="btn btn-ghost btn-sm btn-danger" onclick="navWIP('삭제')">삭제</button></div></td>
+        </tr>
+        <tr>
+          <td><strong>정유나</strong></td>
+          <td style="color:var(--text-sub);">토너 패드 60매</td>
+          <td>
+            <div class="star-rating">
+              <span class="s-filled">★</span><span class="s-filled">★</span><span class="s-filled">★</span><span class="s-filled">★</span><span class="s-filled">★</span>
+            </div>
+          </td>
+          <td><div class="review-content">매일 아침 세안 후 사용하는데 피부결이 확 정돈되는 느낌. 각질 제거 효과도 있어서 좋아요!</div></td>
+          <td style="color:var(--text-muted);">2026-05-26</td>
+          <td style="text-align:center;"><span class="badge badge-success">공개</span></td>
+          <td style="text-align:right;"><div style="display:flex;gap:4px;justify-content:flex-end;"><button class="btn btn-ghost btn-sm" onclick="navWIP('숨김')">숨김</button><button class="btn btn-ghost btn-sm btn-danger" onclick="navWIP('삭제')">삭제</button></div></td>
+        </tr>
+        <tr>
+          <td><strong>강도현</strong></td>
+          <td style="color:var(--text-sub);">앰플 세트 (3종)</td>
+          <td>
+            <div class="star-rating">
+              <span class="s-filled">★</span><span class="s-filled">★</span><span class="s-filled">★</span><span class="s-filled">★</span><span class="s-empty">★</span>
+            </div>
+          </td>
+          <td><div class="review-content">세트 구성이 좋아요. 하이드라+리프팅+브라이트닝 모두 사용해봤는데 피부가 탱탱해지는 게 느껴져요.</div></td>
+          <td style="color:var(--text-muted);">2026-05-26</td>
+          <td style="text-align:center;"><span class="badge badge-muted">숨김</span></td>
+          <td style="text-align:right;"><div style="display:flex;gap:4px;justify-content:flex-end;"><button class="btn btn-secondary btn-sm" onclick="navWIP('공개')">공개</button><button class="btn btn-ghost btn-sm btn-danger" onclick="navWIP('삭제')">삭제</button></div></td>
+        </tr>
+        <tr>
+          <td><strong>오세린</strong></td>
+          <td style="color:var(--text-sub);">에센스 50ml</td>
+          <td>
+            <div class="star-rating">
+              <span class="s-filled">★</span><span class="s-filled">★</span><span class="s-filled">★</span><span class="s-filled">★</span><span class="s-filled">★</span>
+            </div>
+          </td>
+          <td><div class="review-content">발림성이 가볍고 흡수가 빨라요. 레이어링해도 뭉치지 않아서 스킨케어 루틴에 바로 추가했습니다.</div></td>
+          <td style="color:var(--text-muted);">2026-05-25</td>
+          <td style="text-align:center;"><span class="badge badge-warning">대기</span></td>
+          <td style="text-align:right;"><div style="display:flex;gap:4px;justify-content:flex-end;"><button class="btn btn-secondary btn-sm" onclick="navWIP('승인')">승인</button><button class="btn btn-ghost btn-sm btn-danger" onclick="navWIP('삭제')">삭제</button></div></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 커뮤니티 게시글 -->
+  <div class="settings-card">
+    <div class="settings-card-head">
+      <span class="settings-card-title">커뮤니티 최근 게시글</span>
+      <button class="btn btn-ghost btn-sm" onclick="navWIP('전체 게시글 보기')">전체 보기</button>
+    </div>
+    <table class="data-table">
+      <thead><tr>
+        <th>제목</th><th>작성자</th><th>카테고리</th><th style="text-align:center;">조회</th><th style="text-align:center;">댓글</th><th style="text-align:center;">좋아요</th><th>작성일</th><th style="text-align:right;">관리</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"><strong>피부 타입별 추천 루틴 공유합니다 :)</strong></td>
+          <td>김지수</td>
+          <td><span class="badge badge-primary">뷰티팁</span></td>
+          <td style="text-align:center;">2,847</td>
+          <td style="text-align:center;">48</td>
+          <td style="text-align:center;">312</td>
+          <td style="color:var(--text-muted);">2026-05-28</td>
+          <td style="text-align:right;"><button class="btn btn-ghost btn-sm" onclick="navWIP('게시글 관리')">관리</button></td>
+        </tr>
+        <tr>
+          <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"><strong>선크림 어떤 걸 쓰시나요? 추천 부탁드려요</strong></td>
+          <td>이민준</td>
+          <td><span class="badge badge-muted">Q&amp;A</span></td>
+          <td style="text-align:center;">1,423</td>
+          <td style="text-align:center;">73</td>
+          <td style="text-align:center;">89</td>
+          <td style="color:var(--text-muted);">2026-05-27</td>
+          <td style="text-align:right;"><button class="btn btn-ghost btn-sm" onclick="navWIP('게시글 관리')">관리</button></td>
+        </tr>
+        <tr>
+          <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"><strong>30대 피부 고민, 앰플 효과 경험담</strong></td>
+          <td>박서연</td>
+          <td><span class="badge badge-success">후기</span></td>
+          <td style="text-align:center;">983</td>
+          <td style="text-align:center;">31</td>
+          <td style="text-align:center;">247</td>
+          <td style="color:var(--text-muted);">2026-05-26</td>
+          <td style="text-align:right;"><button class="btn btn-ghost btn-sm" onclick="navWIP('게시글 관리')">관리</button></td>
+        </tr>
+        <tr>
+          <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"><strong>비타민C 세럼 여름에 써도 되나요?</strong></td>
+          <td>정유나</td>
+          <td><span class="badge badge-muted">Q&amp;A</span></td>
+          <td style="text-align:center;">742</td>
+          <td style="text-align:center;">19</td>
+          <td style="text-align:center;">63</td>
+          <td style="color:var(--text-muted);">2026-05-25</td>
+          <td style="text-align:right;"><button class="btn btn-ghost btn-sm" onclick="navWIP('게시글 관리')">관리</button></td>
+        </tr>
+        <tr>
+          <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"><strong>신제품 토너패드 솔직 사용 후기</strong></td>
+          <td>최현우</td>
+          <td><span class="badge badge-success">후기</span></td>
+          <td style="text-align:center;">621</td>
+          <td style="text-align:center;">14</td>
+          <td style="text-align:center;">178</td>
+          <td style="color:var(--text-muted);">2026-05-24</td>
+          <td style="text-align:right;"><button class="btn btn-ghost btn-sm" onclick="navWIP('게시글 관리')">관리</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</main>
+
+<script src="crm-layout.js"></script>
+<script src="crm-common.js"></script>
+<script>
+const SCREEN_META = {
+  point:      { label: '포인트 관리' },
+  referral:   { label: '레퍼럴 관리' },
+  membership: { label: '구독/멤버십' },
+  review:     { label: '리뷰 & 커뮤니티' },
+};
+
+function showScreen(name, pushState = true) {
+  if (!SCREEN_META[name]) return;
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById('screen-' + name);
+  if (target) {
+    target.classList.add('active');
+    document.querySelector('.content')?.scrollTo({ top: 0 });
+  }
+  document.getElementById('bcCurr').textContent = SCREEN_META[name].label;
+  if (pushState) history.pushState({ screen: name }, '', '#' + name);
+  else           history.replaceState({ screen: name }, '', '#' + name);
+  if (typeof crmSetActiveSidebar === 'function') crmSetActiveSidebar();
+}
+
+window.addEventListener('popstate', e => {
+  showScreen(e.state?.screen || 'point', false);
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  const hash = location.hash.replace('#', '') || 'point';
+  showScreen(SCREEN_META[hash] ? hash : 'point', false);
+});
+
+function setReviewTab(el) {
+  document.querySelectorAll('#reviewTabs .filter-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+</script>
+</body>
+</html>

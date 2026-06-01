@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>고객 지원 — ENTWIZ CRM</title>
+  <link rel="stylesheet" href="crm-layout.css" />
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-light: #ede9fe;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --info: #3b82f6;
+      --border: #e5e7eb;
+      --text: #111827;
+      --text-muted: #6b7280;
+      --bg: #f9fafb;
+      --card-bg: #ffffff;
+      --radius: 10px;
+    }
+
+    body { padding: 0; margin: 0; }
+
+    /* ── 공통 유틸 ── */
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    .page-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text);
+      margin: 0 0 20px 0;
+    }
+
+
+    /* 요약 카드 */
+    .summary-cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .scard {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .scard::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+    }
+    .scard.total::before  { background: var(--primary); }
+    .scard.pending::before { background: var(--warning); }
+    .scard.progress::before { background: var(--info); }
+    .scard.due::before { background: var(--danger); }
+    .scard-label { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 500; }
+    .scard-value { font-size: 2rem; font-weight: 800; color: var(--text); line-height: 1; }
+    .scard-sub { font-size: 0.75rem; color: var(--text-muted); margin-top: 6px; }
+    .scard.total  .scard-value { color: var(--primary); }
+    .scard.pending .scard-value { color: var(--warning); }
+    .scard.progress .scard-value { color: var(--info); }
+    .scard.due     .scard-value { color: var(--danger); }
+
+    /* 검색/필터 바 */
+    .filter-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .filter-bar input[type="text"],
+    .filter-bar select {
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.875rem;
+      color: var(--text);
+      background: var(--card-bg);
+      outline: none;
+      transition: border-color .2s;
+    }
+    .filter-bar input[type="text"]:focus,
+    .filter-bar select:focus { border-color: var(--primary); }
+    .filter-bar input[type="text"] { width: 220px; }
+    .filter-bar .spacer { flex: 1; }
+
+    /* 버튼 */
+    .btn {
+      padding: 8px 18px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 600;
+      transition: opacity .2s, transform .1s;
+    }
+    .btn:active { transform: scale(.97); }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { opacity: .9; }
+    .btn-warning { background: var(--warning); color: #fff; }
+    .btn-danger  { background: var(--danger);  color: #fff; }
+    .btn-success { background: var(--success);  color: #fff; }
+    .btn-outline {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-sm { padding: 5px 12px; font-size: 0.78rem; }
+
+    /* 테이블 */
+    .table-wrap {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .crm-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+    .crm-table thead th {
+      background: #f3f4f6;
+      padding: 12px 14px;
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .crm-table tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background .15s;
+    }
+    .crm-table tbody tr:last-child { border-bottom: none; }
+    .crm-table tbody tr:hover { background: #f9fafb; }
+    .crm-table tbody td {
+      padding: 12px 14px;
+      color: var(--text);
+      vertical-align: middle;
+    }
+
+    /* 배지 */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 9px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .badge-danger  { background: #fee2e2; color: #dc2626; }
+    .badge-warning { background: #fef3c7; color: #d97706; }
+    .badge-info    { background: #dbeafe; color: #2563eb; }
+    .badge-success { background: #d1fae5; color: #059669; }
+    .badge-muted   { background: #f3f4f6; color: #6b7280; }
+    .badge-purple  { background: var(--primary-light); color: var(--primary); }
+
+    /* 카드 컨테이너 */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    .card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin: 0 0 16px 0;
+    }
+
+    /* ── TICKET ── */
+    .ticket-id { font-family: monospace; color: var(--text-muted); font-size: 0.8rem; }
+    .ticket-subject { font-weight: 500; }
+
+    /* ── HEALTH ── */
+    .health-desc {
+      background: var(--primary-light);
+      border-left: 4px solid var(--primary);
+      border-radius: 8px;
+      padding: 14px 18px;
+      color: var(--primary);
+      font-size: 0.875rem;
+      margin-bottom: 24px;
+      font-weight: 500;
+    }
+    .health-score-cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .hscard {
+      border-radius: var(--radius);
+      padding: 20px;
+      text-align: center;
+    }
+    .hscard.excellent { background: #d1fae5; }
+    .hscard.good      { background: #dbeafe; }
+    .hscard.normal    { background: #fef3c7; }
+    .hscard.bad       { background: #fee2e2; }
+    .hscard-range { font-size: 0.75rem; font-weight: 600; margin-bottom: 6px; opacity: .7; }
+    .hscard-label { font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; }
+    .hscard-value { font-size: 2rem; font-weight: 800; line-height: 1; }
+    .hscard-unit { font-size: 0.75rem; font-weight: 500; opacity: .7; margin-top: 4px; }
+    .hscard.excellent .hscard-label,
+    .hscard.excellent .hscard-value { color: #059669; }
+    .hscard.good .hscard-label,
+    .hscard.good .hscard-value { color: #2563eb; }
+    .hscard.normal .hscard-label,
+    .hscard.normal .hscard-value { color: #d97706; }
+    .hscard.bad .hscard-label,
+    .hscard.bad .hscard-value { color: #dc2626; }
+
+    .trend-up   { color: var(--success); font-weight: 700; }
+    .trend-down { color: var(--danger);  font-weight: 700; }
+    .trend-flat { color: var(--text-muted); font-weight: 700; }
+
+    .health-score-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .health-score-bar .bar-track {
+      flex: 1;
+      height: 8px;
+      background: #e5e7eb;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .health-score-bar .bar-fill {
+      height: 100%;
+      border-radius: 4px;
+    }
+    .health-score-bar .bar-label { font-size: 0.8rem; font-weight: 700; width: 32px; text-align: right; }
+
+    /* ── COUNSEL ── */
+    .stars { color: #f59e0b; font-size: 0.85rem; }
+    .summary-footer {
+      display: flex;
+      gap: 32px;
+      background: #f3f4f6;
+      border-radius: var(--radius);
+      padding: 16px 24px;
+      margin-top: 16px;
+    }
+    .summary-footer .sf-item { text-align: center; }
+    .summary-footer .sf-label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; }
+    .summary-footer .sf-value { font-size: 1.2rem; font-weight: 700; color: var(--text); }
+
+    /* ── CHURN ── */
+    .churn-banner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 20px;
+      border-radius: var(--radius);
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+    .churn-banner.high { background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; }
+    .churn-banner .banner-icon { font-size: 1.4rem; }
+    .churn-banner .banner-count { font-size: 1.5rem; font-weight: 800; margin: 0 4px; }
+
+    .risk-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 18px;
+    }
+    .risk-tab {
+      padding: 7px 20px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--card-bg);
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      transition: all .2s;
+    }
+    .risk-tab.active-very { background: #fee2e2; color: #dc2626; border-color: #fca5a5; }
+    .risk-tab.active-high { background: #fef3c7; color: #d97706; border-color: #fcd34d; }
+    .risk-tab.active-mid  { background: #dbeafe; color: #2563eb; border-color: #93c5fd; }
+
+    .churn-bar-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .churn-bar-wrap .cbar-track {
+      width: 80px;
+      height: 8px;
+      background: #e5e7eb;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .churn-bar-wrap .cbar-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: var(--danger);
+    }
+    .churn-bar-wrap .cbar-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--danger);
+      width: 36px;
+    }
+
+    .action-footer {
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 20px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+    .action-footer .sel-count {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    /* 알림 배너 버튼 */
+    .notify-setting-bar {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 16px;
+    }
+
+    /* 반응형 */
+    @media (max-width: 1100px) {
+      .summary-cards, .health-score-cards { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 700px) {
+      .summary-cards, .health-score-cards { grid-template-columns: 1fr 1fr; }
+      .filter-bar { flex-direction: column; align-items: stretch; }
+      .filter-bar input[type="text"] { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<main class="content">
+
+  <div class="breadcrumb">
+    <span class="bc-link">ENTWIZ CRM</span>
+    <span class="sep">›</span>
+    <span>고객 지원</span>
+    <span class="sep">›</span>
+    <span class="curr" id="bcCurr">문의 목록</span>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       SCREEN: ticket
+  ════════════════════════════════════════ -->
+  <div class="screen" id="screen-ticket">
+    <h1 class="page-title">문의 목록</h1>
+
+    <!-- 요약 카드 -->
+    <div class="summary-cards">
+      <div class="scard total">
+        <div class="scard-label">전체 문의</div>
+        <div class="scard-value">247</div>
+        <div class="scard-sub">이번 달 누적</div>
+      </div>
+      <div class="scard pending">
+        <div class="scard-label">대기중</div>
+        <div class="scard-value">41</div>
+        <div class="scard-sub">응답 필요</div>
+      </div>
+      <div class="scard progress">
+        <div class="scard-label">처리중</div>
+        <div class="scard-value">89</div>
+        <div class="scard-sub">담당자 배정됨</div>
+      </div>
+      <div class="scard due">
+        <div class="scard-label">오늘 마감</div>
+        <div class="scard-value">12</div>
+        <div class="scard-sub">SLA 만료 임박</div>
+      </div>
+    </div>
+
+    <!-- 필터 바 -->
+    <div class="filter-bar">
+      <input type="text" placeholder="🔍 고객명, 문의 제목 검색…" />
+      <select>
+        <option value="">상태: 전체</option>
+        <option>대기중</option>
+        <option>처리중</option>
+        <option>완료</option>
+      </select>
+      <select>
+        <option value="">우선순위: 전체</option>
+        <option>긴급</option>
+        <option>높음</option>
+        <option>보통</option>
+        <option>낮음</option>
+      </select>
+      <select>
+        <option value="">담당자: 전체</option>
+        <option>김지원</option>
+        <option>이수민</option>
+        <option>박현우</option>
+        <option>최다은</option>
+        <option>정태양</option>
+      </select>
+      <div class="spacer"></div>
+      <button class="btn btn-primary" onclick="showToast('info','새 문의','문의 생성 화면은 준비 중입니다.')">+ 새 문의</button>
+    </div>
+
+    <!-- 테이블 -->
+    <div class="table-wrap">
+      <table class="crm-table">
+        <thead>
+          <tr>
+            <th>문의 ID</th>
+            <th>고객명</th>
+            <th>제목</th>
+            <th>채널</th>
+            <th>우선순위</th>
+            <th>상태</th>
+            <th>담당자</th>
+            <th>접수일시</th>
+            <th>마감일</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr onclick="showToast('info','문의 상세','준비 중입니다.')" style="cursor:pointer">
+            <td><span class="ticket-id">#TK-2501</span></td>
+            <td>삼성SDS</td>
+            <td class="ticket-subject">API 연동 오류로 데이터 미전송</td>
+            <td><span class="badge badge-info">채팅</span></td>
+            <td><span class="badge badge-danger">긴급</span></td>
+            <td><span class="badge badge-warning">대기중</span></td>
+            <td>김지원</td>
+            <td>2026-05-28 09:12</td>
+            <td style="color:var(--danger);font-weight:600">2026-05-28</td>
+          </tr>
+          <tr onclick="showToast('info','문의 상세','준비 중입니다.')" style="cursor:pointer">
+            <td><span class="ticket-id">#TK-2499</span></td>
+            <td>LG CNS</td>
+            <td class="ticket-subject">대시보드 로딩 속도 지연 문의</td>
+            <td><span class="badge badge-muted">이메일</span></td>
+            <td><span class="badge badge-warning">높음</span></td>
+            <td><span class="badge badge-info">처리중</span></td>
+            <td>이수민</td>
+            <td>2026-05-27 15:44</td>
+            <td>2026-05-29</td>
+          </tr>
+          <tr onclick="showToast('info','문의 상세','준비 중입니다.')" style="cursor:pointer">
+            <td><span class="ticket-id">#TK-2497</span></td>
+            <td>현대오토에버</td>
+            <td class="ticket-subject">월별 리포트 CSV 다운로드 오류</td>
+            <td><span class="badge badge-success">카카오</span></td>
+            <td><span class="badge badge-info">보통</span></td>
+            <td><span class="badge badge-info">처리중</span></td>
+            <td>박현우</td>
+            <td>2026-05-27 11:30</td>
+            <td>2026-05-30</td>
+          </tr>
+          <tr onclick="showToast('info','문의 상세','준비 중입니다.')" style="cursor:pointer">
+            <td><span class="ticket-id">#TK-2495</span></td>
+            <td>카카오엔터프라이즈</td>
+            <td class="ticket-subject">사용자 권한 설정 변경 요청</td>
+            <td><span class="badge badge-muted">전화</span></td>
+            <td><span class="badge badge-danger">긴급</span></td>
+            <td><span class="badge badge-warning">대기중</span></td>
+            <td>최다은</td>
+            <td>2026-05-27 10:05</td>
+            <td style="color:var(--danger);font-weight:600">2026-05-28</td>
+          </tr>
+          <tr onclick="showToast('info','문의 상세','준비 중입니다.')" style="cursor:pointer">
+            <td><span class="ticket-id">#TK-2493</span></td>
+            <td>네이버클라우드</td>
+            <td class="ticket-subject">멀티 테넌트 설정 가이드 요청</td>
+            <td><span class="badge badge-info">채팅</span></td>
+            <td><span class="badge badge-info">보통</span></td>
+            <td><span class="badge badge-success">완료</span></td>
+            <td>정태양</td>
+            <td>2026-05-26 14:22</td>
+            <td>2026-05-28</td>
+          </tr>
+          <tr onclick="showToast('info','문의 상세','준비 중입니다.')" style="cursor:pointer">
+            <td><span class="ticket-id">#TK-2490</span></td>
+            <td>두산디지털이노베이션</td>
+            <td class="ticket-subject">슬랙 연동 웹훅 토큰 만료</td>
+            <td><span class="badge badge-muted">이메일</span></td>
+            <td><span class="badge badge-warning">높음</span></td>
+            <td><span class="badge badge-info">처리중</span></td>
+            <td>김지원</td>
+            <td>2026-05-26 09:55</td>
+            <td>2026-05-29</td>
+          </tr>
+          <tr onclick="showToast('info','문의 상세','준비 중입니다.')" style="cursor:pointer">
+            <td><span class="ticket-id">#TK-2488</span></td>
+            <td>SK하이닉스</td>
+            <td class="ticket-subject">세금계산서 재발행 요청</td>
+            <td><span class="badge badge-success">카카오</span></td>
+            <td><span class="badge badge-info">보통</span></td>
+            <td><span class="badge badge-warning">대기중</span></td>
+            <td>이수민</td>
+            <td>2026-05-25 16:40</td>
+            <td>2026-05-31</td>
+          </tr>
+          <tr onclick="showToast('info','문의 상세','준비 중입니다.')" style="cursor:pointer">
+            <td><span class="ticket-id">#TK-2485</span></td>
+            <td>GS리테일</td>
+            <td class="ticket-subject">모바일 앱 푸시 수신 안됨</td>
+            <td><span class="badge badge-muted">전화</span></td>
+            <td><span class="badge badge-danger">긴급</span></td>
+            <td><span class="badge badge-info">처리중</span></td>
+            <td>박현우</td>
+            <td>2026-05-25 13:15</td>
+            <td style="color:var(--danger);font-weight:600">2026-05-28</td>
+          </tr>
+          <tr onclick="showToast('info','문의 상세','준비 중입니다.')" style="cursor:pointer">
+            <td><span class="ticket-id">#TK-2481</span></td>
+            <td>롯데이노베이트</td>
+            <td class="ticket-subject">데이터 마이그레이션 일정 조율</td>
+            <td><span class="badge badge-info">채팅</span></td>
+            <td><span class="badge badge-info">보통</span></td>
+            <td><span class="badge badge-success">완료</span></td>
+            <td>최다은</td>
+            <td>2026-05-24 11:00</td>
+            <td>2026-05-27</td>
+          </tr>
+          <tr onclick="showToast('info','문의 상세','준비 중입니다.')" style="cursor:pointer">
+            <td><span class="ticket-id">#TK-2478</span></td>
+            <td>CJ올리브네트웍스</td>
+            <td class="ticket-subject">계정 이메일 변경 후 로그인 불가</td>
+            <td><span class="badge badge-muted">이메일</span></td>
+            <td><span class="badge badge-warning">높음</span></td>
+            <td><span class="badge badge-warning">대기중</span></td>
+            <td>정태양</td>
+            <td>2026-05-24 09:30</td>
+            <td>2026-05-29</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       SCREEN: health
+  ════════════════════════════════════════ -->
+  <div class="screen" id="screen-health">
+    <h1 class="page-title">고객 건강도 현황</h1>
+
+    <div class="health-desc">
+      고객 건강도 점수는 구매빈도 · 최근활동 · 채널반응 · CS이력을 종합한 지수입니다. 점수는 매일 자정 자동 갱신되며, 알림 임계값 설정 시 슬랙/이메일로 즉시 통보됩니다.
+    </div>
+
+    <!-- 점수대 분포 카드 -->
+    <div class="health-score-cards">
+      <div class="hscard excellent">
+        <div class="hscard-range">80–100점</div>
+        <div class="hscard-label">우수</div>
+        <div class="hscard-value">312</div>
+        <div class="hscard-unit">명의 고객</div>
+      </div>
+      <div class="hscard good">
+        <div class="hscard-range">60–79점</div>
+        <div class="hscard-label">양호</div>
+        <div class="hscard-value">487</div>
+        <div class="hscard-unit">명의 고객</div>
+      </div>
+      <div class="hscard normal">
+        <div class="hscard-range">40–59점</div>
+        <div class="hscard-label">보통</div>
+        <div class="hscard-value">218</div>
+        <div class="hscard-unit">명의 고객</div>
+      </div>
+      <div class="hscard bad">
+        <div class="hscard-range">0–39점</div>
+        <div class="hscard-label">위험</div>
+        <div class="hscard-value">63</div>
+        <div class="hscard-unit">명의 고객</div>
+      </div>
+    </div>
+
+    <!-- 세그먼트별 히트맵 테이블 -->
+    <div class="table-wrap">
+      <table class="crm-table">
+        <thead>
+          <tr>
+            <th>세그먼트</th>
+            <th>평균 건강도</th>
+            <th>고객 수</th>
+            <th>30일 추이</th>
+            <th>주요 이슈</th>
+            <th>세부 지표</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="badge badge-purple">VIP</span></td>
+            <td>
+              <div class="health-score-bar">
+                <div class="bar-track"><div class="bar-fill" style="width:91%;background:var(--success)"></div></div>
+                <span class="bar-label" style="color:var(--success)">91</span>
+              </div>
+            </td>
+            <td>48명</td>
+            <td><span class="trend-up">↑ +2.3</span></td>
+            <td>없음 — 안정적</td>
+            <td><button class="btn btn-outline btn-sm" onclick="showToast('info','세그먼트 상세','준비 중입니다.')">보기</button></td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-success">활성 우량</span></td>
+            <td>
+              <div class="health-score-bar">
+                <div class="bar-track"><div class="bar-fill" style="width:82%;background:var(--success)"></div></div>
+                <span class="bar-label" style="color:var(--success)">82</span>
+              </div>
+            </td>
+            <td>126명</td>
+            <td><span class="trend-up">↑ +0.8</span></td>
+            <td>경쟁사 접촉 1건 감지</td>
+            <td><button class="btn btn-outline btn-sm" onclick="showToast('info','세그먼트 상세','준비 중입니다.')">보기</button></td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-info">일반</span></td>
+            <td>
+              <div class="health-score-bar">
+                <div class="bar-track"><div class="bar-fill" style="width:71%;background:var(--info)"></div></div>
+                <span class="bar-label" style="color:var(--info)">71</span>
+              </div>
+            </td>
+            <td>319명</td>
+            <td><span class="trend-flat">→ 0.0</span></td>
+            <td>CS 문의 증가 +12%</td>
+            <td><button class="btn btn-outline btn-sm" onclick="showToast('info','세그먼트 상세','준비 중입니다.')">보기</button></td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-info">신규(3개월 이내)</span></td>
+            <td>
+              <div class="health-score-bar">
+                <div class="bar-track"><div class="bar-fill" style="width:68%;background:var(--info)"></div></div>
+                <span class="bar-label" style="color:var(--info)">68</span>
+              </div>
+            </td>
+            <td>94명</td>
+            <td><span class="trend-up">↑ +5.1</span></td>
+            <td>온보딩 완료율 61%</td>
+            <td><button class="btn btn-outline btn-sm" onclick="showToast('info','세그먼트 상세','준비 중입니다.')">보기</button></td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-warning">관심 필요</span></td>
+            <td>
+              <div class="health-score-bar">
+                <div class="bar-track"><div class="bar-fill" style="width:53%;background:var(--warning)"></div></div>
+                <span class="bar-label" style="color:var(--warning)">53</span>
+              </div>
+            </td>
+            <td>142명</td>
+            <td><span class="trend-down">↓ -3.2</span></td>
+            <td>로그인 빈도 30% 감소</td>
+            <td><button class="btn btn-outline btn-sm" onclick="showToast('info','세그먼트 상세','준비 중입니다.')">보기</button></td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-warning">구매 저조</span></td>
+            <td>
+              <div class="health-score-bar">
+                <div class="bar-track"><div class="bar-fill" style="width:48%;background:var(--warning)"></div></div>
+                <span class="bar-label" style="color:var(--warning)">48</span>
+              </div>
+            </td>
+            <td>76명</td>
+            <td><span class="trend-down">↓ -1.5</span></td>
+            <td>재구매 유도 캠페인 필요</td>
+            <td><button class="btn btn-outline btn-sm" onclick="showToast('info','세그먼트 상세','준비 중입니다.')">보기</button></td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-danger">이탈 위험</span></td>
+            <td>
+              <div class="health-score-bar">
+                <div class="bar-track"><div class="bar-fill" style="width:31%;background:var(--danger)"></div></div>
+                <span class="bar-label" style="color:var(--danger)">31</span>
+              </div>
+            </td>
+            <td>45명</td>
+            <td><span class="trend-down">↓ -6.7</span></td>
+            <td>CS 불만 3건, 미응답 7일↑</td>
+            <td><button class="btn btn-outline btn-sm" onclick="showToast('info','세그먼트 상세','준비 중입니다.')">보기</button></td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-muted">휴면(90일+)</span></td>
+            <td>
+              <div class="health-score-bar">
+                <div class="bar-track"><div class="bar-fill" style="width:18%;background:#9ca3af"></div></div>
+                <span class="bar-label" style="color:#9ca3af">18</span>
+              </div>
+            </td>
+            <td>30명</td>
+            <td><span class="trend-down">↓ -2.1</span></td>
+            <td>90일 이상 무활동</td>
+            <td><button class="btn btn-outline btn-sm" onclick="showToast('info','세그먼트 상세','준비 중입니다.')">보기</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="notify-setting-bar">
+      <button class="btn btn-outline" onclick="showToast('info','알림 설정','건강도 하락 알림 설정 화면은 준비 중입니다.')">
+        🔔 건강도 하락 알림 설정
+      </button>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       SCREEN: counsel
+  ════════════════════════════════════════ -->
+  <div class="screen" id="screen-counsel">
+    <h1 class="page-title">상담 이력</h1>
+
+    <!-- 필터 바 -->
+    <div class="filter-bar">
+      <input type="text" placeholder="🔍 고객명, 상담 내용 검색…" />
+      <select>
+        <option>기간: 최근 30일</option>
+        <option>최근 7일</option>
+        <option>최근 90일</option>
+        <option>직접 입력</option>
+      </select>
+      <select>
+        <option value="">채널: 전체</option>
+        <option>채팅</option>
+        <option>이메일</option>
+        <option>전화</option>
+      </select>
+      <select>
+        <option value="">상담 유형: 전체</option>
+        <option>기술 지원</option>
+        <option>결제/환불</option>
+        <option>사용 문의</option>
+        <option>불만 처리</option>
+        <option>계정 관리</option>
+      </select>
+      <div class="spacer"></div>
+      <button class="btn btn-outline" onclick="showToast('info','내보내기','엑셀 다운로드는 준비 중입니다.')">⬇ 내보내기</button>
+    </div>
+
+    <!-- 테이블 -->
+    <div class="table-wrap">
+      <table class="crm-table">
+        <thead>
+          <tr>
+            <th>상담 ID</th>
+            <th>고객명</th>
+            <th>등급</th>
+            <th>상담 유형</th>
+            <th>채널</th>
+            <th>상담 내용 요약</th>
+            <th>처리 결과</th>
+            <th>상담사</th>
+            <th>상담 시간</th>
+            <th>만족도</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="ticket-id">#CS-8841</span></td>
+            <td>삼성SDS</td>
+            <td><span class="badge badge-purple">VIP</span></td>
+            <td>기술 지원</td>
+            <td><span class="badge badge-info">채팅</span></td>
+            <td>API 인증 토큰 만료 후 자동 갱신 불가</td>
+            <td><span class="badge badge-success">해결됨</span></td>
+            <td>김지원</td>
+            <td>18분</td>
+            <td><span class="stars">★★★★★</span></td>
+          </tr>
+          <tr>
+            <td><span class="ticket-id">#CS-8835</span></td>
+            <td>LG CNS</td>
+            <td><span class="badge badge-warning">Gold</span></td>
+            <td>사용 문의</td>
+            <td><span class="badge badge-muted">이메일</span></td>
+            <td>대시보드 커스텀 위젯 추가 방법 안내 요청</td>
+            <td><span class="badge badge-success">해결됨</span></td>
+            <td>이수민</td>
+            <td>7분</td>
+            <td><span class="stars">★★★★</span><span style="color:#d1d5db">★</span></td>
+          </tr>
+          <tr>
+            <td><span class="ticket-id">#CS-8829</span></td>
+            <td>현대오토에버</td>
+            <td><span class="badge badge-warning">Gold</span></td>
+            <td>결제/환불</td>
+            <td><span class="badge badge-muted">전화</span></td>
+            <td>구독 플랜 다운그레이드 후 환불 금액 확인</td>
+            <td><span class="badge badge-success">해결됨</span></td>
+            <td>박현우</td>
+            <td>24분</td>
+            <td><span class="stars">★★★★★</span></td>
+          </tr>
+          <tr>
+            <td><span class="ticket-id">#CS-8820</span></td>
+            <td>카카오엔터프라이즈</td>
+            <td><span class="badge badge-purple">VIP</span></td>
+            <td>불만 처리</td>
+            <td><span class="badge badge-success">카카오</span></td>
+            <td>신규 기능 배포 후 기존 워크플로우 오작동 클레임</td>
+            <td><span class="badge badge-warning">에스컬레이션</span></td>
+            <td>최다은</td>
+            <td>42분</td>
+            <td><span class="stars">★★</span><span style="color:#d1d5db">★★★</span></td>
+          </tr>
+          <tr>
+            <td><span class="ticket-id">#CS-8814</span></td>
+            <td>네이버클라우드</td>
+            <td><span class="badge badge-info">Silver</span></td>
+            <td>계정 관리</td>
+            <td><span class="badge badge-info">채팅</span></td>
+            <td>팀원 10명 일괄 초대 및 권한 설정 안내</td>
+            <td><span class="badge badge-success">해결됨</span></td>
+            <td>정태양</td>
+            <td>11분</td>
+            <td><span class="stars">★★★★</span><span style="color:#d1d5db">★</span></td>
+          </tr>
+          <tr>
+            <td><span class="ticket-id">#CS-8807</span></td>
+            <td>두산디지털이노베이션</td>
+            <td><span class="badge badge-info">Silver</span></td>
+            <td>기술 지원</td>
+            <td><span class="badge badge-muted">이메일</span></td>
+            <td>슬랙 웹훅 토큰 재발급 및 연동 재설정 가이드</td>
+            <td><span class="badge badge-success">해결됨</span></td>
+            <td>김지원</td>
+            <td>15분</td>
+            <td><span class="stars">★★★★★</span></td>
+          </tr>
+          <tr>
+            <td><span class="ticket-id">#CS-8798</span></td>
+            <td>SK하이닉스</td>
+            <td><span class="badge badge-warning">Gold</span></td>
+            <td>결제/환불</td>
+            <td><span class="badge badge-success">카카오</span></td>
+            <td>세금계산서 담당자 변경 및 재발행 요청 처리</td>
+            <td><span class="badge badge-success">해결됨</span></td>
+            <td>이수민</td>
+            <td>9분</td>
+            <td><span class="stars">★★★★★</span></td>
+          </tr>
+          <tr>
+            <td><span class="ticket-id">#CS-8789</span></td>
+            <td>GS리테일</td>
+            <td><span class="badge badge-info">Silver</span></td>
+            <td>기술 지원</td>
+            <td><span class="badge badge-muted">전화</span></td>
+            <td>iOS 앱 푸시 알림 미수신 — 기기 토큰 초기화 조치</td>
+            <td><span class="badge badge-info">처리중</span></td>
+            <td>박현우</td>
+            <td>31분</td>
+            <td><span class="stars">★★★</span><span style="color:#d1d5db">★★</span></td>
+          </tr>
+          <tr>
+            <td><span class="ticket-id">#CS-8780</span></td>
+            <td>롯데이노베이트</td>
+            <td><span class="badge badge-warning">Gold</span></td>
+            <td>사용 문의</td>
+            <td><span class="badge badge-info">채팅</span></td>
+            <td>데이터 마이그레이션 전 백업 절차 확인</td>
+            <td><span class="badge badge-success">해결됨</span></td>
+            <td>최다은</td>
+            <td>13분</td>
+            <td><span class="stars">★★★★</span><span style="color:#d1d5db">★</span></td>
+          </tr>
+          <tr>
+            <td><span class="ticket-id">#CS-8771</span></td>
+            <td>CJ올리브네트웍스</td>
+            <td><span class="badge badge-muted">일반</span></td>
+            <td>계정 관리</td>
+            <td><span class="badge badge-muted">이메일</span></td>
+            <td>이메일 변경 후 2FA 재설정 및 로그인 복구</td>
+            <td><span class="badge badge-warning">에스컬레이션</span></td>
+            <td>정태양</td>
+            <td>28분</td>
+            <td><span class="stars">★★★</span><span style="color:#d1d5db">★★</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 하단 요약 -->
+    <div class="summary-footer">
+      <div class="sf-item">
+        <div class="sf-label">평균 상담 시간</div>
+        <div class="sf-value">19.8분</div>
+      </div>
+      <div class="sf-item">
+        <div class="sf-label">평균 만족도</div>
+        <div class="sf-value">4.1 / 5.0</div>
+      </div>
+      <div class="sf-item">
+        <div class="sf-label">해결률</div>
+        <div class="sf-value" style="color:var(--success)">78.4%</div>
+      </div>
+      <div class="sf-item">
+        <div class="sf-label">에스컬레이션율</div>
+        <div class="sf-value" style="color:var(--warning)">12.3%</div>
+      </div>
+      <div class="sf-item">
+        <div class="sf-label">재문의율</div>
+        <div class="sf-value" style="color:var(--danger)">9.2%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       SCREEN: churn
+  ════════════════════════════════════════ -->
+  <div class="screen" id="screen-churn">
+    <h1 class="page-title">이탈 위험 고객 목록</h1>
+
+    <!-- 경고 배너 -->
+    <div class="churn-banner high">
+      <span class="banner-icon">⚠️</span>
+      <span>현재 이탈 위험 고객이</span>
+      <span class="banner-count">63</span>
+      <span>명입니다. 즉시 대응을 권장합니다.</span>
+      <div style="flex:1"></div>
+      <button class="btn btn-danger btn-sm" onclick="showToast('warning','긴급 알림','CS팀에 긴급 공지를 발송했습니다.')">긴급 공지 발송</button>
+    </div>
+
+    <!-- 위험도 탭 -->
+    <div class="risk-tabs">
+      <button class="risk-tab active-very" onclick="setRiskTab(this,'active-very')">🔴 매우 높음 (18명)</button>
+      <button class="risk-tab" onclick="setRiskTab(this,'active-high')">🟠 높음 (27명)</button>
+      <button class="risk-tab" onclick="setRiskTab(this,'active-mid')">🟡 보통 (18명)</button>
+    </div>
+
+    <!-- 테이블 -->
+    <div class="table-wrap">
+      <table class="crm-table">
+        <thead>
+          <tr>
+            <th><input type="checkbox" id="chk-all" onchange="toggleAllChk(this)" /></th>
+            <th>고객명</th>
+            <th>등급</th>
+            <th>이탈위험점수</th>
+            <th>마지막 구매일</th>
+            <th>마지막 접속일</th>
+            <th>주요 이탈 신호</th>
+            <th>권장 조치</th>
+          </tr>
+        </thead>
+        <tbody id="churn-tbody">
+          <tr>
+            <td><input type="checkbox" class="chk-row" /></td>
+            <td><strong>카카오엔터프라이즈</strong></td>
+            <td><span class="badge badge-purple">VIP</span></td>
+            <td>
+              <div class="churn-bar-wrap">
+                <div class="cbar-track"><div class="cbar-fill" style="width:94%"></div></div>
+                <span class="cbar-label">94</span>
+              </div>
+            </td>
+            <td>2026-03-12</td>
+            <td>2026-04-30</td>
+            <td>불만 CS 3건, 경쟁사 데모 진행</td>
+            <td style="white-space:nowrap">
+              <button class="btn btn-warning btn-sm" style="margin-right:4px" onclick="showToast('success','캠페인','캠페인 발송 예약 완료')">캠페인 발송</button>
+              <button class="btn btn-outline btn-sm" onclick="showToast('success','배정','담당자가 배정되었습니다.')">담당자 배정</button>
+            </td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" class="chk-row" /></td>
+            <td><strong>GS리테일</strong></td>
+            <td><span class="badge badge-warning">Gold</span></td>
+            <td>
+              <div class="churn-bar-wrap">
+                <div class="cbar-track"><div class="cbar-fill" style="width:89%"></div></div>
+                <span class="cbar-label">89</span>
+              </div>
+            </td>
+            <td>2026-03-28</td>
+            <td>2026-05-01</td>
+            <td>앱 오류 미해결, 미응답 27일</td>
+            <td style="white-space:nowrap">
+              <button class="btn btn-warning btn-sm" style="margin-right:4px" onclick="showToast('success','캠페인','캠페인 발송 예약 완료')">캠페인 발송</button>
+              <button class="btn btn-outline btn-sm" onclick="showToast('success','배정','담당자가 배정되었습니다.')">담당자 배정</button>
+            </td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" class="chk-row" /></td>
+            <td><strong>한화시스템</strong></td>
+            <td><span class="badge badge-warning">Gold</span></td>
+            <td>
+              <div class="churn-bar-wrap">
+                <div class="cbar-track"><div class="cbar-fill" style="width:85%"></div></div>
+                <span class="cbar-label">85</span>
+              </div>
+            </td>
+            <td>2026-02-15</td>
+            <td>2026-04-22</td>
+            <td>로그인 빈도 80% 감소, 구독 취소 문의</td>
+            <td style="white-space:nowrap">
+              <button class="btn btn-warning btn-sm" style="margin-right:4px" onclick="showToast('success','캠페인','캠페인 발송 예약 완료')">캠페인 발송</button>
+              <button class="btn btn-outline btn-sm" onclick="showToast('success','배정','담당자가 배정되었습니다.')">담당자 배정</button>
+            </td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" class="chk-row" /></td>
+            <td><strong>코오롱베니트</strong></td>
+            <td><span class="badge badge-info">Silver</span></td>
+            <td>
+              <div class="churn-bar-wrap">
+                <div class="cbar-track"><div class="cbar-fill" style="width:82%"></div></div>
+                <span class="cbar-label">82</span>
+              </div>
+            </td>
+            <td>2026-02-28</td>
+            <td>2026-05-05</td>
+            <td>플랜 다운그레이드 문의, CS 불만 2건</td>
+            <td style="white-space:nowrap">
+              <button class="btn btn-warning btn-sm" style="margin-right:4px" onclick="showToast('success','캠페인','캠페인 발송 예약 완료')">캠페인 발송</button>
+              <button class="btn btn-outline btn-sm" onclick="showToast('success','배정','담당자가 배정되었습니다.')">담당자 배정</button>
+            </td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" class="chk-row" /></td>
+            <td><strong>동원시스템즈</strong></td>
+            <td><span class="badge badge-info">Silver</span></td>
+            <td>
+              <div class="churn-bar-wrap">
+                <div class="cbar-track"><div class="cbar-fill" style="width:78%"></div></div>
+                <span class="cbar-label">78</span>
+              </div>
+            </td>
+            <td>2026-03-05</td>
+            <td>2026-05-10</td>
+            <td>핵심 기능 미활성화, 온보딩 미완료</td>
+            <td style="white-space:nowrap">
+              <button class="btn btn-warning btn-sm" style="margin-right:4px" onclick="showToast('success','캠페인','캠페인 발송 예약 완료')">캠페인 발송</button>
+              <button class="btn btn-outline btn-sm" onclick="showToast('success','배정','담당자가 배정되었습니다.')">담당자 배정</button>
+            </td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" class="chk-row" /></td>
+            <td><strong>포스코ICT</strong></td>
+            <td><span class="badge badge-warning">Gold</span></td>
+            <td>
+              <div class="churn-bar-wrap">
+                <div class="cbar-track"><div class="cbar-fill" style="width:76%"></div></div>
+                <span class="cbar-label">76</span>
+              </div>
+            </td>
+            <td>2026-01-20</td>
+            <td>2026-04-15</td>
+            <td>60일 이상 미구매, 이메일 미열람</td>
+            <td style="white-space:nowrap">
+              <button class="btn btn-warning btn-sm" style="margin-right:4px" onclick="showToast('success','캠페인','캠페인 발송 예약 완료')">캠페인 발송</button>
+              <button class="btn btn-outline btn-sm" onclick="showToast('success','배정','담당자가 배정되었습니다.')">담당자 배정</button>
+            </td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" class="chk-row" /></td>
+            <td><strong>신세계아이앤씨</strong></td>
+            <td><span class="badge badge-muted">일반</span></td>
+            <td>
+              <div class="churn-bar-wrap">
+                <div class="cbar-track"><div class="cbar-fill" style="width:72%"></div></div>
+                <span class="cbar-label">72</span>
+              </div>
+            </td>
+            <td>2026-03-18</td>
+            <td>2026-05-14</td>
+            <td>채팅 채널 반응률 15% 이하</td>
+            <td style="white-space:nowrap">
+              <button class="btn btn-warning btn-sm" style="margin-right:4px" onclick="showToast('success','캠페인','캠페인 발송 예약 완료')">캠페인 발송</button>
+              <button class="btn btn-outline btn-sm" onclick="showToast('success','배정','담당자가 배정되었습니다.')">담당자 배정</button>
+            </td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" class="chk-row" /></td>
+            <td><strong>효성ITX</strong></td>
+            <td><span class="badge badge-muted">일반</span></td>
+            <td>
+              <div class="churn-bar-wrap">
+                <div class="cbar-track"><div class="cbar-fill" style="width:69%"></div></div>
+                <span class="cbar-label">69</span>
+              </div>
+            </td>
+            <td>2026-04-01</td>
+            <td>2026-05-18</td>
+            <td>기능 사용률 20% 미만, 갱신일 임박</td>
+            <td style="white-space:nowrap">
+              <button class="btn btn-warning btn-sm" style="margin-right:4px" onclick="showToast('success','캠페인','캠페인 발송 예약 완료')">캠페인 발송</button>
+              <button class="btn btn-outline btn-sm" onclick="showToast('success','배정','담당자가 배정되었습니다.')">담당자 배정</button>
+            </td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" class="chk-row" /></td>
+            <td><strong>KCC정보통신</strong></td>
+            <td><span class="badge badge-info">Silver</span></td>
+            <td>
+              <div class="churn-bar-wrap">
+                <div class="cbar-track"><div class="cbar-fill" style="width:65%"></div></div>
+                <span class="cbar-label">65</span>
+              </div>
+            </td>
+            <td>2026-04-10</td>
+            <td>2026-05-20</td>
+            <td>지원 요청 3회 연속 미해결</td>
+            <td style="white-space:nowrap">
+              <button class="btn btn-warning btn-sm" style="margin-right:4px" onclick="showToast('success','캠페인','캠페인 발송 예약 완료')">캠페인 발송</button>
+              <button class="btn btn-outline btn-sm" onclick="showToast('success','배정','담당자가 배정되었습니다.')">담당자 배정</button>
+            </td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" class="chk-row" /></td>
+            <td><strong>대림정보통신</strong></td>
+            <td><span class="badge badge-muted">일반</span></td>
+            <td>
+              <div class="churn-bar-wrap">
+                <div class="cbar-track"><div class="cbar-fill" style="width:61%"></div></div>
+                <span class="cbar-label">61</span>
+              </div>
+            </td>
+            <td>2026-04-22</td>
+            <td>2026-05-22</td>
+            <td>결제 실패 2회, 이메일 반응 없음</td>
+            <td style="white-space:nowrap">
+              <button class="btn btn-warning btn-sm" style="margin-right:4px" onclick="showToast('success','캠페인','캠페인 발송 예약 완료')">캠페인 발송</button>
+              <button class="btn btn-outline btn-sm" onclick="showToast('success','배정','담당자가 배정되었습니다.')">담당자 배정</button>
+            </td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" class="chk-row" /></td>
+            <td><strong>우리FIS</strong></td>
+            <td><span class="badge badge-info">Silver</span></td>
+            <td>
+              <div class="churn-bar-wrap">
+                <div class="cbar-track"><div class="cbar-fill" style="width:57%"></div></div>
+                <span class="cbar-label">57</span>
+              </div>
+            </td>
+            <td>2026-05-01</td>
+            <td>2026-05-24</td>
+            <td>구독 플랜 문의, 담당자 교체</td>
+            <td style="white-space:nowrap">
+              <button class="btn btn-warning btn-sm" style="margin-right:4px" onclick="showToast('success','캠페인','캠페인 발송 예약 완료')">캠페인 발송</button>
+              <button class="btn btn-outline btn-sm" onclick="showToast('success','배정','담당자가 배정되었습니다.')">담당자 배정</button>
+            </td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" class="chk-row" /></td>
+            <td><strong>이지스엔터프라이즈</strong></td>
+            <td><span class="badge badge-muted">일반</span></td>
+            <td>
+              <div class="churn-bar-wrap">
+                <div class="cbar-track"><div class="cbar-fill" style="width:53%"></div></div>
+                <span class="cbar-label">53</span>
+              </div>
+            </td>
+            <td>2026-05-08</td>
+            <td>2026-05-26</td>
+            <td>FAQ 반복 조회, 고객센터 전화 3회</td>
+            <td style="white-space:nowrap">
+              <button class="btn btn-warning btn-sm" style="margin-right:4px" onclick="showToast('success','캠페인','캠페인 발송 예약 완료')">캠페인 발송</button>
+              <button class="btn btn-outline btn-sm" onclick="showToast('success','배정','담당자가 배정되었습니다.')">담당자 배정</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 일괄 액션 푸터 -->
+    <div class="action-footer">
+      <span class="sel-count" id="sel-count-label">0명 선택됨</span>
+      <div style="flex:1"></div>
+      <button class="btn btn-outline btn-sm" onclick="showToast('info','담당자 일괄 배정','담당자 배정 화면은 준비 중입니다.')">담당자 일괄 배정</button>
+      <button class="btn btn-warning" onclick="bulkCampaign()">선택한 고객에게 이탈방지 캠페인 발송</button>
+    </div>
+  </div>
+
+</main>
+
+<script src="crm-layout.js"></script>
+<script src="crm-common.js"></script>
+<script>
+/* ═══════════════════════════════════════════
+   SCREEN META & SHOW SCREEN
+═══════════════════════════════════════════ */
+const SCREEN_META = {
+  ticket:  { label: '문의 목록' },
+  health:  { label: '고객 건강도 현황' },
+  counsel: { label: '상담 이력' },
+  churn:   { label: '이탈 위험 고객 목록' },
+};
+
+function showScreen(name, pushState = true) {
+  if (!SCREEN_META[name]) return;
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name)?.classList.add('active');
+  document.querySelector('.content')?.scrollTo({ top: 0 });
+  const el = document.getElementById('bcCurr');
+  if (el) el.textContent = SCREEN_META[name].label;
+  if (pushState) history.pushState({ screen: name }, '', '#' + name);
+  else history.replaceState({ screen: name }, '', '#' + name);
+
+  if (typeof crmSetActiveSidebar === 'function') crmSetActiveSidebar();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const hash = location.hash.replace('#', '') || 'ticket';
+  showScreen(SCREEN_META[hash] ? hash : 'ticket', false);
+});
+
+window.addEventListener('popstate', e => {
+  showScreen(e.state?.screen || 'ticket', false);
+});
+
+/* ═══════════════════════════════════════════
+   CHURN — 위험도 탭
+═══════════════════════════════════════════ */
+function setRiskTab(el, activeClass) {
+  document.querySelectorAll('.risk-tab').forEach(t => {
+    t.className = 'risk-tab';
+  });
+  el.classList.add(activeClass);
+}
+
+/* ═══════════════════════════════════════════
+   CHURN — 체크박스
+═══════════════════════════════════════════ */
+function toggleAllChk(master) {
+  document.querySelectorAll('.chk-row').forEach(c => { c.checked = master.checked; });
+  updateSelCount();
+}
+
+document.addEventListener('change', e => {
+  if (e.target.classList.contains('chk-row')) updateSelCount();
+});
+
+function updateSelCount() {
+  const n = document.querySelectorAll('.chk-row:checked').length;
+  const label = document.getElementById('sel-count-label');
+  if (label) label.textContent = n + '명 선택됨';
+}
+
+/* ═══════════════════════════════════════════
+   CHURN — 캠페인 일괄 발송
+═══════════════════════════════════════════ */
+function bulkCampaign() {
+  const n = document.querySelectorAll('.chk-row:checked').length;
+  if (n === 0) {
+    showToast('warning', '선택 필요', '캠페인을 발송할 고객을 먼저 선택해주세요.');
+    return;
+  }
+  showToast('success', '캠페인 발송', n + '명의 고객에게 이탈방지 캠페인을 발송했습니다.');
+}
+</script>
+</body>
+</html>

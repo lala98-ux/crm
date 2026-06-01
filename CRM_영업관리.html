@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="crm-layout.css">
+<title>영업 관리 | ENTWIZ CRM</title>
+<style>
+:root {
+  --primary:#2563EB; --primary-dark:#1D4ED8; --primary-light:#EFF6FF;
+  --bg:#F8FAFC; --surface:#FFFFFF; --border:#E2E8F0;
+  --text:#0F172A; --text-sub:#475569; --text-muted:#94A3B8;
+  --success:#059669; --success-bg:#ECFDF5;
+  --warning:#D97706; --warning-bg:#FFFBEB;
+  --danger:#DC2626; --danger-bg:#FEF2F2;
+  --radius:8px; --radius-sm:5px;
+  --shadow:0 1px 3px rgba(0,0,0,.08); --shadow-md:0 4px 16px rgba(0,0,0,.10);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Pretendard','Malgun Gothic','맑은 고딕',-apple-system,sans-serif;font-size:14px;color:var(--text);background:var(--bg);padding:0;}
+a{text-decoration:none;} button{font-family:inherit;cursor:pointer;}
+
+.screen{display:none;} .screen.active{display:block;}
+
+/* 버튼 */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--radius);font-size:13px;font-weight:600;border:1px solid transparent;transition:all .15s;white-space:nowrap;cursor:pointer;}
+.btn-primary{background:var(--primary);color:#fff;}
+.btn-primary:hover{background:var(--primary-dark);}
+.btn-secondary{background:var(--surface);color:var(--text-sub);border-color:var(--border);}
+.btn-secondary:hover{background:var(--bg);}
+.btn-ghost{background:none;border-color:transparent;color:var(--text-sub);}
+.btn-ghost:hover{background:var(--bg);}
+.btn-sm{padding:5px 10px;font-size:12px;border-radius:var(--radius-sm);}
+.btn-danger-ghost{background:none;border:none;color:var(--danger);cursor:pointer;font-family:inherit;font-size:12px;padding:5px 10px;border-radius:var(--radius-sm);}
+.btn-danger-ghost:hover{background:var(--danger-bg);}
+
+/* KPI 그리드 */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);}
+.kpi-label{font-size:12px;color:var(--text-muted);font-weight:600;margin-bottom:8px;}
+.kpi-value{font-size:24px;font-weight:800;color:var(--text);line-height:1.1;}
+.kpi-trend{font-size:12px;color:var(--text-muted);margin-top:6px;}
+.kpi-trend.up{color:var(--success);}
+.kpi-trend.down{color:var(--danger);}
+
+/* 설정 카드 */
+.settings-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:16px;overflow:hidden;}
+.settings-card-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.settings-card-title{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px;}
+.settings-card-body{padding:20px;}
+
+/* 데이터 테이블 */
+.data-table{width:100%;border-collapse:collapse;}
+.data-table th{padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:.05em;text-transform:uppercase;border-bottom:2px solid var(--border);background:var(--bg);}
+.data-table td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle;}
+.data-table tr:last-child td{border-bottom:none;}
+.data-table tr:hover td{background:var(--bg);}
+
+/* 배지 */
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;}
+.badge-success{background:var(--success-bg);color:var(--success);}
+.badge-muted{background:var(--bg);color:var(--text-muted);border:1px solid var(--border);}
+.badge-warning{background:var(--warning-bg);color:var(--warning);}
+.badge-danger{background:var(--danger-bg);color:var(--danger);}
+.badge-primary{background:var(--primary-light);color:var(--primary);}
+.badge-gray{background:#F1F5F9;color:#64748B;border:1px solid #E2E8F0;}
+
+/* 토글 스위치 */
+.toggle{position:relative;width:44px;height:24px;flex-shrink:0;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-track{position:absolute;inset:0;background:var(--border);border-radius:12px;cursor:pointer;transition:background .2s;}
+.toggle input:checked+.toggle-track{background:var(--primary);}
+.toggle-track::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.toggle input:checked+.toggle-track::before{transform:translateX(20px);}
+
+/* ─── PIPELINE ─────────────────────────────────── */
+.pipeline-board{display:flex;gap:14px;overflow-x:auto;padding-bottom:12px;}
+.pipeline-board::-webkit-scrollbar{height:5px;}
+.pipeline-board::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.pipeline-col{min-width:224px;flex-shrink:0;display:flex;flex-direction:column;gap:10px;}
+.pipeline-col-head{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;box-shadow:var(--shadow);}
+.col-head-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;}
+.col-stage-name{font-size:13px;font-weight:700;color:var(--text);}
+.col-count{font-size:11px;font-weight:700;color:var(--surface);background:var(--text-muted);border-radius:10px;padding:1px 7px;}
+.col-amount{font-size:12px;color:var(--text-muted);font-weight:500;}
+
+/* 단계별 컬럼 색상 */
+.col-new    .col-count{background:#6366F1;}
+.col-interest .col-count{background:#F59E0B;}
+.col-demo   .col-count{background:#2563EB;}
+.col-nego   .col-count{background:#D97706;}
+.col-won    .col-count{background:#059669;}
+.col-lost   .col-count{background:#94A3B8;}
+
+.col-new    .pipeline-col-head{border-top:3px solid #6366F1;}
+.col-interest .pipeline-col-head{border-top:3px solid #F59E0B;}
+.col-demo   .pipeline-col-head{border-top:3px solid #2563EB;}
+.col-nego   .pipeline-col-head{border-top:3px solid #D97706;}
+.col-won    .pipeline-col-head{border-top:3px solid #059669;}
+.col-lost   .pipeline-col-head{border-top:3px solid #94A3B8;}
+
+/* 딜 카드 */
+.deal-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;box-shadow:var(--shadow);cursor:pointer;transition:box-shadow .15s,transform .1s;}
+.deal-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px);}
+.col-lost .deal-card{opacity:.7;background:#FAFAFA;}
+.deal-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.deal-customer{font-size:11px;color:var(--text-muted);margin-bottom:6px;}
+.deal-amount{font-size:14px;font-weight:800;color:var(--primary);margin-bottom:8px;}
+.col-lost .deal-amount{color:var(--text-muted);}
+.deal-meta{display:flex;justify-content:space-between;align-items:center;margin-top:8px;}
+.deal-assignee{display:flex;align-items:center;gap:5px;}
+.deal-avatar{width:22px;height:22px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;}
+.deal-avatar.av-green{background:#059669;}
+.deal-avatar.av-purple{background:#7C3AED;}
+.deal-avatar.av-orange{background:#D97706;}
+.deal-assignee-name{font-size:11px;color:var(--text-sub);}
+.deal-days{font-size:11px;font-weight:700;padding:2px 6px;border-radius:4px;background:var(--primary-light);color:var(--primary);}
+.deal-days.warn{background:var(--warning-bg);color:var(--warning);}
+.deal-days.danger{background:var(--danger-bg);color:var(--danger);}
+.col-lost .deal-days{background:var(--bg);color:var(--text-muted);}
+.deal-followup{font-size:11px;color:var(--text-muted);margin-top:6px;padding-top:6px;border-top:1px dashed var(--border);display:flex;align-items:center;gap:4px;}
+
+/* ─── ASSIGNMENT ────────────────────────────────── */
+.assign-modes{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;}
+.assign-mode-card{background:var(--surface);border:2px solid var(--border);border-radius:var(--radius);padding:16px 18px;cursor:pointer;transition:all .15s;display:flex;gap:12px;align-items:flex-start;}
+.assign-mode-card.selected{border-color:var(--primary);background:var(--primary-light);}
+.assign-mode-card:hover:not(.selected){border-color:#CBD5E1;background:var(--bg);}
+.mode-radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.assign-mode-card.selected .mode-radio{border-color:var(--primary);background:var(--primary);}
+.mode-radio-dot{width:8px;height:8px;border-radius:50%;background:#fff;display:none;}
+.assign-mode-card.selected .mode-radio-dot{display:block;}
+.mode-info{}
+.mode-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;}
+.assign-mode-card.selected .mode-name{color:var(--primary-dark);}
+.mode-desc{font-size:12px;color:var(--text-muted);line-height:1.5;}
+
+/* 담당자 현황 카드 */
+.assignee-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px;}
+.assignee-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);}
+.assignee-top{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.assignee-avatar{width:40px;height:40px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;flex-shrink:0;}
+.assignee-info{flex:1;}
+.assignee-name{font-size:14px;font-weight:700;}
+.assignee-title{font-size:12px;color:var(--text-muted);}
+.assignee-stats{display:flex;gap:16px;margin-bottom:14px;}
+.asgn-stat{text-align:center;}
+.asgn-stat-val{font-size:18px;font-weight:800;color:var(--text);}
+.asgn-stat-label{font-size:11px;color:var(--text-muted);}
+.load-bar-wrap{height:8px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:6px;}
+.load-bar{height:100%;border-radius:4px;transition:width .4s ease;}
+.load-bar.ok{background:var(--success);}
+.load-bar.warn{background:var(--warning);}
+.load-bar.danger{background:var(--danger);}
+.load-label{display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);}
+.assignee-footer{display:flex;justify-content:space-between;align-items:center;padding-top:12px;border-top:1px solid var(--border);margin-top:12px;}
+
+/* 설정 행 */
+.settings-row{display:flex;align-items:flex-start;gap:24px;padding:14px 0;border-bottom:1px solid var(--border);}
+.settings-row:last-child{border-bottom:none;padding-bottom:0;}
+.settings-label-col{width:200px;flex-shrink:0;}
+.settings-label{font-size:13px;font-weight:600;margin-bottom:3px;}
+.settings-hint{font-size:12px;color:var(--text-muted);line-height:1.5;}
+.settings-control{flex:1;}
+
+/* ─── FOLLOWUP ──────────────────────────────────── */
+.followup-grid{display:flex;flex-direction:column;gap:12px;margin-bottom:20px;}
+.followup-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+.followup-card-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg);}
+.followup-card-head-left{display:flex;align-items:center;gap:12px;}
+.followup-name{font-size:14px;font-weight:700;}
+.followup-card-body{padding:16px 18px;display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start;}
+.followup-trigger{font-size:12px;color:var(--text-muted);margin-bottom:10px;display:flex;align-items:center;gap:5px;}
+.followup-trigger strong{color:var(--text-sub);}
+.action-steps{display:flex;flex-direction:column;gap:6px;}
+.action-step{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-sub);}
+.action-day{font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;background:var(--primary-light);color:var(--primary);white-space:nowrap;flex-shrink:0;}
+.action-day.day-imm{background:#F0FDF4;color:#059669;}
+.action-type-icon{font-size:14px;flex-shrink:0;}
+.followup-meta{display:flex;flex-direction:column;gap:4px;align-items:flex-end;}
+.followup-meta-item{font-size:11px;color:var(--text-muted);}
+.followup-meta-item strong{color:var(--text-sub);}
+.followup-actions{display:flex;gap:6px;margin-top:8px;}
+
+/* 팔로업 효과 통계 카드 */
+.stat-cards-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);text-align:center;}
+.stat-icon{font-size:28px;margin-bottom:10px;}
+.stat-value{font-size:28px;font-weight:800;color:var(--text);line-height:1;}
+.stat-value.success{color:var(--success);}
+.stat-value.primary{color:var(--primary);}
+.stat-label{font-size:12px;color:var(--text-muted);margin-top:6px;}
+</style>
+</head>
+<body>
+<main class="content">
+
+<div class="breadcrumb" id="globalBreadcrumb">
+  <span class="bc-link">ENTWIZ CRM</span>
+  <span class="sep">›</span>
+  <span>영업 관리</span>
+  <span class="sep">›</span>
+  <span class="curr" id="bcCurr">영업 파이프라인</span>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SCREEN: 영업 파이프라인
+══════════════════════════════════════════════ -->
+<div id="screen-pipeline" class="screen active">
+  <div class="page-header">
+    <div>
+      <div class="page-title">영업 파이프라인</div>
+      <div class="page-desc">리드부터 성사까지 딜 단계를 관리합니다.</div>
+    </div>
+    <div class="page-actions">
+      <button class="btn btn-secondary" onclick="navWIP('목록 보기')">목록 보기 ↕</button>
+      <button class="btn btn-primary" onclick="navWIP('딜 추가')">+ 딜 추가</button>
+    </div>
+  </div>
+
+  <!-- KPI 카드 4개 -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">전체 딜</div>
+      <div class="kpi-value">247<small style="font-size:14px;font-weight:600;color:var(--text-muted);">건</small></div>
+      <div class="kpi-trend">진행 중 134건</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">이번 달 성사</div>
+      <div class="kpi-value">34<small style="font-size:14px;font-weight:600;color:var(--text-muted);">건</small></div>
+      <div class="kpi-trend up">▲ 전월 대비 +12%</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">예상 매출</div>
+      <div class="kpi-value" style="font-size:18px;">284,000,000<small style="font-size:12px;font-weight:600;color:var(--text-muted);">원</small></div>
+      <div class="kpi-trend up">파이프라인 기준</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">평균 성사 기간</div>
+      <div class="kpi-value">18.3<small style="font-size:14px;font-weight:600;color:var(--text-muted);">일</small></div>
+      <div class="kpi-trend up">전월 대비 -2.1일</div>
+    </div>
+  </div>
+
+  <!-- 파이프라인 칸반 보드 -->
+  <div class="pipeline-board">
+
+    <!-- 신규 리드 -->
+    <div class="pipeline-col col-new">
+      <div class="pipeline-col-head">
+        <div class="col-head-row">
+          <span class="col-stage-name">신규 리드</span>
+          <span class="col-count">12건</span>
+        </div>
+        <div class="col-amount">합계 48,000,000원</div>
+      </div>
+      <div class="deal-card" onclick="navWIP('딜 상세')">
+        <div class="deal-name">프리미엄 플랜 업그레이드</div>
+        <div class="deal-customer">김철수</div>
+        <div class="deal-amount">12,000,000원</div>
+        <div class="deal-meta">
+          <div class="deal-assignee">
+            <div class="deal-avatar">이</div>
+            <span class="deal-assignee-name">이마케터</span>
+          </div>
+          <span class="deal-days">D+3</span>
+        </div>
+        <div class="deal-followup">📅 내일 오전 10시 첫 상담 전화</div>
+      </div>
+      <div class="deal-card" onclick="navWIP('딜 상세')">
+        <div class="deal-name">솔루션 신규 도입 검토</div>
+        <div class="deal-customer">㈜한빛소프트</div>
+        <div class="deal-amount">24,000,000원</div>
+        <div class="deal-meta">
+          <div class="deal-assignee">
+            <div class="deal-avatar av-orange">박</div>
+            <span class="deal-assignee-name">박영업</span>
+          </div>
+          <span class="deal-days">D+1</span>
+        </div>
+      </div>
+      <div class="deal-card" onclick="navWIP('딜 상세')">
+        <div class="deal-name">월정액 기업 계정</div>
+        <div class="deal-customer">스마트팩토리C</div>
+        <div class="deal-amount">12,000,000원</div>
+        <div class="deal-meta">
+          <div class="deal-assignee">
+            <div class="deal-avatar av-green">김</div>
+            <span class="deal-assignee-name">김운영</span>
+          </div>
+          <span class="deal-days">D+2</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 관심 확인 -->
+    <div class="pipeline-col col-interest">
+      <div class="pipeline-col-head">
+        <div class="col-head-row">
+          <span class="col-stage-name">관심 확인</span>
+          <span class="col-count">28건</span>
+        </div>
+        <div class="col-amount">합계 112,000,000원</div>
+      </div>
+      <div class="deal-card" onclick="navWIP('딜 상세')">
+        <div class="deal-name">엔터프라이즈 계약</div>
+        <div class="deal-customer">㈜한국유통</div>
+        <div class="deal-amount">85,000,000원</div>
+        <div class="deal-meta">
+          <div class="deal-assignee">
+            <div class="deal-avatar av-orange">박</div>
+            <span class="deal-assignee-name">박영업</span>
+          </div>
+          <span class="deal-days">D+7</span>
+        </div>
+        <div class="deal-followup">📧 수요일 제안서 발송 예정</div>
+      </div>
+      <div class="deal-card" onclick="navWIP('딜 상세')">
+        <div class="deal-name">연간 라이선스 계약</div>
+        <div class="deal-customer">글로벌테크D</div>
+        <div class="deal-amount">27,000,000원</div>
+        <div class="deal-meta">
+          <div class="deal-assignee">
+            <div class="deal-avatar">이</div>
+            <span class="deal-assignee-name">이마케터</span>
+          </div>
+          <span class="deal-days warn">D+9</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 제안/데모 -->
+    <div class="pipeline-col col-demo">
+      <div class="pipeline-col-head">
+        <div class="col-head-row">
+          <span class="col-stage-name">제안/데모</span>
+          <span class="col-count">45건</span>
+        </div>
+        <div class="col-amount">합계 234,000,000원</div>
+      </div>
+      <div class="deal-card" onclick="navWIP('딜 상세')">
+        <div class="deal-name">CRM 도입</div>
+        <div class="deal-customer">스타트업A</div>
+        <div class="deal-amount">38,000,000원</div>
+        <div class="deal-meta">
+          <div class="deal-assignee">
+            <div class="deal-avatar">이</div>
+            <span class="deal-assignee-name">이마케터</span>
+          </div>
+          <span class="deal-days">D+12</span>
+        </div>
+        <div class="deal-followup">🖥️ 내일 오후 2시 데모 세션</div>
+      </div>
+      <div class="deal-card" onclick="navWIP('딜 상세')">
+        <div class="deal-name">마케팅 자동화 패키지</div>
+        <div class="deal-customer">이커머스E</div>
+        <div class="deal-amount">62,000,000원</div>
+        <div class="deal-meta">
+          <div class="deal-assignee">
+            <div class="deal-avatar av-orange">박</div>
+            <span class="deal-assignee-name">박영업</span>
+          </div>
+          <span class="deal-days warn">D+14</span>
+        </div>
+      </div>
+      <div class="deal-card" onclick="navWIP('딜 상세')">
+        <div class="deal-name">SaaS 통합 솔루션</div>
+        <div class="deal-customer">핀테크F</div>
+        <div class="deal-amount">134,000,000원</div>
+        <div class="deal-meta">
+          <div class="deal-assignee">
+            <div class="deal-avatar av-green">김</div>
+            <span class="deal-assignee-name">김운영</span>
+          </div>
+          <span class="deal-days warn">D+18</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 협상 중 -->
+    <div class="pipeline-col col-nego">
+      <div class="pipeline-col-head">
+        <div class="col-head-row">
+          <span class="col-stage-name">협상 중</span>
+          <span class="col-count">31건</span>
+        </div>
+        <div class="col-amount">합계 186,000,000원</div>
+      </div>
+      <div class="deal-card" onclick="navWIP('딜 상세')">
+        <div class="deal-name">연간 계약</div>
+        <div class="deal-customer">㈜대형마트</div>
+        <div class="deal-amount">120,000,000원</div>
+        <div class="deal-meta">
+          <div class="deal-assignee">
+            <div class="deal-avatar av-green">김</div>
+            <span class="deal-assignee-name">김운영</span>
+          </div>
+          <span class="deal-days danger">D+21</span>
+        </div>
+        <div class="deal-followup">⚠️ 계약서 검토 응답 대기 중</div>
+      </div>
+      <div class="deal-card" onclick="navWIP('딜 상세')">
+        <div class="deal-name">멀티채널 마케팅 계약</div>
+        <div class="deal-customer">뷰티브랜드G</div>
+        <div class="deal-amount">66,000,000원</div>
+        <div class="deal-meta">
+          <div class="deal-assignee">
+            <div class="deal-avatar">이</div>
+            <span class="deal-assignee-name">이마케터</span>
+          </div>
+          <span class="deal-days warn">D+19</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 계약 완료 -->
+    <div class="pipeline-col col-won">
+      <div class="pipeline-col-head">
+        <div class="col-head-row">
+          <span class="col-stage-name">계약 완료</span>
+          <span class="col-count">18건</span>
+        </div>
+        <div class="col-amount">합계 156,000,000원</div>
+      </div>
+      <div class="deal-card" onclick="navWIP('딜 상세')">
+        <div class="deal-name">파트너십 계약</div>
+        <div class="deal-customer">패션브랜드B</div>
+        <div class="deal-amount">45,000,000원</div>
+        <div class="deal-meta">
+          <div class="deal-assignee">
+            <div class="deal-avatar av-orange">박</div>
+            <span class="deal-assignee-name">박영업</span>
+          </div>
+          <span class="deal-days" style="background:var(--success-bg);color:var(--success);">D+28</span>
+        </div>
+        <div class="deal-followup">✅ 온보딩 일정 조율 중</div>
+      </div>
+      <div class="deal-card" onclick="navWIP('딜 상세')">
+        <div class="deal-name">기업 연간 구독</div>
+        <div class="deal-customer">로지스틱스H</div>
+        <div class="deal-amount">72,000,000원</div>
+        <div class="deal-meta">
+          <div class="deal-assignee">
+            <div class="deal-avatar av-green">김</div>
+            <span class="deal-assignee-name">김운영</span>
+          </div>
+          <span class="deal-days" style="background:var(--success-bg);color:var(--success);">D+31</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 실패 -->
+    <div class="pipeline-col col-lost">
+      <div class="pipeline-col-head">
+        <div class="col-head-row">
+          <span class="col-stage-name" style="color:var(--text-muted);">실패</span>
+          <span class="col-count">113건</span>
+        </div>
+        <div class="col-amount" style="color:#CBD5E1;">이번 달 누적</div>
+      </div>
+      <div class="deal-card" onclick="navWIP('딜 상세')">
+        <div class="deal-name" style="color:var(--text-muted);">예산 미확정으로 보류</div>
+        <div class="deal-customer" style="color:#CBD5E1;">중소기업I</div>
+        <div class="deal-amount">—</div>
+        <div class="deal-meta">
+          <div class="deal-assignee">
+            <div class="deal-avatar" style="background:#CBD5E1;">이</div>
+            <span class="deal-assignee-name" style="color:#CBD5E1;">이마케터</span>
+          </div>
+          <span class="deal-days">D+45</span>
+        </div>
+      </div>
+      <div class="deal-card" onclick="navWIP('딜 상세')">
+        <div class="deal-name" style="color:var(--text-muted);">경쟁사 선택</div>
+        <div class="deal-customer" style="color:#CBD5E1;">리테일J</div>
+        <div class="deal-amount">—</div>
+        <div class="deal-meta">
+          <div class="deal-assignee">
+            <div class="deal-avatar" style="background:#CBD5E1;">박</div>
+            <span class="deal-assignee-name" style="color:#CBD5E1;">박영업</span>
+          </div>
+          <span class="deal-days">D+38</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 담당자별 성과 테이블 -->
+  <div class="settings-card" style="margin-top:20px;">
+    <div class="settings-card-head">
+      <span class="settings-card-title">담당자별 성과</span>
+      <button class="btn btn-ghost btn-sm" onclick="navWIP('리포트 내보내기')">리포트 내보내기</button>
+    </div>
+    <table class="data-table">
+      <thead><tr>
+        <th>담당자</th><th>활성 딜</th><th>이번 달 성사</th><th>성사율</th><th>예상 매출</th><th>평균 딜 기간</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div class="deal-avatar av-green" style="width:28px;height:28px;font-size:11px;">김</div>
+              <strong>김운영</strong>
+            </div>
+          </td>
+          <td>18건</td>
+          <td><strong style="color:var(--success);">14건</strong></td>
+          <td><span class="badge badge-success">77.8%</span></td>
+          <td>98,000,000원</td>
+          <td>16.2일</td>
+        </tr>
+        <tr>
+          <td>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div class="deal-avatar" style="width:28px;height:28px;font-size:11px;">이</div>
+              <strong>이마케터</strong>
+            </div>
+          </td>
+          <td>22건</td>
+          <td><strong style="color:var(--success);">12건</strong></td>
+          <td><span class="badge badge-primary">54.5%</span></td>
+          <td>112,000,000원</td>
+          <td>19.7일</td>
+        </tr>
+        <tr>
+          <td>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div class="deal-avatar av-orange" style="width:28px;height:28px;font-size:11px;">박</div>
+              <strong>박영업</strong>
+            </div>
+          </td>
+          <td>15건</td>
+          <td><strong style="color:var(--success);">8건</strong></td>
+          <td><span class="badge badge-warning">53.3%</span></td>
+          <td>74,000,000원</td>
+          <td>21.4일</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SCREEN: 담당자 배정 규칙 설정
+══════════════════════════════════════════════ -->
+<div id="screen-assignment" class="screen">
+  <div class="page-header">
+    <div>
+      <div class="page-title">담당자 배정 규칙 설정</div>
+      <div class="page-desc">신규 리드 유입 시 담당자를 자동으로 배정하는 규칙을 설정합니다.</div>
+    </div>
+    <div class="page-actions">
+      <button class="btn btn-secondary" onclick="navWIP('규칙 추가')">+ 규칙 추가</button>
+      <button class="btn btn-primary" onclick="showToast('success','저장 완료','배정 규칙이 저장되었습니다.')">저장</button>
+    </div>
+  </div>
+
+  <!-- 배정 방식 선택 -->
+  <div class="settings-card">
+    <div class="settings-card-head">
+      <span class="settings-card-title">배정 방식 선택</span>
+    </div>
+    <div class="settings-card-body">
+      <div class="assign-modes">
+        <div class="assign-mode-card selected" id="mode-rr" onclick="selectMode('rr')">
+          <div class="mode-radio"><div class="mode-radio-dot"></div></div>
+          <div class="mode-info">
+            <div class="mode-name">라운드 로빈</div>
+            <div class="mode-desc">담당자에게 순서대로 균등하게 자동 배정합니다.</div>
+          </div>
+        </div>
+        <div class="assign-mode-card" id="mode-cond" onclick="selectMode('cond')">
+          <div class="mode-radio"><div class="mode-radio-dot"></div></div>
+          <div class="mode-info">
+            <div class="mode-name">조건 기반 배정</div>
+            <div class="mode-desc">리드 속성(지역, 업종, 금액)에 따라 담당자를 배정합니다.</div>
+          </div>
+        </div>
+        <div class="assign-mode-card" id="mode-manual" onclick="selectMode('manual')">
+          <div class="mode-radio"><div class="mode-radio-dot"></div></div>
+          <div class="mode-info">
+            <div class="mode-name">수동 배정</div>
+            <div class="mode-desc">모든 리드를 관리자가 직접 검토 후 배정합니다.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 조건 기반 배정 규칙 -->
+  <div class="settings-card">
+    <div class="settings-card-head">
+      <span class="settings-card-title">조건 기반 배정 규칙</span>
+      <button class="btn btn-secondary btn-sm" onclick="navWIP('규칙 추가')">+ 규칙 추가</button>
+    </div>
+    <table class="data-table">
+      <thead><tr>
+        <th style="width:54px;">우선순위</th>
+        <th>조건</th>
+        <th>배정 담당자</th>
+        <th>예비 담당자</th>
+        <th style="text-align:center;">상태</th>
+        <th style="text-align:right;">관리</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td style="text-align:center;"><span class="badge badge-primary">1</span></td>
+          <td><strong>예상 계약금액 ≥ 5천만원</strong></td>
+          <td>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <div class="deal-avatar av-green" style="width:24px;height:24px;font-size:10px;">김</div>
+              김운영
+            </div>
+          </td>
+          <td>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <div class="deal-avatar av-orange" style="width:24px;height:24px;font-size:10px;">박</div>
+              박영업
+            </div>
+          </td>
+          <td style="text-align:center;">
+            <label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label>
+          </td>
+          <td style="text-align:right;">
+            <button class="btn btn-ghost btn-sm" onclick="navWIP('규칙 편집')">편집</button>
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align:center;"><span class="badge badge-primary">2</span></td>
+          <td><strong>업종 = 이커머스</strong></td>
+          <td>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <div class="deal-avatar" style="width:24px;height:24px;font-size:10px;">이</div>
+              이마케터
+            </div>
+          </td>
+          <td><span style="color:var(--text-muted);font-size:12px;">—</span></td>
+          <td style="text-align:center;">
+            <label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label>
+          </td>
+          <td style="text-align:right;">
+            <button class="btn btn-ghost btn-sm" onclick="navWIP('규칙 편집')">편집</button>
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align:center;"><span class="badge badge-primary">3</span></td>
+          <td><strong>지역 = 서울/경기</strong></td>
+          <td>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <div class="deal-avatar av-orange" style="width:24px;height:24px;font-size:10px;">박</div>
+              박영업
+            </div>
+          </td>
+          <td><span style="color:var(--text-muted);font-size:12px;">—</span></td>
+          <td style="text-align:center;">
+            <label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label>
+          </td>
+          <td style="text-align:right;">
+            <button class="btn btn-ghost btn-sm" onclick="navWIP('규칙 편집')">편집</button>
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align:center;"><span class="badge badge-muted">4</span></td>
+          <td><strong>첫 방문 후 24시간 내</strong></td>
+          <td><span class="badge badge-gray">라운드 로빈</span></td>
+          <td><span style="color:var(--text-muted);font-size:12px;">—</span></td>
+          <td style="text-align:center;">
+            <label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label>
+          </td>
+          <td style="text-align:right;">
+            <button class="btn btn-ghost btn-sm" onclick="navWIP('규칙 편집')">편집</button>
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align:center;"><span class="badge badge-muted">5</span></td>
+          <td><strong>기타 (Fallback)</strong></td>
+          <td><span class="badge badge-gray">라운드 로빈</span></td>
+          <td><span style="color:var(--text-muted);font-size:12px;">—</span></td>
+          <td style="text-align:center;">
+            <label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label>
+          </td>
+          <td style="text-align:right;">
+            <button class="btn btn-ghost btn-sm" onclick="navWIP('규칙 편집')">편집</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 담당자 현황 카드 -->
+  <div class="settings-card">
+    <div class="settings-card-head">
+      <span class="settings-card-title">담당자 현황</span>
+      <span style="font-size:12px;color:var(--text-muted);">현재 활성 딜 기준 로드 현황</span>
+    </div>
+    <div class="settings-card-body">
+      <div class="assignee-cards">
+
+        <div class="assignee-card">
+          <div class="assignee-top">
+            <div class="assignee-avatar" style="background:#059669;">김</div>
+            <div class="assignee-info">
+              <div class="assignee-name">김운영</div>
+              <div class="assignee-title">마케팅팀 · 시니어</div>
+            </div>
+            <label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label>
+          </div>
+          <div class="assignee-stats">
+            <div class="asgn-stat">
+              <div class="asgn-stat-val">18</div>
+              <div class="asgn-stat-label">활성 딜</div>
+            </div>
+            <div class="asgn-stat">
+              <div class="asgn-stat-val" style="color:var(--success);">14</div>
+              <div class="asgn-stat-label">이달 성사</div>
+            </div>
+          </div>
+          <div class="load-bar-wrap">
+            <div class="load-bar ok" style="width:60%;"></div>
+          </div>
+          <div class="load-label">
+            <span>로드 60%</span>
+            <span>권장: 25건</span>
+          </div>
+        </div>
+
+        <div class="assignee-card">
+          <div class="assignee-top">
+            <div class="assignee-avatar" style="background:#2563EB;">이</div>
+            <div class="assignee-info">
+              <div class="assignee-name">이마케터</div>
+              <div class="assignee-title">영업팀 · 담당</div>
+            </div>
+            <label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label>
+          </div>
+          <div class="assignee-stats">
+            <div class="asgn-stat">
+              <div class="asgn-stat-val">22</div>
+              <div class="asgn-stat-label">활성 딜</div>
+            </div>
+            <div class="asgn-stat">
+              <div class="asgn-stat-val" style="color:var(--success);">12</div>
+              <div class="asgn-stat-label">이달 성사</div>
+            </div>
+          </div>
+          <div class="load-bar-wrap">
+            <div class="load-bar warn" style="width:88%;"></div>
+          </div>
+          <div class="load-label">
+            <span>로드 88%</span>
+            <span>권장: 25건</span>
+          </div>
+        </div>
+
+        <div class="assignee-card">
+          <div class="assignee-top">
+            <div class="assignee-avatar" style="background:#D97706;">박</div>
+            <div class="assignee-info">
+              <div class="assignee-name">박영업</div>
+              <div class="assignee-title">영업팀 · 담당</div>
+            </div>
+            <label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label>
+          </div>
+          <div class="assignee-stats">
+            <div class="asgn-stat">
+              <div class="asgn-stat-val">15</div>
+              <div class="asgn-stat-label">활성 딜</div>
+            </div>
+            <div class="asgn-stat">
+              <div class="asgn-stat-val" style="color:var(--success);">8</div>
+              <div class="asgn-stat-label">이달 성사</div>
+            </div>
+          </div>
+          <div class="load-bar-wrap">
+            <div class="load-bar ok" style="width:60%;"></div>
+          </div>
+          <div class="load-label">
+            <span>로드 60%</span>
+            <span>권장: 25건</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SCREEN: 팔로업 자동화 설정
+══════════════════════════════════════════════ -->
+<div id="screen-followup" class="screen">
+  <div class="page-header">
+    <div>
+      <div class="page-title">팔로업 자동화 설정</div>
+      <div class="page-desc">딜 단계 변화에 따라 팔로업 메시지와 할일을 자동으로 생성합니다.</div>
+    </div>
+    <div class="page-actions">
+      <button class="btn btn-secondary" onclick="navWIP('자동화 추가')">+ 자동화 추가</button>
+      <button class="btn btn-primary" onclick="showToast('success','저장 완료','팔로업 설정이 저장되었습니다.')">저장</button>
+    </div>
+  </div>
+
+  <!-- 팔로업 시나리오 목록 -->
+  <div class="followup-grid">
+
+    <!-- 시나리오 1 -->
+    <div class="followup-card">
+      <div class="followup-card-head">
+        <div class="followup-card-head-left">
+          <label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label>
+          <div>
+            <div class="followup-name">🎉 신규 리드 웰컴</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <button class="btn btn-secondary btn-sm" onclick="navWIP('자동화 편집')">편집</button>
+          <button class="btn btn-ghost btn-sm" onclick="navWIP('복제')">복제</button>
+        </div>
+      </div>
+      <div class="followup-card-body">
+        <div>
+          <div class="followup-trigger">
+            <span>트리거:</span>
+            <strong>리드 생성 시</strong>
+          </div>
+          <div class="action-steps">
+            <div class="action-step">
+              <span class="action-day day-imm">즉시</span>
+              <span class="action-type-icon">📧</span>
+              <span>환영 이메일 자동 발송</span>
+            </div>
+            <div class="action-step">
+              <span class="action-day">D+1</span>
+              <span class="action-type-icon">📞</span>
+              <span>첫 상담 전화 태스크 생성</span>
+            </div>
+          </div>
+        </div>
+        <div class="followup-meta">
+          <div class="followup-meta-item">적용 <strong>847회</strong>/월</div>
+          <div class="followup-meta-item">최종 수정 <strong>2026-05-20</strong></div>
+          <span class="badge badge-success" style="margin-top:4px;">활성</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 시나리오 2 -->
+    <div class="followup-card">
+      <div class="followup-card-head">
+        <div class="followup-card-head-left">
+          <label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label>
+          <div>
+            <div class="followup-name">🖥️ 데모 요청 후 팔로업</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <button class="btn btn-secondary btn-sm" onclick="navWIP('자동화 편집')">편집</button>
+          <button class="btn btn-ghost btn-sm" onclick="navWIP('복제')">복제</button>
+        </div>
+      </div>
+      <div class="followup-card-body">
+        <div>
+          <div class="followup-trigger">
+            <span>트리거:</span>
+            <strong>딜이 '제안/데모' 단계로 이동 시</strong>
+          </div>
+          <div class="action-steps">
+            <div class="action-step">
+              <span class="action-day">D+2</span>
+              <span class="action-type-icon">📧</span>
+              <span>데모 확인 이메일 발송</span>
+            </div>
+            <div class="action-step">
+              <span class="action-day">D+5</span>
+              <span class="action-type-icon">📄</span>
+              <span>제안서 발송 태스크 생성</span>
+            </div>
+          </div>
+        </div>
+        <div class="followup-meta">
+          <div class="followup-meta-item">적용 <strong>312회</strong>/월</div>
+          <div class="followup-meta-item">최종 수정 <strong>2026-05-15</strong></div>
+          <span class="badge badge-success" style="margin-top:4px;">활성</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 시나리오 3 -->
+    <div class="followup-card">
+      <div class="followup-card-head">
+        <div class="followup-card-head-left">
+          <label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label>
+          <div>
+            <div class="followup-name">⚠️ 협상 지연 알림</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <button class="btn btn-secondary btn-sm" onclick="navWIP('자동화 편집')">편집</button>
+          <button class="btn btn-ghost btn-sm" onclick="navWIP('복제')">복제</button>
+        </div>
+      </div>
+      <div class="followup-card-body">
+        <div>
+          <div class="followup-trigger">
+            <span>트리거:</span>
+            <strong>'협상 중' 단계에서 7일 이상 경과 시</strong>
+          </div>
+          <div class="action-steps">
+            <div class="action-step">
+              <span class="action-day day-imm">즉시</span>
+              <span class="action-type-icon">💬</span>
+              <span>담당자에게 Slack 지연 알림</span>
+            </div>
+            <div class="action-step">
+              <span class="action-day">D+1</span>
+              <span class="action-type-icon">📞</span>
+              <span>재접촉 태스크 생성</span>
+            </div>
+          </div>
+        </div>
+        <div class="followup-meta">
+          <div class="followup-meta-item">적용 <strong>89회</strong>/월</div>
+          <div class="followup-meta-item">최종 수정 <strong>2026-05-10</strong></div>
+          <span class="badge badge-success" style="margin-top:4px;">활성</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 시나리오 4 -->
+    <div class="followup-card">
+      <div class="followup-card-head">
+        <div class="followup-card-head-left">
+          <label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label>
+          <div>
+            <div class="followup-name">✅ 계약 완료 후 온보딩</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <button class="btn btn-secondary btn-sm" onclick="navWIP('자동화 편집')">편집</button>
+          <button class="btn btn-ghost btn-sm" onclick="navWIP('복제')">복제</button>
+        </div>
+      </div>
+      <div class="followup-card-body">
+        <div>
+          <div class="followup-trigger">
+            <span>트리거:</span>
+            <strong>딜이 '계약 완료'로 이동 시</strong>
+          </div>
+          <div class="action-steps">
+            <div class="action-step">
+              <span class="action-day day-imm">즉시</span>
+              <span class="action-type-icon">📧</span>
+              <span>온보딩 이메일 시퀀스 시작 (3회)</span>
+            </div>
+            <div class="action-step">
+              <span class="action-day">D+1</span>
+              <span class="action-type-icon">🎧</span>
+              <span>CS팀 온보딩 태스크 생성</span>
+            </div>
+          </div>
+        </div>
+        <div class="followup-meta">
+          <div class="followup-meta-item">적용 <strong>374회</strong>/월</div>
+          <div class="followup-meta-item">최종 수정 <strong>2026-05-08</strong></div>
+          <span class="badge badge-success" style="margin-top:4px;">활성</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 시나리오 5 -->
+    <div class="followup-card">
+      <div class="followup-card-head">
+        <div class="followup-card-head-left">
+          <label class="toggle"><input type="checkbox"><span class="toggle-track"></span></label>
+          <div>
+            <div class="followup-name" style="color:var(--text-muted);">🔄 실패 리드 재활성</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <button class="btn btn-secondary btn-sm" onclick="navWIP('자동화 편집')">편집</button>
+          <button class="btn btn-ghost btn-sm" onclick="navWIP('복제')">복제</button>
+        </div>
+      </div>
+      <div class="followup-card-body">
+        <div>
+          <div class="followup-trigger">
+            <span>트리거:</span>
+            <strong>'실패' 처리 후 30일 경과 시</strong>
+          </div>
+          <div class="action-steps">
+            <div class="action-step">
+              <span class="action-day">D+30</span>
+              <span class="action-type-icon">📧</span>
+              <span>재접촉 이메일 발송</span>
+            </div>
+            <div class="action-step">
+              <span class="action-day">D+32</span>
+              <span class="action-type-icon">📄</span>
+              <span>재활성 제안 태스크 생성</span>
+            </div>
+          </div>
+        </div>
+        <div class="followup-meta">
+          <div class="followup-meta-item">적용 <strong>225회</strong>/월</div>
+          <div class="followup-meta-item">최종 수정 <strong>2026-04-22</strong></div>
+          <span class="badge badge-muted" style="margin-top:4px;">비활성</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 팔로업 효과 통계 -->
+  <div class="settings-card">
+    <div class="settings-card-head">
+      <span class="settings-card-title">팔로업 효과 통계</span>
+      <span style="font-size:12px;color:var(--text-muted);">최근 30일 기준</span>
+    </div>
+    <div class="settings-card-body">
+      <div class="stat-cards-row">
+        <div class="stat-card">
+          <div class="stat-icon">📨</div>
+          <div class="stat-value primary">1,847</div>
+          <div class="stat-label">자동화 팔로업 발송 건수/월</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🔄</div>
+          <div class="stat-value success">23%</div>
+          <div class="stat-label">팔로업 후 딜 재활성률</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⚡</div>
+          <div class="stat-value" style="color:var(--warning);">-4.2일</div>
+          <div class="stat-label">평균 성사 기간 단축</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script src="crm-layout.js"></script>
+<script src="crm-common.js"></script>
+<script>
+const SCREEN_META = {
+  pipeline:   { label: '영업 파이프라인' },
+  assignment: { label: '담당자 배정 규칙 설정' },
+  followup:   { label: '팔로업 자동화 설정' },
+};
+
+function showScreen(name, pushState = true) {
+  if (!SCREEN_META[name]) return;
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById('screen-' + name);
+  if (target) {
+    target.classList.add('active');
+    document.querySelector('.content')?.scrollTo({ top: 0 });
+  }
+  document.getElementById('bcCurr').textContent = SCREEN_META[name].label;
+  if (pushState) history.pushState({ screen: name }, '', '#' + name);
+  else           history.replaceState({ screen: name }, '', '#' + name);
+  if (typeof crmSetActiveSidebar === 'function') crmSetActiveSidebar();
+}
+
+window.addEventListener('popstate', e => {
+  showScreen(e.state?.screen || 'pipeline', false);
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  const hash = location.hash.replace('#', '') || 'pipeline';
+  showScreen(SCREEN_META[hash] ? hash : 'pipeline', false);
+});
+
+/* 배정 방식 라디오 선택 */
+function selectMode(mode) {
+  ['rr', 'cond', 'manual'].forEach(m => {
+    document.getElementById('mode-' + m)?.classList.remove('selected');
+  });
+  document.getElementById('mode-' + mode)?.classList.add('selected');
+}
+</script>
+</body>
+</html>

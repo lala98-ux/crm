@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>페이지 제목 | ENTWIZ CRM</title>
+
+<!-- ① 공통 레이아웃 CSS (헤더·사이드바·패널 스타일) -->
+<link rel="stylesheet" href="crm-layout.css">
+
+<!-- ② 이 페이지만의 스타일 -->
+<style>
+/* 페이지 전용 스타일을 여기에 작성 */
+</style>
+</head>
+<body>
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     메인 콘텐츠 영역
+     헤더·사이드바는 crm-layout.js가 자동 주입하므로
+     이 <main> 태그만 작성하면 됩니다.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<main class="content">
+
+  <!-- 브레드크럼 -->
+  <div class="breadcrumb">
+    <span>ENTWIZ CRM</span>
+    <span class="sep">›</span>
+    <span class="curr">페이지 제목</span>
+  </div>
+
+  <!-- 페이지 헤더 -->
+  <div class="page-header">
+    <div>
+      <div class="page-title">페이지 제목</div>
+      <div class="page-desc">페이지 설명을 여기에 작성하세요.</div>
+    </div>
+    <div class="page-actions">
+      <button class="btn btn-secondary">내보내기</button>
+      <button class="btn btn-primary">+ 추가</button>
+    </div>
+  </div>
+
+  <!-- 페이지 콘텐츠 -->
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:40px;text-align:center;color:var(--text-muted);">
+    <div style="font-size:48px;margin-bottom:16px;">📄</div>
+    <div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:8px;">페이지 콘텐츠를 여기에 작성하세요</div>
+    <div style="font-size:13px;">이 템플릿을 복사한 후 &lt;main class="content"&gt; 안의 내용을 교체하면 됩니다.</div>
+  </div>
+
+</main>
+
+<!-- ③ 공통 레이아웃 주입 (헤더 + 사이드바 + 패널 자동 삽입) -->
+<script src="crm-layout.js"></script>
+<!-- ④ 공통 기능 (toggleSidebar, toggleNoti, showToast 등) -->
+<script src="crm-common.js"></script>
+
+<!-- ⑤ 페이지 전용 JS -->
+<script>
+/* 페이지 전용 JavaScript를 여기에 작성 */
+</script>
+
+</body>
+</html>

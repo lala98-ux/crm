@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="crm-layout.css">
+<title>워크플로우 | ENTWIZ CRM</title>
+<style>
+:root {
+  --primary:#2563EB; --primary-dark:#1D4ED8; --primary-light:#EFF6FF;
+  --bg:#F8FAFC; --surface:#FFFFFF; --border:#E2E8F0;
+  --text:#0F172A; --text-sub:#475569; --text-muted:#94A3B8;
+  --success:#059669; --success-bg:#ECFDF5;
+  --warning:#D97706; --warning-bg:#FFFBEB;
+  --danger:#DC2626; --danger-bg:#FEF2F2;
+  --radius:8px; --radius-sm:5px;
+  --shadow:0 1px 3px rgba(0,0,0,.08); --shadow-md:0 4px 16px rgba(0,0,0,.10);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Pretendard','Malgun Gothic','맑은 고딕',-apple-system,sans-serif;font-size:14px;color:var(--text);background:var(--bg);padding:0;}
+a{text-decoration:none;} button{font-family:inherit;cursor:pointer;}
+
+.screen{display:none;} .screen.active{display:block;}
+
+/* 브레드크럼 */
+.breadcrumb{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-muted);margin-bottom:14px;}
+.breadcrumb .sep{color:var(--border);font-size:14px;}
+.breadcrumb .curr{color:var(--text-sub);font-weight:600;}
+.breadcrumb .bc-link{cursor:pointer;color:var(--text-muted);}
+.breadcrumb .bc-link:hover{color:var(--primary);}
+
+/* 페이지 헤더 */
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;}
+.page-title{font-size:20px;font-weight:800;}
+.page-desc{font-size:13px;color:var(--text-sub);margin-top:3px;}
+.page-actions{display:flex;gap:8px;align-items:center;}
+
+/* 버튼 */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--radius);font-size:13px;font-weight:600;border:1px solid transparent;transition:all .15s;white-space:nowrap;cursor:pointer;}
+.btn-primary{background:var(--primary);color:#fff;border-color:var(--primary);}
+.btn-primary:hover{background:var(--primary-dark);}
+.btn-secondary{background:var(--surface);color:var(--text-sub);border-color:var(--border);}
+.btn-secondary:hover{background:var(--bg);}
+.btn-ghost{background:none;border-color:transparent;color:var(--text-sub);}
+.btn-ghost:hover{background:var(--bg);}
+.btn-sm{padding:5px 10px;font-size:12px;border-radius:var(--radius-sm);}
+
+/* KPI 그리드 */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.kpi-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);}
+.kpi-label{font-size:12px;color:var(--text-muted);font-weight:600;margin-bottom:8px;}
+.kpi-value{font-size:24px;font-weight:800;color:var(--text);line-height:1.1;}
+.kpi-value-sub{font-size:13px;font-weight:400;color:var(--text-muted);margin-top:4px;}
+.kpi-trend{font-size:12px;color:var(--text-muted);margin-top:6px;}
+.kpi-trend.up{color:var(--success);}
+.kpi-trend.down{color:var(--danger);}
+.kpi-value.warn{color:var(--warning);}
+.kpi-value.danger-color{color:var(--danger);}
+
+/* 설정 카드 */
+.settings-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:16px;overflow:hidden;}
+.settings-card-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.settings-card-title{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px;}
+.settings-card-body{padding:20px;}
+
+/* 데이터 테이블 */
+.data-table{width:100%;border-collapse:collapse;}
+.data-table th{padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:.05em;text-transform:uppercase;border-bottom:2px solid var(--border);background:var(--bg);}
+.data-table td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle;}
+.data-table tr:last-child td{border-bottom:none;}
+.data-table tr:hover td{background:var(--bg);}
+
+/* 배지 */
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;}
+.badge-success{background:var(--success-bg);color:var(--success);}
+.badge-muted{background:var(--bg);color:var(--text-muted);border:1px solid var(--border);}
+.badge-warning{background:var(--warning-bg);color:var(--warning);}
+.badge-danger{background:var(--danger-bg);color:var(--danger);}
+.badge-primary{background:var(--primary-light);color:var(--primary);}
+
+/* 토글 스위치 */
+.toggle{position:relative;width:44px;height:24px;flex-shrink:0;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-track{position:absolute;inset:0;background:var(--border);border-radius:12px;cursor:pointer;transition:background .2s;}
+.toggle input:checked+.toggle-track{background:var(--primary);}
+.toggle-track::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.toggle input:checked+.toggle-track::before{transform:translateX(20px);}
+
+/* 필터 탭 */
+.filter-tabs{display:flex;gap:4px;margin-bottom:16px;border-bottom:2px solid var(--border);}
+.filter-tab{padding:8px 16px;font-size:13px;font-weight:600;color:var(--text-muted);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;}
+.filter-tab.active{color:var(--primary);border-bottom-color:var(--primary);}
+.filter-tab:hover:not(.active){color:var(--text-sub);}
+
+/* 필터 바 */
+.filter-bar{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center;}
+.filter-bar select{padding:7px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;color:var(--text);background:var(--surface);cursor:pointer;font-family:inherit;}
+.filter-bar select:focus{outline:none;border-color:var(--primary);}
+.filter-bar input[type="date"]{padding:7px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;color:var(--text);background:var(--surface);font-family:inherit;}
+.filter-bar input[type="date"]:focus{outline:none;border-color:var(--primary);}
+
+/* 시나리오 카드 그리드 */
+.scenario-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;}
+.scenario-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);transition:box-shadow .18s, border-color .18s;cursor:pointer;}
+.scenario-card:hover{box-shadow:var(--shadow-md);border-color:#CBD5E1;}
+.scenario-card.selected{border-color:var(--primary);box-shadow:0 0 0 2px var(--primary-light),var(--shadow-md);}
+.scenario-card-name{font-size:15px;font-weight:800;margin-bottom:6px;color:var(--text);}
+.scenario-card-trigger{font-size:12px;color:var(--text-muted);margin-bottom:12px;display:flex;align-items:center;gap:4px;}
+.scenario-card-trigger::before{content:'⚡';font-size:11px;}
+.scenario-card-meta{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.scenario-card-steps{font-size:12px;color:var(--text-sub);font-weight:600;}
+.scenario-card-duration{font-size:12px;color:var(--text-muted);}
+.scenario-card-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:12px 0 0;border-top:1px solid var(--border);}
+.scenario-stat-item{text-align:center;}
+.scenario-stat-val{font-size:14px;font-weight:800;color:var(--text);}
+.scenario-stat-lbl{font-size:10px;color:var(--text-muted);margin-top:2px;}
+.scenario-card-actions{display:flex;gap:6px;margin-top:14px;}
+
+/* 타임라인 */
+.timeline{position:relative;padding-left:32px;}
+.timeline::before{content:'';position:absolute;left:12px;top:20px;bottom:20px;width:2px;background:var(--border);border-left:2px dashed var(--border);}
+.timeline-item{position:relative;margin-bottom:0;}
+.timeline-node{position:absolute;left:-32px;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;z-index:1;}
+.timeline-node.start{background:#D1FAE5;color:var(--success);border:2px solid var(--success);}
+.timeline-node.end{background:#D1FAE5;color:var(--success);border:2px solid var(--success);}
+.timeline-node.action{background:var(--primary-light);color:var(--primary);border:2px solid var(--primary);}
+.timeline-content{padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:0;}
+.timeline-content-title{font-size:13px;font-weight:700;margin-bottom:2px;}
+.timeline-content-desc{font-size:12px;color:var(--text-sub);}
+.timeline-delay{display:flex;align-items:center;gap:8px;padding:8px 0 8px 0;color:var(--text-muted);font-size:12px;font-weight:600;}
+.timeline-delay::before{content:'';display:block;width:1px;height:24px;background:repeating-linear-gradient(to bottom,var(--border) 0,var(--border) 4px,transparent 4px,transparent 8px);margin-left:-20px;margin-right:4px;}
+
+/* 채널 현황 바 */
+.channel-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:16px 20px;border-top:1px solid var(--border);background:var(--bg);}
+.channel-bar-item{display:flex;align-items:center;gap:10px;}
+.channel-bar-icon{font-size:20px;}
+.channel-bar-info{flex:1;}
+.channel-bar-label{font-size:11px;color:var(--text-muted);font-weight:600;}
+.channel-bar-count{font-size:16px;font-weight:800;color:var(--text);}
+.channel-bar-progress{height:4px;background:var(--border);border-radius:2px;margin-top:4px;overflow:hidden;}
+.channel-bar-fill{height:100%;border-radius:2px;transition:width .4s ease;}
+
+/* 상태 점 */
+.status-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;}
+.status-dot.on{background:var(--success);}
+.status-dot.off{background:var(--border);}
+
+/* 관리 버튼 셀 */
+.action-cell{display:flex;gap:4px;justify-content:flex-end;}
+
+/* 통계 뱃지 (발동 횟수) */
+.count-badge{font-size:13px;font-weight:700;color:var(--text);}
+.count-sub{font-size:11px;color:var(--text-muted);}
+
+/* 미리보기 패널 래퍼 */
+.preview-panel-title{font-size:13px;font-weight:700;color:var(--text-sub);margin-bottom:14px;display:flex;align-items:center;gap:6px;}
+.preview-panel-title::before{content:'';width:3px;height:14px;background:var(--primary);border-radius:2px;display:block;}
+
+/* select 커스텀 */
+select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2394A3B8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px!important;}
+</style>
+</head>
+<body>
+<main class="content">
+
+<div class="breadcrumb" id="globalBreadcrumb">
+  <span class="bc-link">ENTWIZ CRM</span>
+  <span class="sep">›</span>
+  <span>워크플로우</span>
+  <span class="sep">›</span>
+  <span class="curr" id="bcCurr">트리거 목록</span>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCREEN: 트리거 목록
+═══════════════════════════════════════ -->
+<div id="screen-trigger" class="screen active">
+  <div class="page-header">
+    <div>
+      <div class="page-title">트리거 목록</div>
+      <div class="page-desc">워크플로우를 시작시키는 조건(트리거)을 관리합니다.</div>
+    </div>
+    <div class="page-actions">
+      <button class="btn btn-primary" onclick="navWIP('트리거 추가')">+ 트리거 추가</button>
+    </div>
+  </div>
+
+  <!-- KPI 카드 -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">활성 트리거</div>
+      <div class="kpi-value">24<small style="font-size:14px;font-weight:600;color:var(--text-muted);">개</small></div>
+      <div class="kpi-trend">전체 47개 중</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">이번 달 발동</div>
+      <div class="kpi-value">18,420<small style="font-size:14px;font-weight:600;color:var(--text-muted);">회</small></div>
+      <div class="kpi-trend up">전월 대비 +12.3%</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">연결된 시나리오</div>
+      <div class="kpi-value">31<small style="font-size:14px;font-weight:600;color:var(--text-muted);">개</small></div>
+      <div class="kpi-trend">활성 24 / 정지 7</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">평균 처리 시간</div>
+      <div class="kpi-value">0.8<small style="font-size:14px;font-weight:600;color:var(--text-muted);">초</small></div>
+      <div class="kpi-trend up">안정적</div>
+    </div>
+  </div>
+
+  <!-- 카테고리 탭 필터 -->
+  <div class="filter-tabs" id="triggerTabs">
+    <button class="filter-tab active" onclick="setTriggerTab(this)">전체 <span style="font-size:11px;color:var(--text-muted);">(47)</span></button>
+    <button class="filter-tab" onclick="setTriggerTab(this)">고객 행동 <span style="font-size:11px;color:var(--text-muted);">(18)</span></button>
+    <button class="filter-tab" onclick="setTriggerTab(this)">구매/거래 <span style="font-size:11px;color:var(--text-muted);">(12)</span></button>
+    <button class="filter-tab" onclick="setTriggerTab(this)">시간/일정 <span style="font-size:11px;color:var(--text-muted);">(8)</span></button>
+    <button class="filter-tab" onclick="setTriggerTab(this)">외부 연동 <span style="font-size:11px;color:var(--text-muted);">(6)</span></button>
+    <button class="filter-tab" onclick="setTriggerTab(this)">시스템 <span style="font-size:11px;color:var(--text-muted);">(3)</span></button>
+  </div>
+
+  <!-- 트리거 테이블 -->
+  <div class="settings-card">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>트리거명</th>
+          <th>카테고리</th>
+          <th>조건 설명</th>
+          <th style="text-align:center;">연결 시나리오</th>
+          <th style="text-align:right;">이번 달 발동</th>
+          <th>마지막 발동</th>
+          <th style="text-align:center;">상태</th>
+          <th style="text-align:right;">관리</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>장바구니 이탈 감지</strong></td>
+          <td><span class="badge badge-primary">고객 행동</span></td>
+          <td style="color:var(--text-sub);">장바구니 담은 후 1시간 무결제</td>
+          <td style="text-align:center;"><strong>3개</strong></td>
+          <td style="text-align:right;"><strong>1,284회</strong></td>
+          <td style="color:var(--text-muted);">방금 전</td>
+          <td style="text-align:center;">
+            <label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label>
+          </td>
+          <td style="text-align:right;">
+            <div class="action-cell">
+              <button class="btn btn-ghost btn-sm" onclick="navWIP('트리거 편집')">편집</button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>첫 구매 완료</strong></td>
+          <td><span class="badge badge-success">구매/거래</span></td>
+          <td style="color:var(--text-sub);">회원 최초 구매 결제 완료</td>
+          <td style="text-align:center;"><strong>2개</strong></td>
+          <td style="text-align:right;"><strong>247회</strong></td>
+          <td style="color:var(--text-muted);">5분 전</td>
+          <td style="text-align:center;">
+            <label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label>
+          </td>
+          <td style="text-align:right;">
+            <div class="action-cell">
+              <button class="btn btn-ghost btn-sm" onclick="navWIP('트리거 편집')">편집</button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>이탈 위험 점수 도달</strong></td>
+          <td><span class="badge badge-primary">고객 행동</span></td>
+          <td style="color:var(--text-sub);">건강도 점수 40점 이하</td>
+          <td style="text-align:center;"><strong>2개</strong></td>
+          <td style="text-align:right;"><strong>89회</strong></td>
+          <td style="color:var(--text-muted);">1시간 전</td>
+          <td style="text-align:center;">
+            <label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label>
+          </td>
+          <td style="text-align:right;">
+            <div class="action-cell">
+              <button class="btn btn-ghost btn-sm" onclick="navWIP('트리거 편집')">편집</button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>생일 D-7</strong></td>
+          <td><span class="badge badge-warning">시간/일정</span></td>
+          <td style="color:var(--text-sub);">생일 7일 전 매일 오전 9시</td>
+          <td style="text-align:center;"><strong>1개</strong></td>
+          <td style="text-align:right;"><strong>43회</strong></td>
+          <td style="color:var(--text-muted);">오늘 9:00</td>
+          <td style="text-align:center;">
+            <label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label>
+          </td>
+          <td style="text-align:right;">
+            <div class="action-cell">
+              <button class="btn btn-ghost btn-sm" onclick="navWIP('트리거 편집')">편집</button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>90일 미구매</strong></td>
+          <td><span class="badge badge-warning">시간/일정</span></td>
+          <td style="color:var(--text-sub);">마지막 구매 90일 경과</td>
+          <td style="text-align:center;"><strong>2개</strong></td>
+          <td style="text-align:right;"><strong>312회</strong></td>
+          <td style="color:var(--text-muted);">어제</td>
+          <td style="text-align:center;">
+            <label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label>
+          </td>
+          <td style="text-align:right;">
+            <div class="action-cell">
+              <button class="btn btn-ghost btn-sm" onclick="navWIP('트리거 편집')">편집</button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>VIP 등급 달성</strong></td>
+          <td><span class="badge badge-success">구매/거래</span></td>
+          <td style="color:var(--text-sub);">누적 구매금액 100만원 초과</td>
+          <td style="text-align:center;"><strong>1개</strong></td>
+          <td style="text-align:right;"><strong>12회</strong></td>
+          <td style="color:var(--text-muted);">3일 전</td>
+          <td style="text-align:center;">
+            <label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label>
+          </td>
+          <td style="text-align:right;">
+            <div class="action-cell">
+              <button class="btn btn-ghost btn-sm" onclick="navWIP('트리거 편집')">편집</button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>재입고 알림</strong></td>
+          <td><span class="badge badge-muted">외부 연동</span></td>
+          <td style="color:var(--text-sub);">관심 상품 재고 &gt; 0</td>
+          <td style="text-align:center;"><strong>1개</strong></td>
+          <td style="text-align:right;"><strong>167회</strong></td>
+          <td style="color:var(--text-muted);">2시간 전</td>
+          <td style="text-align:center;">
+            <label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label>
+          </td>
+          <td style="text-align:right;">
+            <div class="action-cell">
+              <button class="btn btn-ghost btn-sm" onclick="navWIP('트리거 편집')">편집</button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>카카오 채널 차단</strong></td>
+          <td><span class="badge badge-muted">외부 연동</span></td>
+          <td style="color:var(--text-sub);">카카오 채널 수신 거부</td>
+          <td style="text-align:center;"><strong>1개</strong></td>
+          <td style="text-align:right;"><strong>8회</strong></td>
+          <td style="color:var(--text-muted);">어제</td>
+          <td style="text-align:center;">
+            <label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label>
+          </td>
+          <td style="text-align:right;">
+            <div class="action-cell">
+              <button class="btn btn-ghost btn-sm" onclick="navWIP('트리거 편집')">편집</button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>포인트 소멸 D-30</strong></td>
+          <td><span class="badge badge-warning">시간/일정</span></td>
+          <td style="color:var(--text-sub);">포인트 소멸 30일 전</td>
+          <td style="text-align:center;"><strong>1개</strong></td>
+          <td style="text-align:right;"><span style="color:var(--text-muted);">671회</span></td>
+          <td style="color:var(--text-muted);">오늘 8:00</td>
+          <td style="text-align:center;">
+            <label class="toggle"><input type="checkbox"><span class="toggle-track"></span></label>
+          </td>
+          <td style="text-align:right;">
+            <div class="action-cell">
+              <button class="btn btn-ghost btn-sm" onclick="navWIP('트리거 편집')">편집</button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>API 웹훅 수신</strong></td>
+          <td><span class="badge" style="background:#F1F0FF;color:#6366F1;">시스템</span></td>
+          <td style="color:var(--text-sub);">외부 시스템 웹훅 POST</td>
+          <td style="text-align:center;"><strong>2개</strong></td>
+          <td style="text-align:right;"><strong>234회</strong></td>
+          <td style="color:var(--text-muted);">1시간 전</td>
+          <td style="text-align:center;">
+            <label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label>
+          </td>
+          <td style="text-align:right;">
+            <div class="action-cell">
+              <button class="btn btn-ghost btn-sm" onclick="navWIP('트리거 편집')">편집</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCREEN: 시나리오 관리
+═══════════════════════════════════════ -->
+<div id="screen-scenario" class="screen">
+  <div class="page-header">
+    <div>
+      <div class="page-title">시나리오 관리</div>
+      <div class="page-desc">트리거 이후 실행되는 자동화 흐름을 설계하고 관리합니다.</div>
+    </div>
+    <div class="page-actions">
+      <button class="btn btn-primary" onclick="navWIP('시나리오 만들기')">+ 시나리오 만들기</button>
+    </div>
+  </div>
+
+  <!-- KPI 카드 3개 -->
+  <div class="kpi-grid-3">
+    <div class="kpi-card">
+      <div class="kpi-label">전체 시나리오</div>
+      <div class="kpi-value">31<small style="font-size:14px;font-weight:600;color:var(--text-muted);">개</small></div>
+      <div class="kpi-trend">활성 24 / 정지 7</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">이번 달 실행</div>
+      <div class="kpi-value">18,420<small style="font-size:14px;font-weight:600;color:var(--text-muted);">회</small></div>
+      <div class="kpi-trend up">전월 대비 +12.3%</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">평균 완료율</div>
+      <div class="kpi-value">73.2<small style="font-size:14px;font-weight:600;color:var(--text-muted);">%</small></div>
+      <div class="kpi-trend up">전월 대비 +2.1%p</div>
+    </div>
+  </div>
+
+  <!-- 시나리오 카드 그리드 -->
+  <div class="scenario-grid" id="scenarioGrid">
+
+    <!-- 카드 1: 장바구니 이탈 복구 시퀀스 -->
+    <div class="scenario-card selected" id="sc-1" onclick="selectScenario(1)">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;">
+        <div class="scenario-card-name">장바구니 이탈 복구 시퀀스</div>
+        <span class="badge badge-success">활성</span>
+      </div>
+      <div class="scenario-card-trigger">장바구니 이탈 감지</div>
+      <div class="scenario-card-meta">
+        <span class="scenario-card-steps">5단계</span>
+        <span style="color:var(--border);">|</span>
+        <span class="scenario-card-duration">7일 소요</span>
+      </div>
+      <div class="scenario-card-stats">
+        <div class="scenario-stat-item">
+          <div class="scenario-stat-val">1,284</div>
+          <div class="scenario-stat-lbl">이번달 실행</div>
+        </div>
+        <div class="scenario-stat-item">
+          <div class="scenario-stat-val" style="color:var(--success);">89%</div>
+          <div class="scenario-stat-lbl">완료율</div>
+        </div>
+        <div class="scenario-stat-item">
+          <div class="scenario-stat-val" style="color:var(--primary);">14.2%</div>
+          <div class="scenario-stat-lbl">전환율</div>
+        </div>
+      </div>
+      <div class="scenario-card-actions">
+        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();navWIP('시나리오 편집')">편집</button>
+        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();navWIP('시나리오 복제')">복제</button>
+        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();navWIP('통계보기')">통계보기</button>
+      </div>
+    </div>
+
+    <!-- 카드 2: 신규 고객 온보딩 -->
+    <div class="scenario-card" id="sc-2" onclick="selectScenario(2)">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;">
+        <div class="scenario-card-name">신규 고객 온보딩</div>
+        <span class="badge badge-success">활성</span>
+      </div>
+      <div class="scenario-card-trigger">첫 구매 완료</div>
+      <div class="scenario-card-meta">
+        <span class="scenario-card-steps">7단계</span>
+        <span style="color:var(--border);">|</span>
+        <span class="scenario-card-duration">14일 소요</span>
+      </div>
+      <div class="scenario-card-stats">
+        <div class="scenario-stat-item">
+          <div class="scenario-stat-val">247</div>
+          <div class="scenario-stat-lbl">이번달 실행</div>
+        </div>
+        <div class="scenario-stat-item">
+          <div class="scenario-stat-val" style="color:var(--success);">94%</div>
+          <div class="scenario-stat-lbl">완료율</div>
+        </div>
+        <div class="scenario-stat-item">
+          <div class="scenario-stat-val" style="color:var(--primary);">28.4%</div>
+          <div class="scenario-stat-lbl">전환율</div>
+        </div>
+      </div>
+      <div class="scenario-card-actions">
+        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();navWIP('시나리오 편집')">편집</button>
+        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();navWIP('시나리오 복제')">복제</button>
+        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();navWIP('통계보기')">통계보기</button>
+      </div>
+    </div>
+
+    <!-- 카드 3: 이탈 위험 개입 -->
+    <div class="scenario-card" id="sc-3" onclick="selectScenario(3)">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;">
+        <div class="scenario-card-name">이탈 위험 개입</div>
+        <span class="badge badge-success">활성</span>
+      </div>
+      <div class="scenario-card-trigger">이탈 위험 점수 도달</div>
+      <div class="scenario-card-meta">
+        <span class="scenario-card-steps">4단계</span>
+        <span style="color:var(--border);">|</span>
+        <span class="scenario-card-duration">5일 소요</span>
+      </div>
+      <div class="scenario-card-stats">
+        <div class="scenario-stat-item">
+          <div class="scenario-stat-val">89</div>
+          <div class="scenario-stat-lbl">이번달 실행</div>
+        </div>
+        <div class="scenario-stat-item">
+          <div class="scenario-stat-val" style="color:var(--success);">71%</div>
+          <div class="scenario-stat-lbl">완료율</div>
+        </div>
+        <div class="scenario-stat-item">
+          <div class="scenario-stat-val" style="color:var(--primary);">18.7%</div>
+          <div class="scenario-stat-lbl">전환율</div>
+        </div>
+      </div>
+      <div class="scenario-card-actions">
+        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();navWIP('시나리오 편집')">편집</button>
+        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();navWIP('시나리오 복제')">복제</button>
+        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();navWIP('통계보기')">통계보기</button>
+      </div>
+    </div>
+
+    <!-- 카드 4: 생일 혜택 시퀀스 -->
+    <div class="scenario-card" id="sc-4" onclick="selectScenario(4)">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;">
+        <div class="scenario-card-name">생일 혜택 시퀀스</div>
+        <span class="badge badge-success">활성</span>
+      </div>
+      <div class="scenario-card-trigger">생일 D-7</div>
+      <div class="scenario-card-meta">
+        <span class="scenario-card-steps">3단계</span>
+        <span style="color:var(--border);">|</span>
+        <span class="scenario-card-duration">7일 소요</span>
+      </div>
+      <div class="scenario-card-stats">
+        <div class="scenario-stat-item">
+          <div class="scenario-stat-val">43</div>
+          <div class="scenario-stat-lbl">이번달 실행</div>
+        </div>
+        <div class="scenario-stat-item">
+          <div class="scenario-stat-val" style="color:var(--success);">98%</div>
+          <div class="scenario-stat-lbl">완료율</div>
+        </div>
+        <div class="scenario-stat-item">
+          <div class="scenario-stat-val" style="color:var(--primary);">52.3%</div>
+          <div class="scenario-stat-lbl">전환율</div>
+        </div>
+      </div>
+      <div class="scenario-card-actions">
+        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();navWIP('시나리오 편집')">편집</button>
+        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();navWIP('시나리오 복제')">복제</button>
+        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();navWIP('통계보기')">통계보기</button>
+      </div>
+    </div>
+
+    <!-- 카드 5: VIP 웰컴 시퀀스 -->
+    <div class="scenario-card" id="sc-5" onclick="selectScenario(5)">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;">
+        <div class="scenario-card-name">VIP 웰컴 시퀀스</div>
+        <span class="badge badge-success">활성</span>
+      </div>
+      <div class="scenario-card-trigger">VIP 등급 달성</div>
+      <div class="scenario-card-meta">
+        <span class="scenario-card-steps">6단계</span>
+        <span style="color:var(--border);">|</span>
+        <span class="scenario-card-duration">21일 소요</span>
+      </div>
+      <div class="scenario-card-stats">
+        <div class="scenario-stat-item">
+          <div class="scenario-stat-val">12</div>
+          <div class="scenario-stat-lbl">이번달 실행</div>
+        </div>
+        <div class="scenario-stat-item">
+          <div class="scenario-stat-val" style="color:var(--success);">91%</div>
+          <div class="scenario-stat-lbl">완료율</div>
+        </div>
+        <div class="scenario-stat-item">
+          <div class="scenario-stat-val" style="color:var(--primary);">67.8%</div>
+          <div class="scenario-stat-lbl">전환율</div>
+        </div>
+      </div>
+      <div class="scenario-card-actions">
+        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();navWIP('시나리오 편집')">편집</button>
+        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();navWIP('시나리오 복제')">복제</button>
+        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();navWIP('통계보기')">통계보기</button>
+      </div>
+    </div>
+
+    <!-- 카드 6: 휴면 고객 재활성 -->
+    <div class="scenario-card" id="sc-6" onclick="selectScenario(6)">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;">
+        <div class="scenario-card-name">휴면 고객 재활성</div>
+        <span class="badge badge-muted">정지</span>
+      </div>
+      <div class="scenario-card-trigger">90일 미구매</div>
+      <div class="scenario-card-meta">
+        <span class="scenario-card-steps">5단계</span>
+        <span style="color:var(--border);">|</span>
+        <span class="scenario-card-duration">14일 소요</span>
+      </div>
+      <div class="scenario-card-stats">
+        <div class="scenario-stat-item">
+          <div class="scenario-stat-val" style="color:var(--text-muted);">0</div>
+          <div class="scenario-stat-lbl">이번달 실행</div>
+        </div>
+        <div class="scenario-stat-item">
+          <div class="scenario-stat-val" style="color:var(--text-muted);">—</div>
+          <div class="scenario-stat-lbl">완료율</div>
+        </div>
+        <div class="scenario-stat-item">
+          <div class="scenario-stat-val" style="color:var(--text-muted);">—</div>
+          <div class="scenario-stat-lbl">전환율</div>
+        </div>
+      </div>
+      <div class="scenario-card-actions">
+        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();navWIP('시나리오 편집')">편집</button>
+        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();navWIP('시나리오 복제')">복제</button>
+        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();navWIP('통계보기')">통계보기</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 시나리오 흐름 미리보기 -->
+  <div class="settings-card">
+    <div class="settings-card-head">
+      <span class="settings-card-title">
+        <span id="previewTitle">장바구니 이탈 복구 시퀀스</span> — 흐름 미리보기
+      </span>
+      <button class="btn btn-secondary btn-sm" onclick="navWIP('흐름 편집')">흐름 편집</button>
+    </div>
+    <div class="settings-card-body">
+      <div class="timeline" id="scenarioTimeline">
+
+        <!-- START -->
+        <div class="timeline-item" style="margin-bottom:16px;">
+          <div class="timeline-node start" style="font-size:14px;">🚀</div>
+          <div class="timeline-content">
+            <div class="timeline-content-title">START: 장바구니 이탈 감지</div>
+            <div class="timeline-content-desc">장바구니 담은 후 1시간 무결제 시 트리거 발동</div>
+          </div>
+        </div>
+
+        <!-- 1시간 후 -->
+        <div class="timeline-delay">1시간 후</div>
+        <div class="timeline-item" style="margin-bottom:16px;">
+          <div class="timeline-node action">💬</div>
+          <div class="timeline-content">
+            <div class="timeline-content-title">카카오 알림톡 발송</div>
+            <div class="timeline-content-desc">"장바구니에 상품이 담겨 있어요!"</div>
+          </div>
+        </div>
+
+        <!-- 6시간 후 -->
+        <div class="timeline-delay">6시간 후</div>
+        <div class="timeline-item" style="margin-bottom:16px;">
+          <div class="timeline-node action">💬</div>
+          <div class="timeline-content">
+            <div class="timeline-content-title">카카오 알림톡 발송</div>
+            <div class="timeline-content-desc">"오늘 안에 결제하면 무료배송!"</div>
+          </div>
+        </div>
+
+        <!-- 24시간 후 -->
+        <div class="timeline-delay">24시간 후</div>
+        <div class="timeline-item" style="margin-bottom:16px;">
+          <div class="timeline-node action">📧</div>
+          <div class="timeline-content">
+            <div class="timeline-content-title">이메일 발송</div>
+            <div class="timeline-content-desc">"장바구니 쿠폰 발급 완료"</div>
+          </div>
+        </div>
+
+        <!-- 3일 후 -->
+        <div class="timeline-delay">3일 후</div>
+        <div class="timeline-item" style="margin-bottom:16px;">
+          <div class="timeline-node action">💬</div>
+          <div class="timeline-content">
+            <div class="timeline-content-title">카카오 알림톡 발송</div>
+            <div class="timeline-content-desc">"마지막 기회! 5% 추가 할인"</div>
+          </div>
+        </div>
+
+        <!-- END -->
+        <div class="timeline-delay" style="font-size:11px;color:var(--text-muted);">구매 완료 시 즉시 종료 / 최대 7일</div>
+        <div class="timeline-item">
+          <div class="timeline-node end" style="font-size:14px;">✅</div>
+          <div class="timeline-content" style="border-color:var(--success-bg);background:var(--success-bg);">
+            <div class="timeline-content-title" style="color:var(--success);">END: 시나리오 종료</div>
+            <div class="timeline-content-desc">구매 완료 시 자동 종료 / 7일 경과 시 자동 종료</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCREEN: 발송 이력
+═══════════════════════════════════════ -->
+<div id="screen-history" class="screen">
+  <div class="page-header">
+    <div>
+      <div class="page-title">발송 이력</div>
+      <div class="page-desc">워크플로우를 통해 발송된 모든 메시지 이력을 조회합니다.</div>
+    </div>
+    <div class="page-actions">
+      <button class="btn btn-secondary" onclick="navWIP('발송 이력 내보내기')">내보내기</button>
+    </div>
+  </div>
+
+  <!-- KPI 카드 -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">오늘 발송</div>
+      <div class="kpi-value">2,847<small style="font-size:14px;font-weight:600;color:var(--text-muted);">건</small></div>
+      <div class="kpi-trend up">어제 대비 +8.2%</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">성공률</div>
+      <div class="kpi-value">97.3<small style="font-size:14px;font-weight:600;color:var(--text-muted);">%</small></div>
+      <div class="kpi-trend up">양호</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">실패/오류</div>
+      <div class="kpi-value danger-color">77<small style="font-size:14px;font-weight:600;color:var(--danger);">건</small></div>
+      <div class="kpi-trend" style="color:var(--danger);">즉시 확인 필요</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">평균 발송 시간</div>
+      <div class="kpi-value">1.2<small style="font-size:14px;font-weight:600;color:var(--text-muted);">초</small></div>
+      <div class="kpi-trend">정상 범위</div>
+    </div>
+  </div>
+
+  <!-- 필터 바 -->
+  <div class="filter-bar">
+    <select id="filterPeriod">
+      <option value="today">오늘</option>
+      <option value="7d">7일</option>
+      <option value="30d">30일</option>
+      <option value="custom">직접 입력</option>
+    </select>
+    <select id="filterChannel">
+      <option value="">채널 전체</option>
+      <option value="kakao">카카오</option>
+      <option value="email">이메일</option>
+      <option value="sms">SMS</option>
+      <option value="push">앱푸시</option>
+    </select>
+    <select id="filterStatus">
+      <option value="">상태 전체</option>
+      <option value="success">성공</option>
+      <option value="fail">실패</option>
+      <option value="pending">대기</option>
+    </select>
+    <select id="filterScenario">
+      <option value="">시나리오 전체</option>
+      <option value="1">장바구니 이탈 복구 시퀀스</option>
+      <option value="2">신규 고객 온보딩</option>
+      <option value="3">이탈 위험 개입</option>
+      <option value="4">생일 혜택 시퀀스</option>
+      <option value="5">VIP 웰컴 시퀀스</option>
+      <option value="6">휴면 고객 재활성</option>
+    </select>
+    <button class="btn btn-primary btn-sm" onclick="navWIP('이력 검색')">검색</button>
+  </div>
+
+  <!-- 발송 이력 테이블 -->
+  <div class="settings-card">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>발송 시각</th>
+          <th>고객명</th>
+          <th>채널</th>
+          <th>시나리오명</th>
+          <th>메시지 요약</th>
+          <th style="text-align:center;">상태</th>
+          <th style="text-align:center;">열람</th>
+          <th style="text-align:center;">클릭</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="color:var(--text-muted);font-variant-numeric:tabular-nums;">14:32:01</td>
+          <td><strong>박서연</strong></td>
+          <td>💬 카카오</td>
+          <td style="color:var(--text-sub);">장바구니 이탈 복구</td>
+          <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-sub);">"장바구니에 상품이 담겨있어요!"</td>
+          <td style="text-align:center;"><span class="badge badge-success">성공</span></td>
+          <td style="text-align:center;"><span class="badge badge-primary">열람</span></td>
+          <td style="text-align:center;"><span style="color:var(--text-muted);">—</span></td>
+        </tr>
+        <tr>
+          <td style="color:var(--text-muted);font-variant-numeric:tabular-nums;">14:31:47</td>
+          <td><strong>김민준</strong></td>
+          <td>📧 이메일</td>
+          <td style="color:var(--text-sub);">신규 고객 온보딩</td>
+          <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-sub);">"첫 구매를 완료해주셔서 감사합니다..."</td>
+          <td style="text-align:center;"><span class="badge badge-success">성공</span></td>
+          <td style="text-align:center;"><span class="badge badge-primary">열람</span></td>
+          <td style="text-align:center;"><span class="badge badge-success">클릭</span></td>
+        </tr>
+        <tr>
+          <td style="color:var(--text-muted);font-variant-numeric:tabular-nums;">14:30:22</td>
+          <td><strong>이지영</strong></td>
+          <td>📱 SMS</td>
+          <td style="color:var(--text-sub);">이탈 위험 개입</td>
+          <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-sub);">"[ENTWIZ] 오랫동안 방문하지 않으셨네요"</td>
+          <td style="text-align:center;"><span class="badge badge-success">성공</span></td>
+          <td style="text-align:center;"><span style="color:var(--text-muted);">—</span></td>
+          <td style="text-align:center;"><span style="color:var(--text-muted);">—</span></td>
+        </tr>
+        <tr>
+          <td style="color:var(--text-muted);font-variant-numeric:tabular-nums;">14:29:15</td>
+          <td><strong>최동욱</strong></td>
+          <td>💬 카카오</td>
+          <td style="color:var(--text-sub);">생일 혜택 시퀀스</td>
+          <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-sub);">"🎂 생일 축하드립니다! 특별 혜택이 준비..."</td>
+          <td style="text-align:center;"><span class="badge badge-success">성공</span></td>
+          <td style="text-align:center;"><span class="badge badge-primary">열람</span></td>
+          <td style="text-align:center;"><span class="badge badge-success">클릭</span></td>
+        </tr>
+        <tr>
+          <td style="color:var(--text-muted);font-variant-numeric:tabular-nums;">14:28:03</td>
+          <td><strong>정수빈</strong></td>
+          <td>📧 이메일</td>
+          <td style="color:var(--text-sub);">장바구니 이탈 복구</td>
+          <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-sub);">"쿠폰이 발급되었습니다. 오늘까지만 사..."</td>
+          <td style="text-align:center;"><span class="badge badge-danger">실패</span></td>
+          <td style="text-align:center;"><span style="color:var(--text-muted);">—</span></td>
+          <td style="text-align:center;"><span style="color:var(--text-muted);">—</span></td>
+        </tr>
+        <tr>
+          <td style="color:var(--text-muted);font-variant-numeric:tabular-nums;">14:26:41</td>
+          <td><strong>한승민</strong></td>
+          <td>💬 카카오</td>
+          <td style="color:var(--text-sub);">VIP 웰컴 시퀀스</td>
+          <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-sub);">"VIP 회원이 되신 것을 축하드립니다!"</td>
+          <td style="text-align:center;"><span class="badge badge-success">성공</span></td>
+          <td style="text-align:center;"><span class="badge badge-primary">열람</span></td>
+          <td style="text-align:center;"><span class="badge badge-success">클릭</span></td>
+        </tr>
+        <tr>
+          <td style="color:var(--text-muted);font-variant-numeric:tabular-nums;">14:25:09</td>
+          <td><strong>오세린</strong></td>
+          <td>📱 SMS</td>
+          <td style="color:var(--text-sub);">이탈 위험 개입</td>
+          <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-sub);">"[ENTWIZ] 특별 할인 쿠폰을 보내드려요"</td>
+          <td style="text-align:center;"><span class="badge badge-success">성공</span></td>
+          <td style="text-align:center;"><span style="color:var(--text-muted);">—</span></td>
+          <td style="text-align:center;"><span style="color:var(--text-muted);">—</span></td>
+        </tr>
+        <tr>
+          <td style="color:var(--text-muted);font-variant-numeric:tabular-nums;">14:23:54</td>
+          <td><strong>임지현</strong></td>
+          <td>🔔 앱푸시</td>
+          <td style="color:var(--text-sub);">신규 고객 온보딩</td>
+          <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-sub);">"앱 전용 5% 추가 쿠폰이 발급되었습니다"</td>
+          <td style="text-align:center;"><span class="badge badge-success">성공</span></td>
+          <td style="text-align:center;"><span class="badge badge-primary">열람</span></td>
+          <td style="text-align:center;"><span style="color:var(--text-muted);">—</span></td>
+        </tr>
+        <tr>
+          <td style="color:var(--text-muted);font-variant-numeric:tabular-nums;">14:21:38</td>
+          <td><strong>강도현</strong></td>
+          <td>📧 이메일</td>
+          <td style="color:var(--text-sub);">장바구니 이탈 복구</td>
+          <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-sub);">"놓치지 마세요! 장바구니 상품 한정 할인"</td>
+          <td style="text-align:center;"><span class="badge badge-warning">대기</span></td>
+          <td style="text-align:center;"><span style="color:var(--text-muted);">—</span></td>
+          <td style="text-align:center;"><span style="color:var(--text-muted);">—</span></td>
+        </tr>
+        <tr>
+          <td style="color:var(--text-muted);font-variant-numeric:tabular-nums;">14:19:22</td>
+          <td><strong>윤채원</strong></td>
+          <td>💬 카카오</td>
+          <td style="color:var(--text-sub);">생일 혜택 시퀀스</td>
+          <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-sub);">"생일 D-3, 혜택이 곧 만료됩니다!"</td>
+          <td style="text-align:center;"><span class="badge badge-success">성공</span></td>
+          <td style="text-align:center;"><span class="badge badge-primary">열람</span></td>
+          <td style="text-align:center;"><span class="badge badge-success">클릭</span></td>
+        </tr>
+        <tr>
+          <td style="color:var(--text-muted);font-variant-numeric:tabular-nums;">14:17:11</td>
+          <td><strong>신다인</strong></td>
+          <td>📧 이메일</td>
+          <td style="color:var(--text-sub);">신규 고객 온보딩</td>
+          <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-sub);">"맞춤 상품 추천 리포트가 도착했습니다"</td>
+          <td style="text-align:center;"><span class="badge badge-danger">실패</span></td>
+          <td style="text-align:center;"><span style="color:var(--text-muted);">—</span></td>
+          <td style="text-align:center;"><span style="color:var(--text-muted);">—</span></td>
+        </tr>
+        <tr>
+          <td style="color:var(--text-muted);font-variant-numeric:tabular-nums;">14:14:58</td>
+          <td><strong>이동우</strong></td>
+          <td>🔔 앱푸시</td>
+          <td style="color:var(--text-sub);">VIP 웰컴 시퀀스</td>
+          <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-sub);">"VIP 전용 혜택 안내 드립니다"</td>
+          <td style="text-align:center;"><span class="badge badge-success">성공</span></td>
+          <td style="text-align:center;"><span class="badge badge-primary">열람</span></td>
+          <td style="text-align:center;"><span class="badge badge-success">클릭</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 채널별 오늘 발송 현황 바 -->
+  <div class="settings-card" style="margin-bottom:0;">
+    <div class="settings-card-head">
+      <span class="settings-card-title">채널별 오늘 발송 현황</span>
+      <span style="font-size:12px;color:var(--text-muted);">총 2,847건</span>
+    </div>
+    <div class="channel-bar">
+      <div class="channel-bar-item">
+        <div class="channel-bar-icon">💬</div>
+        <div class="channel-bar-info">
+          <div class="channel-bar-label">카카오</div>
+          <div class="channel-bar-count">1,284건</div>
+          <div class="channel-bar-progress">
+            <div class="channel-bar-fill" style="width:45%;background:#FEE500;"></div>
+          </div>
+        </div>
+      </div>
+      <div class="channel-bar-item">
+        <div class="channel-bar-icon">📧</div>
+        <div class="channel-bar-info">
+          <div class="channel-bar-label">이메일</div>
+          <div class="channel-bar-count">847건</div>
+          <div class="channel-bar-progress">
+            <div class="channel-bar-fill" style="width:30%;background:var(--primary);"></div>
+          </div>
+        </div>
+      </div>
+      <div class="channel-bar-item">
+        <div class="channel-bar-icon">📱</div>
+        <div class="channel-bar-info">
+          <div class="channel-bar-label">SMS</div>
+          <div class="channel-bar-count">523건</div>
+          <div class="channel-bar-progress">
+            <div class="channel-bar-fill" style="width:18%;background:var(--success);"></div>
+          </div>
+        </div>
+      </div>
+      <div class="channel-bar-item">
+        <div class="channel-bar-icon">🔔</div>
+        <div class="channel-bar-info">
+          <div class="channel-bar-label">앱푸시</div>
+          <div class="channel-bar-count">193건</div>
+          <div class="channel-bar-progress">
+            <div class="channel-bar-fill" style="width:7%;background:var(--warning);"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script src="crm-layout.js"></script>
+<script src="crm-common.js"></script>
+<script>
+const SCREEN_META = {
+  trigger:  { label: '트리거 목록' },
+  scenario: { label: '시나리오 관리' },
+  history:  { label: '발송 이력' },
+};
+
+function showScreen(name, pushState = true) {
+  if (!SCREEN_META[name]) return;
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById('screen-' + name);
+  if (target) {
+    target.classList.add('active');
+    document.querySelector('.content')?.scrollTo({ top: 0 });
+  }
+  document.getElementById('bcCurr').textContent = SCREEN_META[name].label;
+  if (pushState) history.pushState({ screen: name }, '', '#' + name);
+  else           history.replaceState({ screen: name }, '', '#' + name);
+  if (typeof crmSetActiveSidebar === 'function') crmSetActiveSidebar();
+}
+
+window.addEventListener('popstate', e => {
+  showScreen(e.state?.screen || 'trigger', false);
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  const hash = location.hash.replace('#', '') || 'trigger';
+  showScreen(SCREEN_META[hash] ? hash : 'trigger', false);
+});
+
+/* 트리거 탭 전환 */
+function setTriggerTab(el) {
+  document.querySelectorAll('#triggerTabs .filter-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+/* 시나리오 카드 선택 + 미리보기 업데이트 */
+const SCENARIO_PREVIEWS = {
+  1: {
+    title: '장바구니 이탈 복구 시퀀스',
+    steps: [
+      { type: 'start', icon: '🚀', title: 'START: 장바구니 이탈 감지', desc: '장바구니 담은 후 1시간 무결제 시 트리거 발동' },
+      { delay: '1시간 후' },
+      { type: 'action', icon: '💬', title: '카카오 알림톡 발송', desc: '"장바구니에 상품이 담겨 있어요!"' },
+      { delay: '6시간 후' },
+      { type: 'action', icon: '💬', title: '카카오 알림톡 발송', desc: '"오늘 안에 결제하면 무료배송!"' },
+      { delay: '24시간 후' },
+      { type: 'action', icon: '📧', title: '이메일 발송', desc: '"장바구니 쿠폰 발급 완료"' },
+      { delay: '3일 후' },
+      { type: 'action', icon: '💬', title: '카카오 알림톡 발송', desc: '"마지막 기회! 5% 추가 할인"' },
+      { delay: '구매 완료 시 즉시 종료 / 최대 7일', small: true },
+      { type: 'end', icon: '✅', title: 'END: 시나리오 종료', desc: '구매 완료 시 자동 종료 / 7일 경과 시 자동 종료' },
+    ]
+  },
+  2: {
+    title: '신규 고객 온보딩',
+    steps: [
+      { type: 'start', icon: '🚀', title: 'START: 첫 구매 완료', desc: '회원 최초 구매 결제 완료 시 트리거 발동' },
+      { delay: '즉시' },
+      { type: 'action', icon: '📧', title: '이메일 발송', desc: '"첫 구매 감사 안내 + 브랜드 스토리"' },
+      { delay: '1일 후' },
+      { type: 'action', icon: '💬', title: '카카오 알림톡 발송', desc: '"주문 배송 현황 안내"' },
+      { delay: '3일 후' },
+      { type: 'action', icon: '📧', title: '이메일 발송', desc: '"첫 구매 후기 작성 유도 + 500P 보상 안내"' },
+      { delay: '7일 후' },
+      { type: 'action', icon: '💬', title: '카카오 알림톡 발송', desc: '"추천 상품 큐레이션 발송"' },
+      { delay: '14일 후' },
+      { type: 'action', icon: '📧', title: '이메일 발송', desc: '"재구매 유도 + 10% 쿠폰 제공"' },
+      { delay: '14일 소요', small: true },
+      { type: 'end', icon: '✅', title: 'END: 온보딩 완료', desc: '14일 온보딩 시퀀스 완료' },
+    ]
+  },
+  3: {
+    title: '이탈 위험 개입',
+    steps: [
+      { type: 'start', icon: '🚀', title: 'START: 이탈 위험 점수 도달', desc: '건강도 점수 40점 이하 감지 시 발동' },
+      { delay: '즉시' },
+      { type: 'action', icon: '💬', title: '카카오 알림톡 발송', desc: '"오랫동안 방문하지 않으셨네요, 특별 할인 제공"' },
+      { delay: '2일 후' },
+      { type: 'action', icon: '📧', title: '이메일 발송', desc: '"맞춤 상품 추천 + 15% 할인 쿠폰"' },
+      { delay: '3일 후' },
+      { type: 'action', icon: '📱', title: 'SMS 발송', desc: '"[ENTWIZ] 마지막 기회! 20% 할인코드"' },
+      { delay: '5일 소요', small: true },
+      { type: 'end', icon: '✅', title: 'END: 개입 시퀀스 완료', desc: '구매 시 즉시 종료 / 5일 경과 시 자동 종료' },
+    ]
+  },
+  4: {
+    title: '생일 혜택 시퀀스',
+    steps: [
+      { type: 'start', icon: '🚀', title: 'START: 생일 D-7', desc: '생일 7일 전 오전 9시 발동' },
+      { delay: '즉시 (D-7)' },
+      { type: 'action', icon: '💬', title: '카카오 알림톡 발송', desc: '"생일이 다가오고 있어요! 특별 혜택 예고"' },
+      { delay: '생일 당일' },
+      { type: 'action', icon: '💬', title: '카카오 알림톡 발송', desc: '"🎂 생일 축하드립니다! 생일 쿠폰 발급"' },
+      { delay: '생일 D+3' },
+      { type: 'action', icon: '📧', title: '이메일 발송', desc: '"생일 혜택 마감 3일 전 리마인드"' },
+      { delay: '7일 소요', small: true },
+      { type: 'end', icon: '✅', title: 'END: 생일 시퀀스 완료', desc: '생일 쿠폰 사용 완료 또는 7일 경과 시 종료' },
+    ]
+  },
+  5: {
+    title: 'VIP 웰컴 시퀀스',
+    steps: [
+      { type: 'start', icon: '🚀', title: 'START: VIP 등급 달성', desc: '누적 구매금액 100만원 초과 시 발동' },
+      { delay: '즉시' },
+      { type: 'action', icon: '💬', title: '카카오 알림톡 발송', desc: '"VIP 등급 달성 축하! 특별 혜택 안내"' },
+      { delay: '1일 후' },
+      { type: 'action', icon: '📧', title: '이메일 발송', desc: '"VIP 전용 혜택 상세 안내"' },
+      { delay: '3일 후' },
+      { type: 'action', icon: '💬', title: '카카오 알림톡 발송', desc: '"VIP 전담 CS 담당자 소개"' },
+      { delay: '7일 후' },
+      { type: 'action', icon: '📧', title: '이메일 발송', desc: '"VIP 선물 박스 배송 예고"' },
+      { delay: '14일 후' },
+      { type: 'action', icon: '💬', title: '카카오 알림톡 발송', desc: '"VIP 월간 혜택 리포트 발송"' },
+      { delay: '21일 소요', small: true },
+      { type: 'end', icon: '✅', title: 'END: VIP 온보딩 완료', desc: '21일 VIP 웰컴 시퀀스 완료' },
+    ]
+  },
+  6: {
+    title: '휴면 고객 재활성',
+    steps: [
+      { type: 'start', icon: '🚀', title: 'START: 90일 미구매', desc: '마지막 구매 후 90일 경과 고객 대상 (현재 정지 상태)' },
+      { delay: '즉시' },
+      { type: 'action', icon: '📧', title: '이메일 발송', desc: '"보고싶었어요! 재방문 환영 메시지"' },
+      { delay: '3일 후' },
+      { type: 'action', icon: '💬', title: '카카오 알림톡 발송', desc: '"휴면 고객 전용 20% 할인 쿠폰 발급"' },
+      { delay: '7일 후' },
+      { type: 'action', icon: '📱', title: 'SMS 발송', desc: '"[ENTWIZ] 마지막 기회 할인 쿠폰 만료 예정"' },
+      { delay: '14일 후' },
+      { type: 'action', icon: '📧', title: '이메일 발송', desc: '"재구매 시 무료 증정품 제공 안내"' },
+      { delay: '14일 소요', small: true },
+      { type: 'end', icon: '✅', title: 'END: 재활성 시퀀스 완료', desc: '구매 완료 시 즉시 종료 / 14일 경과 시 종료' },
+    ]
+  }
+};
+
+function selectScenario(id) {
+  // 카드 선택 상태
+  document.querySelectorAll('.scenario-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('sc-' + id)?.classList.add('selected');
+
+  // 미리보기 타이틀 업데이트
+  const preview = SCENARIO_PREVIEWS[id];
+  if (!preview) return;
+  document.getElementById('previewTitle').textContent = preview.title;
+
+  // 타임라인 재렌더링
+  const tl = document.getElementById('scenarioTimeline');
+  tl.innerHTML = '';
+
+  preview.steps.forEach(step => {
+    if (step.delay !== undefined) {
+      const d = document.createElement('div');
+      d.className = 'timeline-delay';
+      if (step.small) d.style.cssText = 'font-size:11px;color:var(--text-muted);';
+      d.textContent = step.delay;
+      tl.appendChild(d);
+    } else {
+      const item = document.createElement('div');
+      item.className = 'timeline-item';
+      item.style.marginBottom = '16px';
+
+      const nodeClass = step.type === 'end' ? 'end' : (step.type === 'start' ? 'start' : 'action');
+      const contentStyle = step.type === 'end'
+        ? 'border-color:var(--success-bg);background:var(--success-bg);'
+        : '';
+      const titleStyle = step.type === 'end' ? 'color:var(--success);' : '';
+
+      item.innerHTML = `
+        <div class="timeline-node ${nodeClass}" style="font-size:${step.type !== 'action' ? '14px' : '12px'};">${step.icon}</div>
+        <div class="timeline-content" style="${contentStyle}">
+          <div class="timeline-content-title" style="${titleStyle}">${step.title}</div>
+          <div class="timeline-content-desc">${step.desc}</div>
+        </div>`;
+      tl.appendChild(item);
+    }
+  });
+}
+</script>
+</body>
+</html>
