@@ -70,8 +70,8 @@ input:focus,select:focus,textarea:focus{border-color:var(--primary);box-shadow:0
 .toggle input{opacity:0;width:0;height:0;}
 .toggle-track{position:absolute;inset:0;background:var(--border);border-radius:12px;cursor:pointer;transition:background .2s;}
 .toggle input:checked+.toggle-track{background:var(--primary);}
-.toggle-track::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
-.toggle input:checked+.toggle-track::before{transform:translateX(20px);}
+.toggle-track::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:50%;transform:translateY(-50%);background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.toggle input:checked+.toggle-track::before{transform:translateY(-50%) translateX(17px);}
 .toggle-label{font-size:13px;font-weight:500;}
 
 /* 배지 */
@@ -177,7 +177,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 /* 모달 공통 */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px;}
 .modal-overlay.open{display:flex;}
-.modal-box{background:var(--surface);border-radius:12px;width:600px;max-width:100%;max-height:calc(100vh - 60px);overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.22);animation:mFadeUp .18s ease;}
+.modal-box{background:var(--surface);border-radius:12px;width:600px;max-width:100%;max-height:calc(100vh - 140px);display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.22);animation:mFadeUp .18s ease;}
 @keyframes mFadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
 /* 템플릿 관리 공통 */
@@ -207,12 +207,12 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 .email-preview-header-row:last-child{margin-bottom:0;}
 .email-preview-header-label{font-weight:600;min-width:40px;}
 .email-preview-body{padding:16px 14px;font-size:13px;line-height:1.8;color:var(--text);min-height:80px;}
-.modal-head{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--surface);z-index:1;}
+.modal-head{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:var(--surface);}
 .modal-title{font-size:16px;font-weight:700;}
 .modal-close{background:none;border:none;font-size:24px;line-height:1;color:var(--text-muted);cursor:pointer;padding:0 2px;}
 .modal-close:hover{color:var(--text);}
-.modal-body{padding:24px;}
-.modal-foot{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;background:var(--bg);border-radius:0 0 12px 12px;position:sticky;bottom:0;}
+.modal-body{padding:24px;overflow-y:auto;flex:1;min-height:0;}
+.modal-foot{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;background:var(--bg);border-radius:0 0 12px 12px;flex-shrink:0;}
 .form-row{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
 .form-row:last-child{margin-bottom:0;}
 .form-label{font-size:12px;font-weight:600;color:var(--text-sub);}
@@ -294,14 +294,13 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 .notif-type-cell{padding:14px 16px 14px 0;display:flex;flex-direction:column;justify-content:center;}
 .notif-cell{display:flex;align-items:center;justify-content:center;padding:12px 4px;border-bottom:1px solid var(--border);}
 .notif-type-cell{border-bottom:1px solid var(--border);}
-.notif-pill{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:5px 10px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:none;transition:background .15s,color .15s,box-shadow .15s;font-family:inherit;white-space:nowrap;min-width:56px;}
-.notif-pill.on{background:var(--primary);color:#fff;box-shadow:0 1px 4px rgba(99,102,241,.35);}
-.notif-pill.on:hover{background:#4338CA;}
-.notif-pill.off{background:var(--bg);color:var(--border);border:1.5px solid var(--border);}
-.notif-pill.off:hover{border-color:var(--text-muted);color:var(--text-muted);}
-.notif-pill-master.on{background:var(--success);box-shadow:0 1px 4px rgba(16,185,129,.35);}
-.notif-pill-master.on:hover{background:#059669;}
-.notif-pill-master.off{background:var(--bg);color:var(--border);border:1.5px solid var(--border);}
+.toggle{position:relative;width:40px;height:22px;flex-shrink:0;}
+.toggle input{opacity:0;width:0;height:0;}
+.t-track{position:absolute;inset:0;background:#CBD5E1;border-radius:11px;cursor:pointer;transition:background .2s;}
+.t-thumb{position:absolute;top:50%;left:3px;transform:translateY(-50%);width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:transform .2s;pointer-events:none;}
+.toggle input:checked + .t-track{background:var(--primary);}
+.toggle input:checked + .t-track .t-thumb{transform:translateY(-50%) translateX(15px);}
+.toggle-master input:checked + .t-track{background:var(--success);}
 
 /* ── 신규 알림톡 템플릿 등록 신청 모달 (z-index 2100 — 기존 모달 위) ── */
 .modal-overlay-top{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:2100;display:none;align-items:center;justify-content:center;padding:20px;}
@@ -955,7 +954,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   <div class="settings-card">
     <div class="settings-card-head">
       <span class="settings-card-title">🔔 알림 수신 설정</span>
-      <span style="font-size:11px;color:var(--text-muted);font-weight:400;">버튼을 클릭해 알림 채널을 개별 설정하세요</span>
+      <span style="font-size:11px;color:var(--text-muted);font-weight:400;">토글을 클릭해 알림 채널을 개별 설정하세요</span>
     </div>
     <div class="settings-card-body" style="padding:0;">
       <div class="notif-grid">
@@ -973,72 +972,443 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
           <div style="font-size:13px;font-weight:600;color:var(--text);">🚨 이탈 위험 고객 감지</div>
           <div style="font-size:12px;color:var(--text-muted);margin-top:3px;">이탈 위험 고객 수가 급증할 때 알림</div>
         </div>
-        <div class="notif-cell"><button class="notif-pill notif-pill-master on" onclick="toggleNotifPill(this)">● 수신중</button></div>
-        <div class="notif-cell"><button class="notif-pill on" onclick="toggleNotifPill(this)">● 켜짐</button></div>
-        <div class="notif-cell"><button class="notif-pill on" onclick="toggleNotifPill(this)">● 켜짐</button></div>
-        <div class="notif-cell"><button class="notif-pill off" onclick="toggleNotifPill(this)">○ 꺼짐</button></div>
-        <div class="notif-cell"><button class="notif-pill off" onclick="toggleNotifPill(this)">○ 꺼짐</button></div>
+        <div class="notif-cell"><label class="toggle toggle-master"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></label></div>
+        <div class="notif-cell"><label class="toggle"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></label></div>
+        <div class="notif-cell"><label class="toggle"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></label></div>
+        <div class="notif-cell"><label class="toggle"><input type="checkbox"><div class="t-track"><div class="t-thumb"></div></div></label></div>
+        <div class="notif-cell"><label class="toggle"><input type="checkbox"><div class="t-track"><div class="t-thumb"></div></div></label></div>
 
         <!-- 행 2: 캠페인 발송 완료 -->
         <div class="notif-type-cell" style="padding-left:20px;">
           <div style="font-size:13px;font-weight:600;color:var(--text);">✅ 캠페인 발송 완료</div>
           <div style="font-size:12px;color:var(--text-muted);margin-top:3px;">캠페인 발송이 완료될 때 알림</div>
         </div>
-        <div class="notif-cell"><button class="notif-pill notif-pill-master on" onclick="toggleNotifPill(this)">● 수신중</button></div>
-        <div class="notif-cell"><button class="notif-pill on" onclick="toggleNotifPill(this)">● 켜짐</button></div>
-        <div class="notif-cell"><button class="notif-pill off" onclick="toggleNotifPill(this)">○ 꺼짐</button></div>
-        <div class="notif-cell"><button class="notif-pill on" onclick="toggleNotifPill(this)">● 켜짐</button></div>
-        <div class="notif-cell"><button class="notif-pill off" onclick="toggleNotifPill(this)">○ 꺼짐</button></div>
+        <div class="notif-cell"><label class="toggle toggle-master"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></label></div>
+        <div class="notif-cell"><label class="toggle"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></label></div>
+        <div class="notif-cell"><label class="toggle"><input type="checkbox"><div class="t-track"><div class="t-thumb"></div></div></label></div>
+        <div class="notif-cell"><label class="toggle"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></label></div>
+        <div class="notif-cell"><label class="toggle"><input type="checkbox"><div class="t-track"><div class="t-thumb"></div></div></label></div>
 
         <!-- 행 3: 새 CS 문의 접수 -->
         <div class="notif-type-cell" style="padding-left:20px;">
           <div style="font-size:13px;font-weight:600;color:var(--text);">🎫 새 CS 문의 접수</div>
           <div style="font-size:12px;color:var(--text-muted);margin-top:3px;">미처리 문의가 발생할 때 즉시 알림</div>
         </div>
-        <div class="notif-cell"><button class="notif-pill notif-pill-master on" onclick="toggleNotifPill(this)">● 수신중</button></div>
-        <div class="notif-cell"><button class="notif-pill on" onclick="toggleNotifPill(this)">● 켜짐</button></div>
-        <div class="notif-cell"><button class="notif-pill on" onclick="toggleNotifPill(this)">● 켜짐</button></div>
-        <div class="notif-cell"><button class="notif-pill off" onclick="toggleNotifPill(this)">○ 꺼짐</button></div>
-        <div class="notif-cell"><button class="notif-pill on" onclick="toggleNotifPill(this)">● 켜짐</button></div>
+        <div class="notif-cell"><label class="toggle toggle-master"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></label></div>
+        <div class="notif-cell"><label class="toggle"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></label></div>
+        <div class="notif-cell"><label class="toggle"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></label></div>
+        <div class="notif-cell"><label class="toggle"><input type="checkbox"><div class="t-track"><div class="t-thumb"></div></div></label></div>
+        <div class="notif-cell"><label class="toggle"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></label></div>
 
         <!-- 행 4: 주간 리포트 생성 -->
         <div class="notif-type-cell" style="padding-left:20px;">
           <div style="font-size:13px;font-weight:600;color:var(--text);">📊 주간 리포트 생성</div>
           <div style="font-size:12px;color:var(--text-muted);margin-top:3px;">매주 월요일 주간 리포트 생성 시 알림</div>
         </div>
-        <div class="notif-cell"><button class="notif-pill notif-pill-master on" onclick="toggleNotifPill(this)">● 수신중</button></div>
-        <div class="notif-cell"><button class="notif-pill off" onclick="toggleNotifPill(this)">○ 꺼짐</button></div>
-        <div class="notif-cell"><button class="notif-pill on" onclick="toggleNotifPill(this)">● 켜짐</button></div>
-        <div class="notif-cell"><button class="notif-pill off" onclick="toggleNotifPill(this)">○ 꺼짐</button></div>
-        <div class="notif-cell"><button class="notif-pill on" onclick="toggleNotifPill(this)">● 켜짐</button></div>
+        <div class="notif-cell"><label class="toggle toggle-master"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></label></div>
+        <div class="notif-cell"><label class="toggle"><input type="checkbox"><div class="t-track"><div class="t-thumb"></div></div></label></div>
+        <div class="notif-cell"><label class="toggle"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></label></div>
+        <div class="notif-cell"><label class="toggle"><input type="checkbox"><div class="t-track"><div class="t-thumb"></div></div></label></div>
+        <div class="notif-cell"><label class="toggle"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></label></div>
 
         <!-- 행 5: 매출 목표 달성 -->
         <div class="notif-type-cell" style="padding-left:20px;">
           <div style="font-size:13px;font-weight:600;color:var(--text);">💰 매출 목표 달성</div>
           <div style="font-size:12px;color:var(--text-muted);margin-top:3px;">월간 매출 목표 달성 시 알림</div>
         </div>
-        <div class="notif-cell"><button class="notif-pill notif-pill-master on" onclick="toggleNotifPill(this)">● 수신중</button></div>
-        <div class="notif-cell"><button class="notif-pill on" onclick="toggleNotifPill(this)">● 켜짐</button></div>
-        <div class="notif-cell"><button class="notif-pill on" onclick="toggleNotifPill(this)">● 켜짐</button></div>
-        <div class="notif-cell"><button class="notif-pill on" onclick="toggleNotifPill(this)">● 켜짐</button></div>
-        <div class="notif-cell"><button class="notif-pill off" onclick="toggleNotifPill(this)">○ 꺼짐</button></div>
+        <div class="notif-cell"><label class="toggle toggle-master"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></label></div>
+        <div class="notif-cell"><label class="toggle"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></label></div>
+        <div class="notif-cell"><label class="toggle"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></label></div>
+        <div class="notif-cell"><label class="toggle"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></label></div>
+        <div class="notif-cell"><label class="toggle"><input type="checkbox"><div class="t-track"><div class="t-thumb"></div></div></label></div>
 
         <!-- 행 6: 시스템 오류/채널 지연 -->
         <div class="notif-type-cell" style="border-bottom:none;padding-left:20px;">
           <div style="font-size:13px;font-weight:600;color:var(--text);">⚠️ 시스템 오류 / 채널 지연</div>
           <div style="font-size:12px;color:var(--text-muted);margin-top:3px;">발송 지연 또는 오류 발생 시 즉시 알림</div>
         </div>
-        <div class="notif-cell" style="border-bottom:none;"><button class="notif-pill notif-pill-master on" onclick="toggleNotifPill(this)">● 수신중</button></div>
-        <div class="notif-cell" style="border-bottom:none;"><button class="notif-pill on" onclick="toggleNotifPill(this)">● 켜짐</button></div>
-        <div class="notif-cell" style="border-bottom:none;"><button class="notif-pill on" onclick="toggleNotifPill(this)">● 켜짐</button></div>
-        <div class="notif-cell" style="border-bottom:none;"><button class="notif-pill on" onclick="toggleNotifPill(this)">● 켜짐</button></div>
-        <div class="notif-cell" style="border-bottom:none;"><button class="notif-pill on" onclick="toggleNotifPill(this)">● 켜짐</button></div>
+        <div class="notif-cell" style="border-bottom:none;"><label class="toggle toggle-master"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></label></div>
+        <div class="notif-cell" style="border-bottom:none;"><label class="toggle"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></label></div>
+        <div class="notif-cell" style="border-bottom:none;"><label class="toggle"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></label></div>
+        <div class="notif-cell" style="border-bottom:none;"><label class="toggle"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></label></div>
+        <div class="notif-cell" style="border-bottom:none;"><label class="toggle"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></label></div>
 
       </div>
     </div>
   </div>
 </div>
 
+<!-- ══ SCREEN: 태그 관리 ══ -->
+<div id="screen-autotag" class="screen">
+  <div class="page-header">
+    <div>
+      <div class="page-title">태그 관리</div>
+      <div class="page-desc">자동 태그 규칙과 수동 태그 현황을 관리합니다.</div>
+    </div>
+    <div class="page-actions">
+      <button class="btn btn-secondary" onclick="openTagForm('add')">+ 태그 추가</button>
+      <button class="btn btn-primary" onclick="showToast('success','저장 완료','자동 태그 설정이 저장되었습니다.')">저장</button>
+    </div>
+  </div>
+
+  <!-- 일반 설정 -->
+  <div class="settings-card">
+    <div class="settings-card-head">
+      <span class="settings-card-title">⚙️ 자동 태그 일반 설정</span>
+    </div>
+    <div class="settings-card-body">
+      <div class="settings-row">
+        <div class="settings-label-col">
+          <div class="settings-label">자동 태그 시스템</div>
+          <div class="settings-hint">전체 자동 태그 부여 기능을 활성화/비활성화합니다.</div>
+        </div>
+        <div class="settings-control">
+          <div class="toggle-setting-row">
+            <label class="toggle">
+              <input type="checkbox" id="toggleAutoTag" checked onchange="syncToggleChip(this,'chipAutoTag')">
+              <span class="toggle-track"></span>
+            </label>
+            <span id="chipAutoTag" class="toggle-setting-chip on">● 활성화됨</span>
+          </div>
+        </div>
+      </div>
+      <div class="settings-row">
+        <div class="settings-label-col">
+          <div class="settings-label">갱신 스케줄</div>
+          <div class="settings-hint">전체 자동 태그를 일괄 재산정하는 주기입니다.</div>
+        </div>
+        <div class="settings-control">
+          <select style="width:220px;">
+            <option selected>매일 03:00 (기본값)</option>
+            <option>매일 01:00</option>
+            <option>매일 05:00</option>
+            <option>6시간마다</option>
+            <option>1시간마다 (실시간)</option>
+          </select>
+          <div style="font-size:12px;color:var(--text-muted);margin-top:6px;">마지막 갱신: 2026-05-27 03:00 &nbsp;·&nbsp; 다음 갱신: 2026-06-02 03:00</div>
+        </div>
+      </div>
+      <div class="settings-row">
+        <div class="settings-label-col">
+          <div class="settings-label">수동 태그 허용</div>
+          <div class="settings-hint">관리자가 고객 프로필에서 직접 수동 태그를 추가할 수 있도록 허용합니다.</div>
+        </div>
+        <div class="settings-control">
+          <div class="toggle-setting-row">
+            <label class="toggle">
+              <input type="checkbox" id="toggleManualTagAllow" checked onchange="syncToggleChip(this,'chipManualTagAllow')">
+              <span class="toggle-track"></span>
+            </label>
+            <span id="chipManualTagAllow" class="toggle-setting-chip on">● 허용</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 태그 규칙 목록 -->
+  <div class="settings-card">
+    <div class="settings-card-head">
+      <span class="settings-card-title">🏷️ 자동 태그 규칙 목록</span>
+      <span style="font-size:12px;color:var(--text-muted);">총 11개 태그</span>
+    </div>
+    <table class="data-table">
+      <thead><tr>
+        <th style="width:140px;">태그명</th>
+        <th style="width:260px;">부여 조건</th>
+        <th style="width:90px;">해당 고객</th>
+        <th style="width:100px;">갱신 주기</th>
+        <th style="width:72px;">상태</th>
+        <th style="width:130px;text-align:right;">관리</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>충성고객</strong><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">고빈도·고금액 핵심 고객</div></td>
+          <td><div class="condition-tags"><span class="condition-tag">최근 3개월 구매횟수 ≥ 5회</span><span class="condition-tag and">AND</span><span class="condition-tag">누적 구매금액 ≥ 50만원</span></div></td>
+          <td><strong>342명</strong></td>
+          <td>매일 03:00</td>
+          <td><span class="badge badge-success">활성</span></td>
+          <td style="text-align:right;">
+            <button class="btn btn-ghost btn-sm" onclick="navWIP('충성고객 태그 편집')">편집</button>
+            <button class="btn btn-ghost btn-sm" style="color:var(--text-muted);" onclick="navWIP('충성고객 고객 목록')">고객 보기</button>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>정기구매자</strong><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">규칙적인 구매 패턴 보유</div></td>
+          <td><div class="condition-tags"><span class="condition-tag">최근 6개월 구매 간격 편차 ≤ 7일</span><span class="condition-tag and">AND</span><span class="condition-tag">구매횟수 ≥ 3회</span></div></td>
+          <td><strong>218명</strong></td>
+          <td>매일 03:00</td>
+          <td><span class="badge badge-success">활성</span></td>
+          <td style="text-align:right;">
+            <button class="btn btn-ghost btn-sm" onclick="navWIP('정기구매자 태그 편집')">편집</button>
+            <button class="btn btn-ghost btn-sm" style="color:var(--text-muted);" onclick="navWIP('정기구매자 고객 목록')">고객 보기</button>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>고빈도구매</strong><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">단기 고빈도 구매 고객</div></td>
+          <td><div class="condition-tags"><span class="condition-tag">최근 30일 구매횟수 ≥ 3회</span></div></td>
+          <td><strong>487명</strong></td>
+          <td>매일 03:00</td>
+          <td><span class="badge badge-success">활성</span></td>
+          <td style="text-align:right;">
+            <button class="btn btn-ghost btn-sm" onclick="navWIP('고빈도구매 태그 편집')">편집</button>
+            <button class="btn btn-ghost btn-sm" style="color:var(--text-muted);" onclick="navWIP('고빈도구매 고객 목록')">고객 보기</button>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>챔피언</strong><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">건강도 90점 이상 최우수</div></td>
+          <td><div class="condition-tags"><span class="condition-tag">건강도 점수 ≥ 90점</span><span class="condition-tag and">AND</span><span class="condition-tag">최근 구매 ≤ 30일</span></div></td>
+          <td><strong>93명</strong></td>
+          <td>매일 03:00</td>
+          <td><span class="badge badge-success">활성</span></td>
+          <td style="text-align:right;">
+            <button class="btn btn-ghost btn-sm" onclick="navWIP('챔피언 태그 편집')">편집</button>
+            <button class="btn btn-ghost btn-sm" style="color:var(--text-muted);" onclick="navWIP('챔피언 고객 목록')">고객 보기</button>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>VIP후보</strong><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">VIP 진입 임박 고객</div></td>
+          <td><div class="condition-tags"><span class="condition-tag">누적 구매금액 80만원 이상</span><span class="condition-tag and">AND</span><span class="condition-tag">현재 등급 Gold 미만</span></div></td>
+          <td><strong>156명</strong></td>
+          <td>매일 03:00</td>
+          <td><span class="badge badge-success">활성</span></td>
+          <td style="text-align:right;">
+            <button class="btn btn-ghost btn-sm" onclick="navWIP('VIP후보 태그 편집')">편집</button>
+            <button class="btn btn-ghost btn-sm" style="color:var(--text-muted);" onclick="navWIP('VIP후보 고객 목록')">고객 보기</button>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>가격민감형</strong><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">할인 시에만 구매하는 고객</div></td>
+          <td><div class="condition-tags"><span class="condition-tag">할인 적용 구매 비율 ≥ 80%</span><span class="condition-tag and">AND</span><span class="condition-tag">할인 적용 구매 ≥ 3회</span></div></td>
+          <td><strong>1,024명</strong></td>
+          <td>매일 03:00</td>
+          <td><span class="badge badge-success">활성</span></td>
+          <td style="text-align:right;">
+            <button class="btn btn-ghost btn-sm" onclick="navWIP('가격민감형 태그 편집')">편집</button>
+            <button class="btn btn-ghost btn-sm" style="color:var(--text-muted);" onclick="navWIP('가격민감형 고객 목록')">고객 보기</button>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>화장품 선호</strong><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">화장품 카테고리 집중 구매</div></td>
+          <td><div class="condition-tags"><span class="condition-tag">화장품 카테고리 구매 비율 ≥ 60%</span><span class="condition-tag and">AND</span><span class="condition-tag">구매횟수 ≥ 2회</span></div></td>
+          <td><strong>673명</strong></td>
+          <td>매일 03:00</td>
+          <td><span class="badge badge-success">활성</span></td>
+          <td style="text-align:right;">
+            <button class="btn btn-ghost btn-sm" onclick="navWIP('화장품선호 태그 편집')">편집</button>
+            <button class="btn btn-ghost btn-sm" style="color:var(--text-muted);" onclick="navWIP('화장품선호 고객 목록')">고객 보기</button>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>탐색형</strong><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">방문 빈도 대비 구매 전환 낮음</div></td>
+          <td><div class="condition-tags"><span class="condition-tag">최근 30일 방문 ≥ 5회</span><span class="condition-tag and">AND</span><span class="condition-tag">구매 전환율 ≤ 10%</span></div></td>
+          <td><strong>2,341명</strong></td>
+          <td>매일 03:00</td>
+          <td><span class="badge badge-success">활성</span></td>
+          <td style="text-align:right;">
+            <button class="btn btn-ghost btn-sm" onclick="navWIP('탐색형 태그 편집')">편집</button>
+            <button class="btn btn-ghost btn-sm" style="color:var(--text-muted);" onclick="navWIP('탐색형 고객 목록')">고객 보기</button>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>이탈직전</strong><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">이탈 위험 최고조 단계</div></td>
+          <td><div class="condition-tags"><span class="condition-tag">마지막 구매 ≥ 45일</span><span class="condition-tag and">AND</span><span class="condition-tag">건강도 점수 ≤ 30</span><span class="condition-tag and">AND</span><span class="condition-tag">이메일 오픈율 ≤ 5%</span></div></td>
+          <td><strong>389명</strong></td>
+          <td>매일 03:00</td>
+          <td><span class="badge badge-success">활성</span></td>
+          <td style="text-align:right;">
+            <button class="btn btn-ghost btn-sm" onclick="navWIP('이탈직전 태그 편집')">편집</button>
+            <button class="btn btn-ghost btn-sm" style="color:var(--text-muted);" onclick="navWIP('이탈직전 고객 목록')">고객 보기</button>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>불만고객</strong><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">상담·리뷰에서 불만 감지</div></td>
+          <td><div class="condition-tags"><span class="condition-tag">최근 90일 1~2점 리뷰 ≥ 1건</span><span class="condition-tag">OR</span><span class="condition-tag">불만 상담 감지 ≥ 1건</span></div></td>
+          <td><strong>147명</strong></td>
+          <td>실시간</td>
+          <td><span class="badge badge-success">활성</span></td>
+          <td style="text-align:right;">
+            <button class="btn btn-ghost btn-sm" onclick="navWIP('불만고객 태그 편집')">편집</button>
+            <button class="btn btn-ghost btn-sm" style="color:var(--text-muted);" onclick="navWIP('불만고객 고객 목록')">고객 보기</button>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>신규유망</strong><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">가입 초기 고관여 잠재 우수 고객</div></td>
+          <td><div class="condition-tags"><span class="condition-tag">가입 후 30일 이내</span><span class="condition-tag and">AND</span><span class="condition-tag">방문 ≥ 3회</span><span class="condition-tag and">AND</span><span class="condition-tag">구매 ≥ 1회</span></div></td>
+          <td><strong>204명</strong></td>
+          <td>실시간</td>
+          <td><span class="badge badge-success">활성</span></td>
+          <td style="text-align:right;">
+            <button class="btn btn-ghost btn-sm" onclick="navWIP('신규유망 태그 편집')">편집</button>
+            <button class="btn btn-ghost btn-sm" style="color:var(--text-muted);" onclick="navWIP('신규유망 고객 목록')">고객 보기</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 수동 태그 현황 -->
+  <div class="settings-card">
+    <div class="settings-card-head">
+      <span class="settings-card-title">✏️ 수동 태그 현황</span>
+      <span style="font-size:12px;color:var(--text-muted);">총 5개 수동 태그 · 관리자가 직접 부여한 태그 목록입니다</span>
+    </div>
+    <div class="settings-card-body" style="padding:0;">
+      <table class="data-table" style="margin:0;">
+        <thead><tr>
+          <th style="width:130px;">태그명</th>
+          <th style="width:90px;">부여 방식</th>
+          <th style="width:90px;">부여 고객 수</th>
+          <th style="width:110px;">최초 등록일</th>
+          <th style="width:120px;">마지막 부여일</th>
+          <th style="width:100px;">등록자</th>
+          <th style="width:80px;">상태</th>
+          <th style="width:120px;text-align:right;">관리</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>VIP 관심</strong><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">VIP 전환 가능성 높은 고객</div></td>
+            <td><span class="badge badge-info">수동</span></td>
+            <td><strong>12명</strong></td>
+            <td style="font-size:12px;color:var(--text-muted);">2026-03-12</td>
+            <td style="font-size:12px;color:var(--text-muted);">2026-05-28</td>
+            <td style="font-size:12px;color:var(--text-sub);">이마케터</td>
+            <td><span class="badge badge-success">활성</span></td>
+            <td style="text-align:right;">
+              <button class="btn btn-ghost btn-sm" onclick="location.href='CRM_고객관리.html?manualtag='+encodeURIComponent('VIP 관심')">고객 보기</button>
+              <button class="btn btn-ghost btn-sm" style="color:var(--danger);" onclick="deleteConfirm(this.closest('tr').querySelector('strong')?.textContent,this.closest('tr'))">삭제</button>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>불만처리완료</strong><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">CS 처리 완료 후 수동 표시</div></td>
+            <td><span class="badge badge-info">수동</span></td>
+            <td><strong>47명</strong></td>
+            <td style="font-size:12px;color:var(--text-muted);">2026-01-05</td>
+            <td style="font-size:12px;color:var(--text-muted);">2026-05-31</td>
+            <td style="font-size:12px;color:var(--text-sub);">김CS팀장</td>
+            <td><span class="badge badge-success">활성</span></td>
+            <td style="text-align:right;">
+              <button class="btn btn-ghost btn-sm" onclick="location.href='CRM_고객관리.html?manualtag='+encodeURIComponent('불만처리완료')">고객 보기</button>
+              <button class="btn btn-ghost btn-sm" style="color:var(--danger);" onclick="deleteConfirm(this.closest('tr').querySelector('strong')?.textContent,this.closest('tr'))">삭제</button>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>오프라인 VIP</strong><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">오프라인 매장 우수 고객</div></td>
+            <td><span class="badge badge-info">수동</span></td>
+            <td><strong>28명</strong></td>
+            <td style="font-size:12px;color:var(--text-muted);">2026-02-18</td>
+            <td style="font-size:12px;color:var(--text-muted);">2026-04-22</td>
+            <td style="font-size:12px;color:var(--text-sub);">박팀장</td>
+            <td><span class="badge badge-success">활성</span></td>
+            <td style="text-align:right;">
+              <button class="btn btn-ghost btn-sm" onclick="location.href='CRM_고객관리.html?manualtag='+encodeURIComponent('오프라인 VIP')">고객 보기</button>
+              <button class="btn btn-ghost btn-sm" style="color:var(--danger);" onclick="deleteConfirm(this.closest('tr').querySelector('strong')?.textContent,this.closest('tr'))">삭제</button>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>리뷰어 모집</strong><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">체험단 리뷰어 대상 고객</div></td>
+            <td><span class="badge badge-info">수동</span></td>
+            <td><strong>8명</strong></td>
+            <td style="font-size:12px;color:var(--text-muted);">2026-04-01</td>
+            <td style="font-size:12px;color:var(--text-muted);">2026-04-01</td>
+            <td style="font-size:12px;color:var(--text-sub);">이마케터</td>
+            <td><span class="badge badge-success">활성</span></td>
+            <td style="text-align:right;">
+              <button class="btn btn-ghost btn-sm" onclick="location.href='CRM_고객관리.html?manualtag='+encodeURIComponent('리뷰어 모집')">고객 보기</button>
+              <button class="btn btn-ghost btn-sm" style="color:var(--danger);" onclick="deleteConfirm(this.closest('tr').querySelector('strong')?.textContent,this.closest('tr'))">삭제</button>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>이벤트당첨</strong><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">5월 이벤트 경품 당첨 고객</div></td>
+            <td><span class="badge badge-info">수동</span></td>
+            <td><strong>3명</strong></td>
+            <td style="font-size:12px;color:var(--text-muted);">2026-05-15</td>
+            <td style="font-size:12px;color:var(--text-muted);">2026-05-15</td>
+            <td style="font-size:12px;color:var(--text-sub);">이마케터</td>
+            <td><span class="badge badge-success">활성</span></td>
+            <td style="text-align:right;">
+              <button class="btn btn-ghost btn-sm" onclick="location.href='CRM_고객관리.html?manualtag='+encodeURIComponent('이벤트당첨')">고객 보기</button>
+              <button class="btn btn-ghost btn-sm" style="color:var(--danger);" onclick="deleteConfirm(this.closest('tr').querySelector('strong')?.textContent,this.closest('tr'))">삭제</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+<!-- ══════════════════════════════════════════════════
+     모달: 자동 태그 추가 / 편집 (공용)
+══════════════════════════════════════════════════ -->
+<div id="modal-tag-form" class="modal-overlay">
+  <div class="modal-box" style="width:680px;">
+    <div class="modal-head">
+      <span class="modal-title" id="tagFormTitle">+ 태그 추가</span>
+      <button class="modal-close" onclick="closeModal('modal-tag-form')">×</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- 기본 정보 -->
+      <div class="section-group">
+        <div class="section-group-title">기본 정보</div>
+        <div class="form-row">
+          <label class="form-label">태그명 <span style="color:var(--danger);">*</span></label>
+          <input type="text" id="tagFormName" placeholder="예: 충성고객, 이탈위험, VIP후보…" maxlength="12" style="max-width:260px;">
+          <span class="form-hint" id="tagFormNameHint">최대 12자 · 태그명은 생성 후 변경 불가</span>
+        </div>
+        <div class="form-row">
+          <label class="form-label">설명</label>
+          <input type="text" id="tagFormDesc" placeholder="이 태그가 부여될 고객 유형을 간략히 설명합니다.">
+        </div>
+      </div>
+
+      <!-- 부여 조건 빌더 -->
+      <div class="section-group">
+        <div class="section-group-title">
+          부여 조건
+          <span style="font-size:11px;font-weight:400;color:var(--text-muted);"> — 조건 충족 고객에게 태그가 자동 부여됩니다</span>
+        </div>
+        <div id="tagCondList" style="display:flex;flex-direction:column;"></div>
+        <div style="margin-top:10px;display:flex;align-items:center;gap:12px;">
+          <button class="btn btn-secondary btn-sm" onclick="addTagCondition()">+ 조건 추가</button>
+          <span style="font-size:11px;color:var(--text-muted);">조건이 없으면 태그가 부여되지 않습니다.</span>
+        </div>
+      </div>
+
+      <!-- 운영 설정 -->
+      <div class="section-group" style="margin-bottom:0;">
+        <div class="section-group-title">운영 설정</div>
+        <div class="form-row">
+          <label class="form-label">갱신 주기</label>
+          <select id="tagFormCycle" style="width:240px;">
+            <option value="daily">매일 03:00 (기본값)</option>
+            <option value="realtime">실시간 (이벤트 발생 즉시)</option>
+            <option value="1h">매 1시간</option>
+            <option value="6h">매 6시간</option>
+          </select>
+          <span class="form-hint">복잡한 조건 또는 대용량 태그는 매일 갱신을 권장합니다.</span>
+        </div>
+        <div class="form-row" style="flex-direction:row;align-items:center;justify-content:space-between;padding:10px 0;margin-bottom:0;">
+          <div>
+            <div class="form-label">태그 활성화</div>
+            <div class="form-hint">비활성화 시 조건 충족 고객에게도 태그가 부여되지 않습니다.</div>
+          </div>
+          <div class="toggle-setting-row">
+            <label class="toggle">
+              <input type="checkbox" id="tagFormActive" checked onchange="syncToggleChip(this,'tagFormActiveChip')">
+              <span class="toggle-track"></span>
+            </label>
+            <span id="tagFormActiveChip" class="toggle-setting-chip on">● 활성화됨</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button id="tagFormDeleteBtn" class="btn btn-sm btn-secondary" style="margin-right:auto;color:var(--danger);display:none;" onclick="deleteTag()">🗑 태그 삭제</button>
+      <button class="btn btn-secondary" onclick="closeModal('modal-tag-form')">취소</button>
+      <button class="btn btn-primary" onclick="saveTagForm()">저장</button>
+    </div>
+  </div>
+</div>
 
 <!-- ══════════════════════════════════════════════════
      모달: 세그먼트 추가 / 편집 (공용)
@@ -2352,6 +2722,7 @@ const SCREEN_META = {
   data:         { label: '데이터 관리' },
   permission:   { label: '권한/계정 관리' },
   notification: { label: '알림 설정' },
+  autotag:      { label: '태그 관리' },
 };
 
 function showScreen(name, pushState = true) {
@@ -3535,16 +3906,191 @@ function addNewDomain() {
   showToast('success', '도메인 추가 요청', `"${val}" 도메인 인증을 시작합니다. DNS 레코드 설정 후 재확인해 주세요.`);
 }
 
-// ══════════════════════════════════════════════════
-// 알림 수신 설정 토글
-// ══════════════════════════════════════════════════
-function toggleNotifPill(btn) {
-  const isOn = btn.classList.contains('on');
-  const isMaster = btn.classList.contains('notif-pill-master');
-  btn.classList.toggle('on', !isOn);
-  btn.classList.toggle('off', isOn);
-  btn.textContent = isOn ? '○ 꺼짐' : (isMaster ? '● 수신중' : '● 켜짐');
+/* ═══ 자동 태그 조건 빌더 ════════════════════════════════════════ */
+const TAG_FIELD_OPTIONS = [
+  { v:'purchase_count_3m',    l:'구매횟수 (최근 3개월)',        u:'회' },
+  { v:'purchase_count_6m',    l:'구매횟수 (최근 6개월)',        u:'회' },
+  { v:'purchase_amount_all',  l:'누적 구매금액',                u:'원' },
+  { v:'purchase_amount_3m',   l:'구매금액 (최근 3개월)',        u:'원' },
+  { v:'last_purchase_days',   l:'마지막 구매 경과일',           u:'일' },
+  { v:'health_score',         l:'건강도 점수',                  u:'점' },
+  { v:'signup_days',          l:'가입 경과일',                  u:'일' },
+  { v:'visit_count_30d',      l:'30일 방문 횟수',               u:'회' },
+  { v:'purchase_cycle_stddev',l:'구매 간격 편차',               u:'일' },
+  { v:'discount_ratio',       l:'할인 적용 구매 비율',          u:'%' },
+  { v:'category_ratio',       l:'카테고리 집중도',              u:'%' },
+  { v:'email_open_rate',      l:'이메일 오픈율',                u:'%' },
+  { v:'complaint_count_90d',  l:'불만 접수 건수 (최근 90일)',   u:'건' },
+  { v:'cs_count_90d',         l:'CS 문의 건수 (최근 90일)',     u:'건' },
+  { v:'convert_rate',         l:'구매 전환율',                  u:'%' },
+];
+
+const TAG_DATA = {
+  '충성고객':   { desc:'고빈도·고금액 핵심 고객',           cycle:'daily',    active:true,
+    conds:[{f:'purchase_count_3m',op:'≥',v:'5'},{f:'purchase_amount_all',op:'≥',v:'500000'}], conn:['AND'] },
+  '정기구매자': { desc:'규칙적인 구매 패턴 보유',           cycle:'daily',    active:true,
+    conds:[{f:'purchase_cycle_stddev',op:'≤',v:'7'},{f:'purchase_count_6m',op:'≥',v:'3'}], conn:['AND'] },
+  '고빈도구매': { desc:'단기 고빈도 구매 고객',             cycle:'daily',    active:true,
+    conds:[{f:'purchase_count_3m',op:'≥',v:'3'}], conn:[] },
+  '챔피언':    { desc:'건강도 90점 이상 최우수',            cycle:'daily',    active:true,
+    conds:[{f:'health_score',op:'≥',v:'90'},{f:'last_purchase_days',op:'≤',v:'30'}], conn:['AND'] },
+  'VIP후보':   { desc:'VIP 진입 임박 고객',                 cycle:'daily',    active:true,
+    conds:[{f:'purchase_amount_all',op:'≥',v:'800000'}], conn:[] },
+  '가격민감형': { desc:'할인 시에만 구매하는 고객',          cycle:'daily',    active:true,
+    conds:[{f:'discount_ratio',op:'≥',v:'80'},{f:'purchase_count_3m',op:'≥',v:'3'}], conn:['AND'] },
+  '화장품 선호':{ desc:'화장품 카테고리 집중 구매',          cycle:'daily',    active:true,
+    conds:[{f:'category_ratio',op:'≥',v:'60'},{f:'purchase_count_3m',op:'≥',v:'2'}], conn:['AND'] },
+  '탐색형':    { desc:'방문 빈도 대비 구매 전환 낮음',       cycle:'daily',    active:true,
+    conds:[{f:'visit_count_30d',op:'≥',v:'5'},{f:'convert_rate',op:'≤',v:'10'}], conn:['AND'] },
+  '이탈직전':  { desc:'이탈 위험 최고조 단계',              cycle:'daily',    active:true,
+    conds:[{f:'last_purchase_days',op:'≥',v:'45'},{f:'health_score',op:'≤',v:'30'},{f:'email_open_rate',op:'≤',v:'5'}], conn:['AND','AND'] },
+  '불만고객':  { desc:'상담·리뷰에서 불만 감지',            cycle:'realtime', active:true,
+    conds:[{f:'complaint_count_90d',op:'≥',v:'1'},{f:'cs_count_90d',op:'≥',v:'1'}], conn:['OR'] },
+  '신규유망':  { desc:'가입 초기 고관여 잠재 우수 고객',     cycle:'realtime', active:true,
+    conds:[{f:'signup_days',op:'≤',v:'30'},{f:'visit_count_30d',op:'≥',v:'3'},{f:'purchase_count_3m',op:'≥',v:'1'}], conn:['AND','AND'] },
+};
+
+function getTagFieldUnit(fv) {
+  return TAG_FIELD_OPTIONS.find(o => o.v === fv)?.u || '';
 }
+function onTagCondFieldChange(sel) {
+  sel.closest('.seg-cond-row').querySelector('.tag-cond-unit').textContent = getTagFieldUnit(sel.value);
+}
+function buildTagCondRow(c) {
+  const fOpts = TAG_FIELD_OPTIONS.map(f =>
+    `<option value="${f.v}"${c?.f===f.v?' selected':''}>${f.l}</option>`).join('');
+  const oOpts = ['≥','≤','=','≠','>','<'].map(op =>
+    `<option${c?.op===op?' selected':''}>${op}</option>`).join('');
+  return `<div class="seg-cond-row">
+    <select class="tag-cond-field" onchange="onTagCondFieldChange(this)">${fOpts}</select>
+    <select class="tag-cond-op">${oOpts}</select>
+    <input class="tag-cond-val" type="number" min="0" value="${c?.v||''}" placeholder="값">
+    <span class="tag-cond-unit">${c ? getTagFieldUnit(c.f) : getTagFieldUnit(TAG_FIELD_OPTIONS[0].v)}</span>
+    <button class="seg-cond-delete" onclick="removeTagCondRow(this)" title="삭제">✕</button>
+  </div>`;
+}
+
+/* ═══ 자동 태그 추가 / 편집 ═══════════════════════════════════════ */
+let _tagFormMode = 'add';
+
+function openTagForm(mode, row) {
+  _tagFormMode = mode;
+  const condList = document.getElementById('tagCondList');
+  condList.innerHTML = '';
+  document.getElementById('tagFormName').value = '';
+  document.getElementById('tagFormDesc').value = '';
+  document.getElementById('tagFormCycle').value = 'daily';
+  const activeChk = document.getElementById('tagFormActive');
+  activeChk.checked = true;
+  syncToggleChip(activeChk, 'tagFormActiveChip');
+
+  if (mode === 'add') {
+    document.getElementById('tagFormTitle').textContent = '+ 태그 추가';
+    document.getElementById('tagFormDeleteBtn').style.display = 'none';
+    document.getElementById('tagFormName').removeAttribute('readonly');
+    document.getElementById('tagFormName').style.background = '';
+    document.getElementById('tagFormNameHint').textContent = '최대 12자 · 태그명은 생성 후 변경 불가';
+    addTagCondition();
+  } else {
+    document.getElementById('tagFormTitle').textContent = '태그 편집';
+    document.getElementById('tagFormDeleteBtn').style.display = 'block';
+    const tagName = row?.cells[0]?.querySelector('strong')?.textContent?.trim() || '';
+    const tagDesc = row?.cells[0]?.querySelector('div')?.textContent?.trim() || '';
+    const nameEl = document.getElementById('tagFormName');
+    nameEl.value = tagName;
+    nameEl.setAttribute('readonly', true);
+    nameEl.style.background = 'var(--bg)';
+    document.getElementById('tagFormDesc').value = tagDesc;
+    document.getElementById('tagFormNameHint').textContent = '태그명은 변경할 수 없습니다.';
+    // TAG_DATA에서 구조화 조건 로드
+    const tagData = TAG_DATA[tagName];
+    if (tagData?.conds?.length) {
+      tagData.conds.forEach((cond, i) => addTagCondition(cond, i > 0 ? tagData.conn[i-1] : null));
+    } else {
+      addTagCondition();
+    }
+    // 갱신 주기
+    const cycleText = (row?.cells[3]?.textContent?.trim() || '').toLowerCase();
+    document.getElementById('tagFormCycle').value = cycleText.includes('실시간') ? 'realtime' : 'daily';
+    // 활성화 상태
+    const isActive = !!row?.cells[4]?.querySelector('.badge-success');
+    activeChk.checked = isActive;
+    syncToggleChip(activeChk, 'tagFormActiveChip');
+  }
+  openModal('modal-tag-form');
+}
+
+function addTagCondition(cond, connector) {
+  const list = document.getElementById('tagCondList');
+  if (list.children.length > 0) {
+    const connDiv = document.createElement('div');
+    connDiv.className = 'seg-cond-connector';
+    connDiv.innerHTML = `<select style="font-size:11px;padding:1px 4px;border:1px solid var(--border);border-radius:4px;background:var(--surface);font-family:inherit;font-weight:700;cursor:pointer;color:var(--success);width:60px;">
+      <option value="AND" ${(!connector||connector==='AND')?'selected':''}>AND</option>
+      <option value="OR"  ${connector==='OR'?'selected':''}>OR</option>
+    </select>`;
+    list.appendChild(connDiv);
+  }
+  list.insertAdjacentHTML('beforeend', buildTagCondRow(cond || null));
+}
+
+function removeTagCondRow(btn) {
+  const row = btn.closest('.seg-cond-row');
+  const list = row.parentElement;
+  const prev = row.previousElementSibling;
+  const next = row.nextElementSibling;
+  if (prev?.classList.contains('seg-cond-connector')) prev.remove();
+  else if (next?.classList.contains('seg-cond-connector')) next.remove();
+  row.remove();
+}
+
+function saveTagForm() {
+  const name = document.getElementById('tagFormName').value.trim();
+  if (!name) { showToast('warning', '태그명 필수', '태그명을 입력해주세요.'); return; }
+  const vals = [...document.querySelectorAll('#tagCondList .tag-cond-val')];
+  if (!vals.length || !vals.some(i => i.value.trim())) {
+    showToast('warning', '조건 필수', '부여 조건에 값을 1개 이상 입력해주세요.'); return;
+  }
+  closeModal('modal-tag-form');
+  showToast('success', _tagFormMode === 'add' ? '태그 추가 완료' : '저장 완료',
+    _tagFormMode === 'add' ? `[${name}] 태그가 추가되었습니다.` : `[${name}] 태그 설정이 저장되었습니다.`);
+}
+
+function deleteConfirm(name, rowEl) {
+  const label = name || '항목';
+  if (!confirm('[' + label + ']\n\n삭제하시겠습니까?\n\n삭제 후 복구할 수 없습니다.')) return;
+  if (rowEl) rowEl.remove();
+  showToast('success', '삭제 완료', '[' + label + ']이(가) 삭제되었습니다.');
+}
+
+function deleteTag() {
+  const name = document.getElementById('tagFormName').value.trim();
+  if (!confirm('[' + name + ']\n\n태그를 삭제하시겠습니까?\n\n삭제 후 복구할 수 없습니다.')) return;
+  closeModal('modal-tag-form');
+  showToast('info', '태그 삭제', `[${name}] 태그가 삭제되었습니다.`);
+}
+
+// 자동 태그 규칙 목록 버튼 위임 (편집 + 고객 보기)
+document.addEventListener('DOMContentLoaded', () => {
+  // 태그 규칙 테이블 버튼 onclick 제거 (이벤트 위임으로 처리)
+  document.querySelector('#screen-autotag .settings-card table.data-table')
+    ?.querySelectorAll('button').forEach(btn => btn.removeAttribute('onclick'));
+  // 태그 규칙 테이블
+  document.querySelector('#screen-autotag .settings-card table.data-table')?.addEventListener('click', e => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    const tr = btn.closest('tr');
+    const label = btn.textContent.trim();
+    if (label === '편집') {
+      if (tr) openTagForm('edit', tr);
+    } else if (label === '고객 보기') {
+      const tagName = tr?.cells[0]?.querySelector('strong')?.textContent?.trim() || '';
+      location.href = 'CRM_고객관리.html?tag=' + encodeURIComponent(tagName);
+    }
+  });
+});
+
+
 </script>
 </body>
 </html>

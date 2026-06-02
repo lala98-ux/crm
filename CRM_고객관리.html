@@ -147,7 +147,15 @@ input[type=checkbox]{width:15px;height:15px;cursor:pointer;accent-color:var(--pr
 .g-silver{background:#F8FAFC;color:#475569;border:1px solid var(--border);}
 .g-gold{background:#FFFBEB;color:#B45309;}
 .g-vip{background:var(--primary-light);color:#1D4ED8;}
-.h-champ{background:var(--primary-light);color:#1D4ED8;}
+.h-champ{background:#F5F3FF;color:#6D28D9;}
+.profile-score.champ{background:#F5F3FF;}
+.score-breakdown{margin-top:10px;display:flex;flex-direction:column;gap:5px;}
+.score-row{display:grid;grid-template-columns:48px 1fr 28px;align-items:center;gap:6px;}
+.score-row-label{font-size:11px;color:var(--text-sub);font-weight:500;}
+.score-row-bar{height:5px;background:#E2E8F0;border-radius:3px;overflow:hidden;}
+.score-row-fill{height:100%;border-radius:3px;background:var(--primary);}
+.score-row-fill.champ{background:#7C3AED;}
+.score-row-pts{font-size:11px;color:var(--text-sub);font-weight:600;text-align:right;}
 .h-good{background:var(--success-bg);color:#065F46;}
 .h-caution{background:var(--warning-bg);color:#92400E;}
 .h-risk{background:var(--danger-bg);color:#991B1B;}
@@ -158,8 +166,16 @@ input[type=checkbox]{width:15px;height:15px;cursor:pointer;accent-color:var(--pr
 .screen.active{display:block;}
 
 /* DETAIL LAYOUT */
+.detail-sticky-top{position:sticky;top:0;z-index:20;background:var(--bg);margin:0 -24px 16px;padding:0 24px;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.detail-sticky-top::before{content:'';position:absolute;top:-24px;left:0;right:0;height:24px;background:var(--bg);}
+.detail-sticky-top .page-header{margin-bottom:0;padding-bottom:12px;}
+.detail-sticky-top .detail-tabs{margin-bottom:0;}
 .detail-layout{display:grid;grid-template-columns:280px 1fr;gap:16px;}
-.profile-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;position:sticky;top:24px;}
+.detail-left-col{position:sticky;top:0;z-index:10;align-self:start;max-height:calc(100vh - 60px);overflow-y:auto;display:flex;flex-direction:column;gap:12px;}
+.detail-left-col::-webkit-scrollbar{width:4px;}
+.detail-left-col::-webkit-scrollbar-track{background:transparent;}
+.detail-left-col::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.profile-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;}
 .profile-avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--primary),#7C3AED);color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;margin:0 auto 12px;}
 .profile-name{text-align:center;font-size:16px;font-weight:800;margin-bottom:4px;}
 .profile-email{text-align:center;font-size:12px;color:var(--text-muted);margin-bottom:14px;}
@@ -185,11 +201,23 @@ input[type=checkbox]{width:15px;height:15px;cursor:pointer;accent-color:var(--pr
 .detail-panel.active{display:block;}
 
 /* INFO SECTION */
-.info-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:14px;}
-.info-section-title{font-size:13px;font-weight:700;margin-bottom:12px;}
-.info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
-.info-label{font-size:11px;color:var(--text-muted);margin-bottom:3px;}
-.info-value{font-size:13px;font-weight:600;}
+.info-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:12px;}
+.info-section-title{font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:6px;}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;}
+.info-item{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--border);}
+.info-item:nth-last-child(-n+2){border-bottom:none;}
+.info-label{font-size:12px;color:var(--text-muted);font-weight:500;flex-shrink:0;}
+.info-value{font-size:13px;font-weight:600;text-align:right;color:var(--text);}
+/* 인접 아이템 구분선 */
+.info-grid .info-item:nth-child(odd){padding-right:20px;border-right:1px solid var(--border);}
+.info-grid .info-item:nth-child(even){padding-left:20px;}
+/* 섹션 2열 페어 래퍼 */
+.info-section-pair{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;align-items:start;}
+.info-section-pair .info-section{margin-bottom:0;}
+.info-section-pair .info-grid{grid-template-columns:1fr;}
+.info-section-pair .info-grid .info-item{padding-right:0!important;border-right:none!important;padding-left:0!important;}
+.info-section-pair .info-grid .info-item:nth-last-child(-n+2){border-bottom:1px solid var(--border)!important;}
+.info-section-pair .info-grid .info-item:last-child{border-bottom:none!important;}
 
 /* TIMELINE */
 .timeline{position:relative;padding-left:20px;}
@@ -378,6 +406,134 @@ select.form-input{appearance:none;background:var(--surface) url("data:image/svg+
 /* SECTION HEADER */
 .sec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
 .sec-hd-title{font-size:14px;font-weight:700;}
+
+/* ── CS 배정 모달 */
+.cs-current-banner{background:var(--primary-light);border:1px solid #BFDBFE;border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;color:var(--primary);margin-bottom:16px;}
+.cs-assign-list{display:flex;flex-direction:column;gap:8px;}
+.cs-assign-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .15s;}
+.cs-assign-item:hover{border-color:var(--primary);background:var(--primary-light);}
+.cs-assign-item.selected{border-color:var(--primary);background:var(--primary-light);}
+.cs-assign-item input[type=radio]{accent-color:var(--primary);flex-shrink:0;}
+.cs-assign-avatar{width:34px;height:34px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;}
+.cs-assign-info{flex:1;}
+.cs-assign-name{font-size:13px;font-weight:700;color:var(--text);}
+.cs-assign-dept{font-size:11px;color:var(--text-muted);margin-top:2px;}
+
+/* ── 수신거부 처리 모달 */
+.optout-warn{display:flex;gap:8px;padding:12px 14px;background:#FEF2F2;border:1px solid #FECACA;border-radius:var(--radius-sm);font-size:13px;color:#991B1B;line-height:1.6;margin-bottom:16px;}
+.optout-status-row{display:flex;flex-wrap:wrap;gap:10px;padding:10px 14px;background:var(--bg);border-radius:var(--radius-sm);}
+.optout-status-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-sub);}
+.optout-channel-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.optout-channel-card{display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 8px;border:1.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .15s;text-align:center;}
+.optout-channel-card:hover:not(.disabled){border-color:var(--danger);background:#FEF2F2;}
+.optout-channel-card:has(input:checked){border-color:var(--danger);background:#FEF2F2;}
+.optout-channel-card input[type=checkbox]{accent-color:var(--danger);}
+.optout-ch-icon{font-size:20px;}
+.optout-ch-label{font-size:12px;font-weight:600;color:var(--text-sub);}
+.optout-confirm-check{display:flex;align-items:flex-start;gap:8px;padding:12px 14px;background:#FFF7ED;border:1px solid #FED7AA;border-radius:var(--radius-sm);font-size:13px;color:var(--text-sub);cursor:pointer;line-height:1.6;}
+.optout-confirm-check input{accent-color:var(--danger);margin-top:3px;flex-shrink:0;}
+.btn-danger:disabled{opacity:.4;cursor:not-allowed;}
+
+/* ── 기본정보 탭 개선 */
+.info-section-title{display:flex;align-items:center;gap:6px;}
+.info-value a{color:var(--primary);text-decoration:none;}
+.info-value a:hover{text-decoration:underline;}
+
+/* ── 구매이력 탭: LTV 툴팁 */
+.info-tip-wrap{position:relative;display:inline-flex;align-items:center;}
+.info-tip-icon{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;background:#CBD5E1;color:var(--text-sub);font-size:9px;font-weight:700;cursor:help;margin-left:4px;flex-shrink:0;}
+.info-tip-bubble{position:absolute;bottom:calc(100% + 7px);left:50%;transform:translateX(-50%);background:#1E293B;color:#fff;font-size:11px;font-weight:400;padding:8px 12px;border-radius:var(--radius-sm);white-space:normal;width:230px;line-height:1.65;z-index:200;opacity:0;pointer-events:none;transition:opacity .15s;}
+.info-tip-bubble::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#1E293B;}
+.info-tip-wrap:hover .info-tip-bubble{opacity:1;}
+
+/* ── 구매이력 탭: 검색/필터 */
+.ord-filter-bar{display:inline-flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap;}
+.ord-search-wrap{position:relative;width:210px;}
+.ord-search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;pointer-events:none;}
+.ord-search-input{width:100%;padding:7px 10px 7px 30px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:inherit;background:var(--surface);color:var(--text);}
+.ord-search-input:focus{outline:none;border-color:var(--primary);}
+.ord-filter-sel{padding:7px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;font-family:inherit;background:var(--surface);color:var(--text-sub);cursor:pointer;}
+.ord-filter-sel:focus{outline:none;border-color:var(--primary);}
+.ord-empty{text-align:center;padding:32px;color:var(--text-muted);font-size:13px;}
+
+/* ── 구매이력 탭: 주문 행 */
+.ord-row{cursor:pointer;transition:background .1s;}
+.ord-row:hover{background:var(--bg);}
+.ord-row.expanded{background:#F8F9FF;}
+.ord-expand-icon{font-size:10px;color:var(--text-muted);transition:transform .2s;display:inline-block;}
+.ord-row.expanded .ord-expand-icon{transform:rotate(90deg);}
+.ord-detail-row{display:none;}
+.ord-detail-row.open{display:table-row;}
+.ord-detail-box{padding:16px 20px;background:#F8F9FF;border-top:1px dashed var(--border);border-bottom:1px solid var(--border);}
+.ord-detail-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.ord-detail-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;}
+.ord-detail-section-title{font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;}
+.ord-kv{display:flex;justify-content:space-between;align-items:flex-start;padding:4px 0;font-size:12px;border-bottom:1px solid var(--border);}
+.ord-kv:last-child{border-bottom:none;}
+.ord-kv-label{color:var(--text-muted);}
+.ord-kv-val{font-weight:600;color:var(--text);text-align:right;max-width:60%;}
+.ord-kv-val.accent{color:var(--primary);}
+.ord-kv-val.danger{color:var(--danger);}
+.ord-kv-total{border-top:2px solid var(--border)!important;font-size:13px;padding-top:8px!important;margin-top:4px;}
+.ord-kv-total .ord-kv-val{color:var(--primary);font-size:14px;}
+.ord-refund-box{background:#FEF2F2;border:1px solid #FECACA;border-radius:var(--radius-sm);padding:12px 14px;margin-top:12px;}
+.ord-refund-title{font-size:12px;font-weight:700;color:var(--danger);margin-bottom:8px;}
+
+/* ── 행동/예측 탭 공통 */
+.metric-tag{display:inline-flex;align-items:center;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;background:var(--bg);border:1px solid var(--border);color:var(--text-sub);margin-top:6px;}
+.beh-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;}
+.beh-section-title{font-size:13px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:6px;}
+.beh-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.beh-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+
+/* ── 소비 주기 차트 */
+.purchase-chart-wrap{overflow-x:auto;}
+.chart-legend{display:flex;gap:14px;font-size:11px;align-items:center;color:var(--text-sub);margin-top:12px;}
+.legend-dot{width:10px;height:10px;border-radius:2px;display:inline-block;margin-right:4px;flex-shrink:0;}
+
+/* ── 패턴 분석 바 */
+.beh-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:12px;}
+.beh-bar-label{min-width:72px;color:var(--text-sub);}
+.beh-bar-track{flex:1;height:8px;background:var(--bg);border-radius:4px;overflow:hidden;border:1px solid var(--border);}
+.beh-bar-fill{height:100%;border-radius:4px;background:var(--primary);}
+.beh-bar-val{min-width:36px;text-align:right;font-weight:600;color:var(--text-sub);font-size:11px;}
+
+/* ── 캠페인 반응 테이블 */
+.resp-table{width:100%;border-collapse:collapse;font-size:12px;}
+.resp-table th{font-size:11px;font-weight:700;color:var(--text-muted);padding:6px 10px;border-bottom:2px solid var(--border);text-align:left;}
+.resp-table td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.resp-table tr:last-child td{border-bottom:none;}
+.resp-bar-mini{display:inline-block;height:6px;border-radius:3px;background:var(--primary);vertical-align:middle;margin-right:4px;}
+
+/* ── AI 예측 인사이트 */
+.ai-insight-box{background:linear-gradient(135deg,#EFF6FF 0%,#F5F3FF 100%);border:1px solid #C4B5FD;border-radius:var(--radius);padding:16px;margin-bottom:14px;}
+.ai-insight-title{font-size:13px;font-weight:700;color:#6D28D9;margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.ai-action-list{display:flex;flex-direction:column;gap:8px;}
+.ai-action-item{display:flex;align-items:flex-start;gap:10px;background:#fff;border:1px solid #DDD6FE;border-radius:var(--radius-sm);padding:10px 14px;}
+.ai-action-icon{font-size:18px;flex-shrink:0;margin-top:1px;}
+.ai-action-label{font-size:11px;font-weight:700;color:#6D28D9;margin-bottom:2px;}
+.ai-action-desc{font-size:12px;color:var(--text-sub);line-height:1.5;}
+.ai-action-badge{display:inline-flex;padding:1px 7px;border-radius:8px;font-size:10px;font-weight:700;margin-top:4px;}
+/* 구매이력 테이블 nowrap */
+#ordTable{min-width:820px;}
+#ordTable .ord-row td{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;vertical-align:middle;}
+#ordTable .ord-col-nm{white-space:normal;overflow:visible;text-overflow:unset;}
+/* 복수 상품 리스트 */
+.ord-items-wrap{display:flex;flex-direction:column;gap:0;}
+.ord-item-line{display:flex;align-items:center;gap:12px;padding:6px 0;border-bottom:1px dashed var(--border);font-size:12px;}
+.ord-item-line:last-child{border-bottom:none;padding-bottom:0;}
+.ord-item-nm{font-weight:600;flex:1;min-width:0;}
+.ord-item-opt{color:var(--text-muted);flex-shrink:0;}
+.ord-item-amt{color:var(--text-sub);flex-shrink:0;}
+/* 주문 필터 태그 행 */
+.ord-tags-row{display:none;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
+.ord-tags-row.open{display:flex;}
+/* 자동 태그 수동 추가 */
+.manual-tag-add{display:none;align-items:center;gap:6px;margin-top:8px;}
+.manual-tag-add.open{display:flex;}
+.manual-tag-field{flex:1;border:1px solid var(--border);border-radius:var(--radius-sm);padding:4px 10px;font-size:12px;font-family:inherit;outline:none;}
+.manual-tag-field:focus{border-color:var(--primary);}
+.tag.manual-tag{background:#FFF7ED;border:1px solid #FED7AA;color:#B45309;}
 </style>
 </head>
 <body>
@@ -442,6 +598,34 @@ select.form-input{appearance:none;background:var(--surface) url("data:image/svg+
         <label class="filter-dd-item"><input type="checkbox" value="건강" onchange="onFilterChange('health',this)"> 건강 (70~89)</label>
         <label class="filter-dd-item"><input type="checkbox" value="주의" onchange="onFilterChange('health',this)"> 주의 (50~69)</label>
         <label class="filter-dd-item"><input type="checkbox" value="위험" onchange="onFilterChange('health',this)"> 위험 (0~49)</label>
+      </div>
+    </div>
+    <!-- 자동 태그 다중 선택 -->
+    <div class="filter-dropdown" id="fd-autotag">
+      <button class="filter-dd-btn" onclick="toggleDD('fd-autotag')">자동 태그 <span class="filter-dd-arrow">▾</span></button>
+      <div class="filter-dd-panel" style="min-width:150px;">
+        <label class="filter-dd-item"><input type="checkbox" value="충성고객" onchange="onFilterChange('autotag',this)"> 충성고객</label>
+        <label class="filter-dd-item"><input type="checkbox" value="정기구매자" onchange="onFilterChange('autotag',this)"> 정기구매자</label>
+        <label class="filter-dd-item"><input type="checkbox" value="고빈도구매" onchange="onFilterChange('autotag',this)"> 고빈도구매</label>
+        <label class="filter-dd-item"><input type="checkbox" value="챔피언" onchange="onFilterChange('autotag',this)"> 챔피언</label>
+        <label class="filter-dd-item"><input type="checkbox" value="VIP후보" onchange="onFilterChange('autotag',this)"> VIP후보</label>
+        <label class="filter-dd-item"><input type="checkbox" value="가격민감형" onchange="onFilterChange('autotag',this)"> 가격민감형</label>
+        <label class="filter-dd-item"><input type="checkbox" value="화장품 선호" onchange="onFilterChange('autotag',this)"> 화장품 선호</label>
+        <label class="filter-dd-item"><input type="checkbox" value="탐색형" onchange="onFilterChange('autotag',this)"> 탐색형</label>
+        <label class="filter-dd-item"><input type="checkbox" value="이탈직전" onchange="onFilterChange('autotag',this)"> 이탈직전</label>
+        <label class="filter-dd-item"><input type="checkbox" value="불만고객" onchange="onFilterChange('autotag',this)"> 불만고객</label>
+        <label class="filter-dd-item"><input type="checkbox" value="신규유망" onchange="onFilterChange('autotag',this)"> 신규유망</label>
+      </div>
+    </div>
+    <!-- 수동 태그 다중 선택 -->
+    <div class="filter-dropdown" id="fd-manualtag">
+      <button class="filter-dd-btn" onclick="toggleDD('fd-manualtag')">수동 태그 <span class="filter-dd-arrow">▾</span></button>
+      <div class="filter-dd-panel" style="min-width:150px;">
+        <label class="filter-dd-item"><input type="checkbox" value="VIP 관심" onchange="onFilterChange('manualtag',this)"> VIP 관심</label>
+        <label class="filter-dd-item"><input type="checkbox" value="불만처리완료" onchange="onFilterChange('manualtag',this)"> 불만처리완료</label>
+        <label class="filter-dd-item"><input type="checkbox" value="오프라인 VIP" onchange="onFilterChange('manualtag',this)"> 오프라인 VIP</label>
+        <label class="filter-dd-item"><input type="checkbox" value="리뷰어 모집" onchange="onFilterChange('manualtag',this)"> 리뷰어 모집</label>
+        <label class="filter-dd-item"><input type="checkbox" value="이벤트당첨" onchange="onFilterChange('manualtag',this)"> 이벤트당첨</label>
       </div>
     </div>
     <!-- 구매 기간 단일 선택 -->
@@ -597,20 +781,29 @@ select.form-input{appearance:none;background:var(--surface) url("data:image/svg+
      SCREEN 2: 고객 상세 프로필 (내비게이션 히든)
 ══════════════════════════════════════ -->
 <div class="screen" id="screen-detail">
-  <div class="page-header">
-    <div>
-      <div class="page-title">박서연</div>
-      <div class="page-desc">Gold · 챔피언 94점 · 기존고객 세그먼트</div>
+  <div class="detail-sticky-top">
+    <div class="breadcrumb" id="detailBreadcrumb" style="padding-top:16px;margin-bottom:8px;"></div>
+    <div class="page-header">
+      <div>
+        <div class="page-title">박서연</div>
+        <div class="page-desc">Gold · 챔피언 94점 · 기존고객 세그먼트</div>
+      </div>
+      <div class="page-actions">
+        <button class="btn btn-secondary btn-sm" onclick="openDetailMessage('kakao')">✉️ 메시지 발송</button>
+        <button class="btn btn-secondary btn-sm" onclick="openModal('modal-retention')">🔄 리텐션 시작</button>
+        <button class="btn btn-primary btn-sm" onclick="openModal('modal-edit-info')">✏️ 정보 수정</button>
+      </div>
     </div>
-    <div class="page-actions">
-      <button class="btn btn-secondary btn-sm">✉️ 메시지 발송</button>
-      <button class="btn btn-secondary btn-sm">🔄 리텐션 시작</button>
-      <button class="btn btn-primary btn-sm">✏️ 정보 수정</button>
+    <div class="detail-tabs">
+      <div class="detail-tab active" onclick="switchDetailTab(this,'dtab-basic')">기본 정보</div>
+      <div class="detail-tab" onclick="switchDetailTab(this,'dtab-purchase')">구매 이력</div>
+      <div class="detail-tab" onclick="switchDetailTab(this,'dtab-behavior')">행동/예측 데이터</div>
+      <div class="detail-tab" onclick="switchDetailTab(this,'dtab-consult')">상담 이력</div>
     </div>
   </div>
 
   <div class="detail-layout">
-    <div>
+    <div class="detail-left-col">
       <div class="profile-card">
         <div class="profile-avatar">박</div>
         <div class="profile-name">박서연</div>
@@ -620,19 +813,40 @@ select.form-input{appearance:none;background:var(--surface) url("data:image/svg+
           <span class="badge h-champ">챔피언</span>
           <span class="badge b-info">기존고객</span>
         </div>
-        <div class="profile-score">
+        <div class="profile-score champ">
           <div class="score-label">고객 건강도</div>
           <div style="display:flex;align-items:center;gap:10px;">
             <svg class="ring-svg" width="56" height="56" viewBox="0 0 56 56">
               <circle class="ring-bg" cx="28" cy="28" r="22"/>
-              <circle class="ring-prog" cx="28" cy="28" r="22" stroke="#2563EB" stroke-dasharray="138.2" stroke-dashoffset="8.3"/>
+              <circle class="ring-prog" cx="28" cy="28" r="22" stroke="#7C3AED" stroke-dasharray="138.2" stroke-dashoffset="8.3"/>
             </svg>
             <div>
-              <div style="font-size:22px;font-weight:800;color:var(--primary)">94</div>
-              <div style="font-size:11px;color:var(--text-muted)">챔피언 구간</div>
+              <div style="font-size:22px;font-weight:800;color:#7C3AED">94</div>
+              <div style="font-size:11px;color:#7C3AED;font-weight:600;opacity:.8">챔피언 구간</div>
             </div>
           </div>
-          <div style="margin-top:8px;font-size:11px;color:var(--text-sub);">구매빈도 30점 · 참여도 24점 · 만족도 25점 · 지원 15점</div>
+          <div class="score-breakdown">
+            <div class="score-row">
+              <span class="score-row-label">구매빈도</span>
+              <div class="score-row-bar"><div class="score-row-fill champ" style="width:100%"></div></div>
+              <span class="score-row-pts">30점</span>
+            </div>
+            <div class="score-row">
+              <span class="score-row-label">참여도</span>
+              <div class="score-row-bar"><div class="score-row-fill champ" style="width:80%"></div></div>
+              <span class="score-row-pts">24점</span>
+            </div>
+            <div class="score-row">
+              <span class="score-row-label">만족도</span>
+              <div class="score-row-bar"><div class="score-row-fill champ" style="width:100%"></div></div>
+              <span class="score-row-pts">25점</span>
+            </div>
+            <div class="score-row">
+              <span class="score-row-label">지원</span>
+              <div class="score-row-bar"><div class="score-row-fill champ" style="width:100%"></div></div>
+              <span class="score-row-pts">15점</span>
+            </div>
+          </div>
         </div>
         <div class="profile-info-list">
           <div class="pil-row"><span class="pil-label">가입일</span><span class="pil-val">2023-08-14</span></div>
@@ -645,12 +859,12 @@ select.form-input{appearance:none;background:var(--surface) url("data:image/svg+
           <div class="pil-row"><span class="pil-label">예측 LTV</span><span class="pil-val" style="color:var(--primary);">3,200,000원</span></div>
         </div>
         <div class="profile-actions">
-          <button class="btn btn-secondary btn-sm" style="width:100%">📱 알림톡 발송</button>
-          <button class="btn btn-secondary btn-sm" style="width:100%">📋 CS 배정</button>
-          <button class="btn btn-ghost btn-sm" style="width:100%;color:var(--danger)">🚫 수신거부 처리</button>
+          <button class="btn btn-secondary btn-sm" style="width:100%" onclick="openDetailMessage('kakao')">📱 알림톡 발송</button>
+          <button class="btn btn-secondary btn-sm" style="width:100%" onclick="openCsAssign()">📋 CS 배정</button>
+          <button class="btn btn-ghost btn-sm" style="width:100%;color:var(--danger)" onclick="openOptout()">🚫 수신거부 처리</button>
         </div>
       </div>
-      <div class="profile-card" style="margin-top:12px;">
+      <div class="profile-card">
         <div style="font-size:13px;font-weight:700;margin-bottom:10px;">마케팅 수신 동의</div>
         <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;">
           <div style="display:flex;justify-content:space-between;"><span>이메일</span><span class="badge b-success">동의</span></div>
@@ -662,97 +876,932 @@ select.form-input{appearance:none;background:var(--surface) url("data:image/svg+
     </div>
 
     <div>
-      <div class="detail-tabs">
-        <div class="detail-tab active" onclick="switchDetailTab(this,'dtab-basic')">기본 정보</div>
-        <div class="detail-tab" onclick="switchDetailTab(this,'dtab-purchase')">구매 이력</div>
-        <div class="detail-tab" onclick="switchDetailTab(this,'dtab-behavior')">행동/예측 데이터</div>
-        <div class="detail-tab" onclick="switchDetailTab(this,'dtab-consult')">상담 이력</div>
-      </div>
       <div class="detail-panel active" id="dtab-basic">
+
+        <div class="info-section-pair">
+        <!-- 👤 개인 정보 -->
         <div class="info-section">
           <div class="info-section-title">👤 개인 정보</div>
           <div class="info-grid">
-            <div class="info-item"><div class="info-label">이름</div><div class="info-value">박서연</div></div>
-            <div class="info-item"><div class="info-label">생년월일</div><div class="info-value">1992-03-15 (만 34세)</div></div>
-            <div class="info-item"><div class="info-label">성별</div><div class="info-value">여성</div></div>
-            <div class="info-item"><div class="info-label">이메일</div><div class="info-value">spark@email.com</div></div>
-            <div class="info-item"><div class="info-label">전화번호</div><div class="info-value">010-2341-5678</div></div>
-            <div class="info-item"><div class="info-label">지역</div><div class="info-value">서울 강남구</div></div>
+            <div class="info-item"><span class="info-label">이름</span><span class="info-value">박서연</span></div>
+            <div class="info-item"><span class="info-label">생년월일</span><span class="info-value">1992-03-15 <span style="color:var(--text-muted);font-weight:400;font-size:11px;">(만 34세)</span></span></div>
+            <div class="info-item"><span class="info-label">성별</span><span class="info-value">여성</span></div>
+            <div class="info-item"><span class="info-label">이메일</span><span class="info-value"><a href="mailto:spark@email.com">spark@email.com</a></span></div>
+            <div class="info-item"><span class="info-label">전화번호</span><span class="info-value">010-2341-5678</span></div>
+            <div class="info-item"><span class="info-label">거주 지역</span><span class="info-value">서울 강남구</span></div>
           </div>
         </div>
+
+        <!-- 🔗 계정 및 유입 정보 -->
         <div class="info-section">
-          <div class="info-section-title">🔗 통합 식별 정보</div>
+          <div class="info-section-title">🔗 계정 및 유입 정보</div>
           <div class="info-grid">
-            <div class="info-item"><div class="info-label">온라인 계정</div><div class="info-value">연결됨 (spark@email.com)</div></div>
-            <div class="info-item"><div class="info-label">멤버십 카드</div><div class="info-value">ENT-2023-08-0041</div></div>
-            <div class="info-item"><div class="info-label">오프라인 구매</div><div class="info-value">4회 (강남점)</div></div>
+            <div class="info-item"><span class="info-label">가입일</span><span class="info-value">2023-08-14</span></div>
+            <div class="info-item"><span class="info-label">마지막 방문일</span><span class="info-value">2026-05-31 <span class="badge b-success" style="font-size:10px;padding:1px 6px;">오늘</span></span></div>
+            <div class="info-item"><span class="info-label">유입 채널</span><span class="info-value">인스타그램 광고</span></div>
+            <div class="info-item"><span class="info-label">온라인 계정</span><span class="info-value">연결됨 <span style="font-size:11px;color:var(--text-muted);">(spark@email.com)</span></span></div>
+            <div class="info-item"><span class="info-label">멤버십 카드</span><span class="info-value">ENT-2023-08-0041</span></div>
+            <div class="info-item"><span class="info-label">오프라인 구매</span><span class="info-value">4회 <span style="font-size:11px;color:var(--text-muted);">(강남점)</span></span></div>
           </div>
         </div>
+
+        </div><!-- /pair: 개인정보+계정정보 -->
+
+        <div class="info-section-pair">
+        <!-- 💰 구매 요약 -->
         <div class="info-section">
-          <div class="info-section-title">🏷️ 자동 태그</div>
-          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;">
+          <div class="info-section-title">💰 구매 요약</div>
+          <!-- 핵심 수치 하이라이트 -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
+            <div style="background:var(--primary-light);border:1px solid #BFDBFE;border-radius:var(--radius-sm);padding:12px 14px;">
+              <div style="font-size:11px;color:var(--primary);font-weight:600;margin-bottom:4px;">누적 구매금액</div>
+              <div style="font-size:17px;font-weight:800;color:var(--primary);">1,284,000<span style="font-size:12px;">원</span></div>
+            </div>
+            <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;">
+              <div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:4px;">구매 횟수</div>
+              <div style="font-size:17px;font-weight:800;color:var(--text);">17<span style="font-size:12px;">회</span></div>
+            </div>
+            <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;">
+              <div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:4px;">평균 객단가</div>
+              <div style="font-size:17px;font-weight:800;color:var(--text);">75,529<span style="font-size:12px;">원</span></div>
+            </div>
+            <div style="background:var(--success-bg);border:1px solid #A7F3D0;border-radius:var(--radius-sm);padding:12px 14px;">
+              <div style="font-size:11px;color:var(--success);font-weight:600;margin-bottom:4px;">마지막 구매일 (2026-05-26)</div>
+              <div style="font-size:17px;font-weight:800;color:var(--success);">6<span style="font-size:12px;">일 전</span></div>
+            </div>
+          </div>
+          <!-- 상세 정보 -->
+          <div class="info-grid">
+            <div class="info-item"><span class="info-label">첫 구매일</span><span class="info-value">2023-08-22</span></div>
+            <div class="info-item"><span class="info-label">마지막 구매일</span><span class="info-value">2026-05-26 <span style="font-size:11px;color:var(--success);font-weight:600;">6일 전</span></span></div>
+            <div class="info-item"><span class="info-label">선호 카테고리</span><span class="info-value">스킨케어</span></div>
+            <div class="info-item"><span class="info-label">선호 결제 수단</span><span class="info-value">신용카드 <span style="font-size:11px;color:var(--text-muted);">(KB국민)</span></span></div>
+            <div class="info-item"><span class="info-label">쿠폰 사용 횟수</span><span class="info-value">5회</span></div>
+            <div class="info-item"><span class="info-label">누적 적립 포인트</span><span class="info-value">12,400 P</span></div>
+          </div>
+        </div>
+
+        <!-- 📊 고객 가치 지표 -->
+        <div class="info-section">
+          <div class="info-section-title">📊 고객 가치 지표</div>
+          <div class="info-grid">
+            <div class="info-item">
+              <div class="info-label">고객 건강도</div>
+              <div class="info-value"><span class="badge" style="background:#F5F3FF;color:#6D28D9;font-size:12px;padding:3px 10px;">챔피언 94점</span></div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">고객 등급</div>
+              <div class="info-value"><span class="badge g-gold" style="font-size:12px;">Gold</span></div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">세그먼트</div>
+              <div class="info-value">기존고객</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">이탈 위험도</div>
+              <div class="info-value" style="color:var(--success);">낮음 <span style="font-size:12px;font-weight:400;color:var(--text-muted);">(8%)</span></div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">예측 다음 구매일</div>
+              <div class="info-value">2026-06-12 <span style="font-size:11px;color:var(--text-muted);">(약 12일 후)</span></div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">예측 LTV</div>
+              <div class="info-value" style="color:var(--primary);">3,200,000원</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">담당자</div>
+              <div class="info-value">이마케터 <span style="font-size:11px;color:var(--text-muted);">(마케팅팀)</span></div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">마지막 캠페인 수신</div>
+              <div class="info-value">2026-05-20 <span style="font-size:11px;color:var(--text-muted);">알림톡</span></div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">캠페인 오픈율</div>
+              <div class="info-value">78% <span style="font-size:11px;color:var(--success);font-weight:500;">↑ 평균 대비 높음</span></div>
+            </div>
+          </div>
+        </div>
+
+        </div><!-- /pair: 구매요약+고객가치지표 -->
+
+        <!-- 🏷️ 자동 태그 -->
+        <div class="info-section" style="margin-bottom:0;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+            <div class="info-section-title" style="margin-bottom:0;">🏷️ 자동 태그</div>
+            <button class="btn btn-ghost btn-sm" style="font-size:11px;padding:3px 8px;" onclick="toggleManualTagAdd()">+ 수동 태그 추가</button>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px;" id="autoTagWrap">
             <span class="tag">충성고객</span>
             <span class="tag">정기구매자</span>
             <span class="tag" style="background:#EFF6FF;color:#2563EB;border-color:#BFDBFE;">화장품 선호</span>
             <span class="tag" style="background:#ECFDF5;color:#065F46;border-color:#A7F3D0;">고빈도구매</span>
+            <span class="tag" style="background:#F5F3FF;color:#6D28D9;border-color:#DDD6FE;">챔피언</span>
+            <span class="tag manual-tag">VIP 관심 <span style="cursor:pointer;margin-left:3px;opacity:.6;" onclick="this.parentElement.remove()">×</span></span>
           </div>
-          <div style="font-size:11px;color:var(--text-muted);">마지막 태그 갱신: 2026-05-27 03:00</div>
+          <div class="manual-tag-add" id="manualTagAdd">
+            <input class="manual-tag-field" id="manualTagInput" type="text" placeholder="태그명 입력 (최대 12자)" maxlength="12" onkeydown="if(event.key==='Enter')addManualTag()">
+            <button class="btn btn-primary btn-sm" onclick="addManualTag()">추가</button>
+            <button class="btn btn-ghost btn-sm" onclick="toggleManualTagAdd()">취소</button>
+          </div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:6px;">시스템이 매일 03:00 자동 갱신 · 마지막 갱신: 2026-05-27 03:00 · <span style="color:var(--primary);cursor:pointer;" onclick="location.href='CRM_설정.html#autotag'">규칙 설정 →</span></div>
         </div>
+
       </div>
       <div class="detail-panel" id="dtab-purchase">
-        <div class="metrics-row">
-          <div class="metric-card"><div class="metric-label">누적 구매금액</div><div class="metric-value">1,284,000원</div></div>
-          <div class="metric-card"><div class="metric-label">구매 횟수</div><div class="metric-value">17회</div></div>
-          <div class="metric-card"><div class="metric-label">평균 객단가</div><div class="metric-value">75,529원</div></div>
-          <div class="metric-card"><div class="metric-label">선호 카테고리</div><div class="metric-value" style="font-size:14px">스킨케어</div></div>
+
+        <!-- 현황 카드 (4개) — 예측 LTV는 행동/예측 데이터 탭에서 표시 -->
+        <div class="metrics-row" style="grid-template-columns:repeat(4,1fr);">
+          <div class="metric-card">
+            <div class="metric-label">누적 구매금액</div>
+            <div class="metric-value" style="font-size:16px;">1,284,000원</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">구매 횟수</div>
+            <div class="metric-value" style="font-size:16px;">17회</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">평균 객단가</div>
+            <div class="metric-value" style="font-size:16px;">75,529원</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">선호 카테고리</div>
+            <div class="metric-value" style="font-size:16px;">스킨케어</div>
+          </div>
         </div>
+
+        <!-- 검색/필터 -->
+        <div class="ord-filter-bar">
+          <div class="ord-search-wrap">
+            <span class="ord-search-icon">🔍</span>
+            <input class="ord-search-input" id="ordSearchInput" type="text" placeholder="주문번호 또는 상품명 검색" oninput="filterOrders()">
+          </div>
+          <div class="filter-dropdown" id="ord-fd-period">
+            <button class="filter-dd-btn" onclick="toggleDD('ord-fd-period')">기간 <span class="filter-dd-arrow">▾</span></button>
+            <div class="filter-dd-panel" style="min-width:220px;">
+              <label class="filter-dd-item"><input type="radio" name="ordPeriod" value="3" onchange="onOrdFilterChange('period','3','최근 3개월')"> 최근 3개월</label>
+              <label class="filter-dd-item"><input type="radio" name="ordPeriod" value="6" onchange="onOrdFilterChange('period','6','최근 6개월')"> 최근 6개월</label>
+              <label class="filter-dd-item"><input type="radio" name="ordPeriod" value="12" onchange="onOrdFilterChange('period','12','최근 1년')"> 최근 1년</label>
+              <div class="filter-dd-divider"></div>
+              <label class="filter-dd-item"><input type="radio" name="ordPeriod" value="custom" onchange="onOrdFilterChange('period','custom','직접설정')"> 📅 직접설정</label>
+              <div class="period-custom-wrap" id="ordPeriodCustomWrap">
+                <div class="period-date-row">
+                  <input type="date" class="period-date-input" id="ordDateFrom">
+                  <span class="period-date-sep">~</span>
+                  <input type="date" class="period-date-input" id="ordDateTo">
+                </div>
+                <button class="btn btn-primary btn-sm" style="width:100%;" onclick="applyOrdCustomPeriod()">적용</button>
+              </div>
+            </div>
+          </div>
+          <div class="filter-dropdown" id="ord-fd-status">
+            <button class="filter-dd-btn" onclick="toggleDD('ord-fd-status')">상태 <span class="filter-dd-arrow">▾</span></button>
+            <div class="filter-dd-panel" style="min-width:130px;">
+              <label class="filter-dd-item"><input type="checkbox" value="입금전" onchange="onOrdMultiFilter('status','입금전',this)"> 입금전</label>
+              <label class="filter-dd-item"><input type="checkbox" value="배송중" onchange="onOrdMultiFilter('status','배송중',this)"> 배송중</label>
+              <label class="filter-dd-item"><input type="checkbox" value="배송완료" onchange="onOrdMultiFilter('status','배송완료',this)"> 배송완료</label>
+              <label class="filter-dd-item"><input type="checkbox" value="구매완료" onchange="onOrdMultiFilter('status','구매완료',this)"> 구매완료</label>
+              <div class="filter-dd-divider"></div>
+              <label class="filter-dd-item"><input type="checkbox" value="반품완료" onchange="onOrdMultiFilter('status','반품완료',this)"> 반품완료</label>
+              <label class="filter-dd-item"><input type="checkbox" value="환불중" onchange="onOrdMultiFilter('status','환불중',this)"> 환불중</label>
+              <label class="filter-dd-item"><input type="checkbox" value="취소/환불" onchange="onOrdMultiFilter('status','취소/환불',this)"> 환불완료</label>
+              <label class="filter-dd-item"><input type="checkbox" value="결제취소" onchange="onOrdMultiFilter('status','결제취소',this)"> 결제취소</label>
+            </div>
+          </div>
+          <div class="filter-dropdown" id="ord-fd-ch">
+            <button class="filter-dd-btn" onclick="toggleDD('ord-fd-ch')">채널 <span class="filter-dd-arrow">▾</span></button>
+            <div class="filter-dd-panel">
+              <label class="filter-dd-item"><input type="checkbox" value="온라인" onchange="onOrdMultiFilter('ch','온라인',this)"> 온라인</label>
+              <label class="filter-dd-item"><input type="checkbox" value="오프라인" onchange="onOrdMultiFilter('ch','오프라인',this)"> 오프라인</label>
+            </div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="resetOrdFilter()">초기화</button>
+        </div>
+        <div class="ord-tags-row" id="ordTagsRow"></div>
+
+        <!-- 주문 목록 -->
         <div class="card">
           <div class="table-wrap">
-            <table>
-              <thead><tr><th>주문일</th><th>주문번호</th><th>상품명</th><th>채널</th><th>금액</th><th>상태</th></tr></thead>
-              <tbody>
-                <tr><td>2026-05-26</td><td>ORD-20260526-0041</td><td>수분 토너 200ml × 2</td><td><span class="badge b-info">온라인</span></td><td><strong>68,000원</strong></td><td><span class="badge b-success">배송완료</span></td></tr>
-                <tr><td>2026-05-03</td><td>ORD-20260503-0218</td><td>나이트 크림 50ml</td><td><span class="badge b-info">온라인</span></td><td><strong>52,000원</strong></td><td><span class="badge b-success">배송완료</span></td></tr>
-                <tr><td>2026-04-11</td><td>ORD-20260411-0509</td><td>선크림 SPF50+ × 3</td><td><span class="badge b-gray">오프라인</span></td><td><strong>87,000원</strong></td><td><span class="badge b-success">구매완료</span></td></tr>
+            <table id="ordTable">
+              <thead><tr>
+                <th style="width:88px;white-space:nowrap;">주문일</th>
+                <th style="width:136px;white-space:nowrap;">주문번호</th>
+                <th style="width:190px;">상품명</th>
+                <th style="width:70px;white-space:nowrap;">채널</th>
+                <th style="width:88px;white-space:nowrap;">정상가</th>
+                <th style="width:100px;white-space:nowrap;">실 결제금액</th>
+                <th style="width:80px;white-space:nowrap;">포인트</th>
+                <th style="width:90px;white-space:nowrap;">상태</th>
+                <th style="width:40px;text-align:center;white-space:nowrap;"></th>
+              </tr></thead>
+              <tbody id="ordTbody">
+
+                <!-- 주문 1 -->
+                <tr class="ord-row" data-date="2026-05-26" data-status="배송완료" data-ch="온라인" onclick="openOrdModal(this)">
+                  <td>2026-05-26</td>
+                  <td style="font-size:12px;color:var(--text-muted);">ORD-20260526-0041</td>
+                  <td class="ord-col-nm"><strong>수분 토너 200ml</strong> 외 1종</td>
+                  <td><span class="badge b-info">온라인</span></td>
+                  <td style="color:var(--text-muted);text-decoration:line-through;font-size:12px;">75,000원</td>
+                  <td><strong>68,000원</strong></td>
+                  <td style="font-size:12px;color:var(--text-muted);">0 P</td>
+                  <td><span class="badge b-success">배송완료</span></td>
+                  <td style="text-align:center;"><span style="font-size:11px;color:var(--primary);font-weight:600;padding:3px 7px;background:var(--primary-light);border-radius:4px;white-space:nowrap;">보기</span></td>
+                </tr>
+                <tr class="ord-detail-row" id="ord1-detail">
+                  <td colspan="9">
+                    <div class="ord-detail-box">
+                      <div class="ord-detail-grid">
+                        <div class="ord-detail-section">
+                          <div class="ord-detail-section-title">📦 주문 상품 <span style="font-size:11px;font-weight:400;color:var(--text-muted);">2종</span></div>
+                          <div class="ord-items-wrap">
+                            <div class="ord-item-line">
+                              <span class="ord-item-nm">수분 토너 200ml</span>
+                              <span class="ord-item-opt">기본 / 1개</span>
+                              <span class="ord-item-amt">42,000원</span>
+                            </div>
+                            <div class="ord-item-line">
+                              <span class="ord-item-nm">수분 토너 패드 60매</span>
+                              <span class="ord-item-opt">기본 / 1개</span>
+                              <span class="ord-item-amt">33,000원</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="ord-detail-section">
+                          <div class="ord-detail-section-title">💳 결제 정보</div>
+                          <div class="ord-kv"><span class="ord-kv-label">정상가</span><span class="ord-kv-val">75,000원</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">쿠폰 할인</span><span class="ord-kv-val danger">-7,000원</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">포인트 사용</span><span class="ord-kv-val">0 P</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">배송비</span><span class="ord-kv-val">0원 (무료)</span></div>
+                          <div class="ord-kv ord-kv-total"><span class="ord-kv-label" style="font-weight:700;">실 결제금액</span><span class="ord-kv-val accent">68,000원</span></div>
+                          <div class="ord-kv" style="margin-top:4px;"><span class="ord-kv-label">결제 수단</span><span class="ord-kv-val">신용카드 (KB국민)</span></div>
+                        </div>
+                        <div class="ord-detail-section">
+                          <div class="ord-detail-section-title">🚚 배송 정보</div>
+                          <div class="ord-kv"><span class="ord-kv-label">수령인</span><span class="ord-kv-val">박서연</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">주소</span><span class="ord-kv-val">서울 강남구 역삼동 123-4</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">배송사</span><span class="ord-kv-val">CJ대한통운</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">운송장</span><span class="ord-kv-val">524-1234-5678</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">배송완료일</span><span class="ord-kv-val">2026-05-28</span></div>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- 주문 2 -->
+                <tr class="ord-row" data-date="2026-05-03" data-status="배송완료" data-ch="온라인" onclick="openOrdModal(this)">
+                  <td>2026-05-03</td>
+                  <td style="font-size:12px;color:var(--text-muted);">ORD-20260503-0218</td>
+                  <td class="ord-col-nm"><strong>나이트 크림 50ml</strong></td>
+                  <td><span class="badge b-info">온라인</span></td>
+                  <td style="font-size:12px;color:var(--text-muted);">52,000원</td>
+                  <td><strong>52,000원</strong></td>
+                  <td style="font-size:12px;color:var(--primary);font-weight:600;">-500 P</td>
+                  <td><span class="badge b-success">배송완료</span></td>
+                  <td style="text-align:center;"><span style="font-size:11px;color:var(--primary);font-weight:600;padding:3px 7px;background:var(--primary-light);border-radius:4px;white-space:nowrap;">보기</span></td>
+                </tr>
+                <tr class="ord-detail-row" id="ord2-detail">
+                  <td colspan="9">
+                    <div class="ord-detail-box">
+                      <div class="ord-detail-grid">
+                        <div class="ord-detail-section">
+                          <div class="ord-detail-section-title">📦 주문 상품</div>
+                          <div class="ord-kv"><span class="ord-kv-label">상품명</span><span class="ord-kv-val">나이트 크림 50ml</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">옵션</span><span class="ord-kv-val">기본 / 1개</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">단가</span><span class="ord-kv-val">52,000원</span></div>
+                        </div>
+                        <div class="ord-detail-section">
+                          <div class="ord-detail-section-title">💳 결제 정보</div>
+                          <div class="ord-kv"><span class="ord-kv-label">정상가</span><span class="ord-kv-val">52,000원</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">쿠폰 할인</span><span class="ord-kv-val">-</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">포인트 사용</span><span class="ord-kv-val danger">-500 P (500원)</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">배송비</span><span class="ord-kv-val">0원 (무료)</span></div>
+                          <div class="ord-kv ord-kv-total"><span class="ord-kv-label" style="font-weight:700;">실 결제금액</span><span class="ord-kv-val accent">51,500원</span></div>
+                          <div class="ord-kv" style="margin-top:4px;"><span class="ord-kv-label">결제 수단</span><span class="ord-kv-val">카카오페이</span></div>
+                        </div>
+                        <div class="ord-detail-section">
+                          <div class="ord-detail-section-title">🚚 배송 정보</div>
+                          <div class="ord-kv"><span class="ord-kv-label">수령인</span><span class="ord-kv-val">박서연</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">주소</span><span class="ord-kv-val">서울 강남구 역삼동 123-4</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">배송사</span><span class="ord-kv-val">한진택배</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">운송장</span><span class="ord-kv-val">617-9876-5432</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">배송완료일</span><span class="ord-kv-val">2026-05-05</span></div>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- 주문 3 (오프라인) -->
+                <tr class="ord-row" data-date="2026-04-11" data-status="구매완료" data-ch="오프라인" onclick="openOrdModal(this)">
+                  <td>2026-04-11</td>
+                  <td style="font-size:12px;color:var(--text-muted);">ORD-20260411-0509</td>
+                  <td class="ord-col-nm"><strong>선크림 SPF50+</strong> 외 2종</td>
+                  <td><span class="badge b-gray">오프라인</span></td>
+                  <td style="color:var(--text-muted);text-decoration:line-through;font-size:12px;">87,000원</td>
+                  <td><strong>79,000원</strong></td>
+                  <td style="font-size:12px;color:var(--text-muted);">0 P</td>
+                  <td><span class="badge b-success">구매완료</span></td>
+                  <td style="text-align:center;"><span style="font-size:11px;color:var(--primary);font-weight:600;padding:3px 7px;background:var(--primary-light);border-radius:4px;white-space:nowrap;">보기</span></td>
+                </tr>
+                <tr class="ord-detail-row" id="ord3-detail">
+                  <td colspan="9">
+                    <div class="ord-detail-box">
+                      <div class="ord-detail-grid">
+                        <div class="ord-detail-section">
+                          <div class="ord-detail-section-title">📦 주문 상품 <span style="font-size:11px;font-weight:400;color:var(--text-muted);">3종</span></div>
+                          <div class="ord-items-wrap">
+                            <div class="ord-item-line">
+                              <span class="ord-item-nm">선크림 SPF50+ PA++++</span>
+                              <span class="ord-item-opt">기본 / 2개</span>
+                              <span class="ord-item-amt">29,000원 × 2</span>
+                            </div>
+                            <div class="ord-item-line">
+                              <span class="ord-item-nm">아이크림 15ml</span>
+                              <span class="ord-item-opt">기본 / 1개</span>
+                              <span class="ord-item-amt">29,000원</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="ord-detail-section">
+                          <div class="ord-detail-section-title">💳 결제 정보</div>
+                          <div class="ord-kv"><span class="ord-kv-label">정상가</span><span class="ord-kv-val">87,000원</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">직원 할인</span><span class="ord-kv-val danger">-8,000원</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">포인트 사용</span><span class="ord-kv-val">0 P</span></div>
+                          <div class="ord-kv ord-kv-total"><span class="ord-kv-label" style="font-weight:700;">실 결제금액</span><span class="ord-kv-val accent">79,000원</span></div>
+                          <div class="ord-kv" style="margin-top:4px;"><span class="ord-kv-label">결제 수단</span><span class="ord-kv-val">현금</span></div>
+                        </div>
+                        <div class="ord-detail-section">
+                          <div class="ord-detail-section-title">🏪 오프라인 정보</div>
+                          <div class="ord-kv"><span class="ord-kv-label">구매 매장</span><span class="ord-kv-val">강남점</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">담당 직원</span><span class="ord-kv-val">이민준</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">영수증 번호</span><span class="ord-kv-val">2026-04-11-0031</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">멤버십 적립</span><span class="ord-kv-val">790 P</span></div>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- 주문 4 (취소/환불) -->
+                <tr class="ord-row" data-date="2026-03-05" data-status="취소/환불" data-ch="온라인" onclick="openOrdModal(this)">
+                  <td>2026-03-05</td>
+                  <td style="font-size:12px;color:var(--text-muted);">ORD-20260305-0312</td>
+                  <td class="ord-col-nm"><strong>비타민 브라이트닝 세럼</strong></td>
+                  <td><span class="badge b-info">온라인</span></td>
+                  <td style="font-size:12px;color:var(--text-muted);">42,000원</td>
+                  <td><strong style="color:var(--danger);">환불완료</strong></td>
+                  <td style="font-size:12px;color:var(--primary);font-weight:600;">+1,000 P</td>
+                  <td><span class="badge b-danger">취소/환불</span></td>
+                  <td style="text-align:center;"><span style="font-size:11px;color:var(--primary);font-weight:600;padding:3px 7px;background:var(--primary-light);border-radius:4px;white-space:nowrap;">보기</span></td>
+                </tr>
+                <tr class="ord-detail-row" id="ord4-detail">
+                  <td colspan="9">
+                    <div class="ord-detail-box">
+                      <div class="ord-detail-grid">
+                        <div class="ord-detail-section">
+                          <div class="ord-detail-section-title">📦 주문 상품</div>
+                          <div class="ord-kv"><span class="ord-kv-label">상품명</span><span class="ord-kv-val">비타민 브라이트닝 세럼</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">옵션</span><span class="ord-kv-val">30ml / 1개</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">단가</span><span class="ord-kv-val">42,000원</span></div>
+                        </div>
+                        <div class="ord-detail-section">
+                          <div class="ord-detail-section-title">💳 결제 정보</div>
+                          <div class="ord-kv"><span class="ord-kv-label">결제금액</span><span class="ord-kv-val">41,000원</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">포인트 사용</span><span class="ord-kv-val danger">-1,000 P</span></div>
+                          <div class="ord-kv ord-kv-total"><span class="ord-kv-label" style="font-weight:700;">환불금액</span><span class="ord-kv-val" style="color:var(--danger);">-41,000원</span></div>
+                          <div class="ord-kv" style="margin-top:4px;"><span class="ord-kv-label">포인트 복구</span><span class="ord-kv-val">+1,000 P</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">결제 수단</span><span class="ord-kv-val">신용카드 (KB국민)</span></div>
+                        </div>
+                        <div class="ord-detail-section">
+                          <div class="ord-detail-section-title">🚚 배송 정보</div>
+                          <div class="ord-kv"><span class="ord-kv-label">배송 상태</span><span class="ord-kv-val danger">반품 완료</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">반품 운송장</span><span class="ord-kv-val">888-1234-0099</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">반품 완료일</span><span class="ord-kv-val">2026-03-09</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">환불 처리일</span><span class="ord-kv-val">2026-03-10</span></div>
+                        </div>
+                      </div>
+                      <div class="ord-refund-box">
+                        <div class="ord-refund-title">🚫 취소/환불 사유</div>
+                        <div style="font-size:13px;font-weight:600;margin-bottom:6px;">제품 불량 — 피부 트러블 발생</div>
+                        <div style="font-size:12px;color:var(--text-sub);line-height:1.7;">사용 3일 후 피부 자극 및 트러블 발생. 피부과 진단서 제출. 전액 환불 처리 완료. CS 담당: 이마케터.</div>
+                        <div style="margin-top:8px;font-size:11px;color:var(--danger);font-weight:600;">처리일: 2026-03-07 · 담당: 이마케터</div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- 주문 5 (배송중) -->
+                <tr class="ord-row" data-date="2026-05-20" data-status="배송중" data-ch="온라인" onclick="openOrdModal(this)">
+                  <td>2026-05-20</td>
+                  <td style="font-size:12px;color:var(--text-muted);">ORD-20260520-0318</td>
+                  <td class="ord-col-nm"><strong>클렌징 폼 150ml</strong></td>
+                  <td><span class="badge b-info">온라인</span></td>
+                  <td style="font-size:12px;color:var(--text-muted);">28,000원</td>
+                  <td><strong>28,000원</strong></td>
+                  <td style="font-size:12px;color:var(--primary);font-weight:600;">+280 P</td>
+                  <td><span class="badge b-info">배송중</span></td>
+                  <td style="text-align:center;"><span style="font-size:11px;color:var(--primary);font-weight:600;padding:3px 7px;background:var(--primary-light);border-radius:4px;white-space:nowrap;">보기</span></td>
+                </tr>
+                <tr class="ord-detail-row" id="ord5-detail">
+                  <td colspan="9">
+                    <div class="ord-detail-box">
+                      <div class="ord-detail-grid">
+                        <div class="ord-detail-section">
+                          <div class="ord-detail-section-title">📦 주문 상품</div>
+                          <div class="ord-kv"><span class="ord-kv-label">상품명</span><span class="ord-kv-val">클렌징 폼 150ml</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">옵션</span><span class="ord-kv-val">기본 / 1개</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">단가</span><span class="ord-kv-val">28,000원</span></div>
+                        </div>
+                        <div class="ord-detail-section">
+                          <div class="ord-detail-section-title">💳 결제 정보</div>
+                          <div class="ord-kv"><span class="ord-kv-label">정상가</span><span class="ord-kv-val">28,000원</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">배송비</span><span class="ord-kv-val">0원 (무료)</span></div>
+                          <div class="ord-kv ord-kv-total"><span class="ord-kv-label" style="font-weight:700;">실 결제금액</span><span class="ord-kv-val accent">28,000원</span></div>
+                          <div class="ord-kv" style="margin-top:4px;"><span class="ord-kv-label">결제 수단</span><span class="ord-kv-val">신용카드 (KB국민)</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">적립 포인트</span><span class="ord-kv-val">+280 P</span></div>
+                        </div>
+                        <div class="ord-detail-section">
+                          <div class="ord-detail-section-title">🚚 배송 정보</div>
+                          <div class="ord-kv"><span class="ord-kv-label">배송 상태</span><span class="ord-kv-val accent">배송중 🚛</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">배송사</span><span class="ord-kv-val">CJ대한통운</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">운송장</span><span class="ord-kv-val">382-1234-5671</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">예상 도착일</span><span class="ord-kv-val">2026-05-22</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">수령인</span><span class="ord-kv-val">박서연</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">주소</span><span class="ord-kv-val">서울 강남구 역삼동 123-4</span></div>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- 주문 6 (입금전) -->
+                <tr class="ord-row" data-date="2026-04-28" data-status="입금전" data-ch="온라인" onclick="openOrdModal(this)">
+                  <td>2026-04-28</td>
+                  <td style="font-size:12px;color:var(--text-muted);">ORD-20260428-0741</td>
+                  <td class="ord-col-nm"><strong>비타민 앰플 30ml</strong> 외 1종</td>
+                  <td><span class="badge b-info">온라인</span></td>
+                  <td style="font-size:12px;color:var(--text-muted);">89,000원</td>
+                  <td><strong style="color:var(--warning);">입금대기</strong></td>
+                  <td style="font-size:12px;color:var(--text-muted);">0 P</td>
+                  <td><span class="badge b-warning">입금전</span></td>
+                  <td style="text-align:center;"><span style="font-size:11px;color:var(--primary);font-weight:600;padding:3px 7px;background:var(--primary-light);border-radius:4px;white-space:nowrap;">보기</span></td>
+                </tr>
+                <tr class="ord-detail-row" id="ord6-detail">
+                  <td colspan="9">
+                    <div class="ord-detail-box">
+                      <div class="ord-detail-grid">
+                        <div class="ord-detail-section">
+                          <div class="ord-detail-section-title">📦 주문 상품 <span style="font-size:11px;font-weight:400;color:var(--text-muted);">2종</span></div>
+                          <div class="ord-items-wrap">
+                            <div class="ord-item-line"><span class="ord-item-nm">비타민 앰플 30ml</span><span class="ord-item-opt">기본 / 1개</span><span class="ord-item-amt">52,000원</span></div>
+                            <div class="ord-item-line"><span class="ord-item-nm">수분 에센스 50ml</span><span class="ord-item-opt">기본 / 1개</span><span class="ord-item-amt">37,000원</span></div>
+                          </div>
+                        </div>
+                        <div class="ord-detail-section" style="background:#FFFBEB;border-color:#FDE68A;">
+                          <div class="ord-detail-section-title" style="color:var(--warning);">💳 결제 대기 중</div>
+                          <div class="ord-kv"><span class="ord-kv-label">결제 방법</span><span class="ord-kv-val">무통장입금</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">입금 은행</span><span class="ord-kv-val">기업은행</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">계좌번호</span><span class="ord-kv-val">123-456789-01-012</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">예금주</span><span class="ord-kv-val">(주)엔트위즈</span></div>
+                          <div class="ord-kv ord-kv-total"><span class="ord-kv-label" style="font-weight:700;">입금 금액</span><span class="ord-kv-val" style="color:var(--warning);">89,000원</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">입금 기한</span><span class="ord-kv-val danger">2026-04-30 23:59</span></div>
+                        </div>
+                        <div class="ord-detail-section">
+                          <div class="ord-detail-section-title">🚚 배송 예정</div>
+                          <div class="ord-kv"><span class="ord-kv-label">배송 상태</span><span class="ord-kv-val" style="color:var(--warning);">입금 확인 후 발송</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">수령인</span><span class="ord-kv-val">박서연</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">주소</span><span class="ord-kv-val">서울 강남구 역삼동 123-4</span></div>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- 주문 7 (반품완료) -->
+                <tr class="ord-row" data-date="2026-02-15" data-status="반품완료" data-ch="온라인" onclick="openOrdModal(this)">
+                  <td>2026-02-15</td>
+                  <td style="font-size:12px;color:var(--text-muted);">ORD-20260215-0422</td>
+                  <td class="ord-col-nm"><strong>수분크림 50ml</strong></td>
+                  <td><span class="badge b-info">온라인</span></td>
+                  <td style="font-size:12px;color:var(--text-muted);">35,000원</td>
+                  <td><strong style="color:var(--text-muted);">환불예정</strong></td>
+                  <td style="font-size:12px;color:var(--text-muted);">0 P</td>
+                  <td><span class="badge b-gray">반품완료</span></td>
+                  <td style="text-align:center;"><span style="font-size:11px;color:var(--primary);font-weight:600;padding:3px 7px;background:var(--primary-light);border-radius:4px;white-space:nowrap;">보기</span></td>
+                </tr>
+                <tr class="ord-detail-row" id="ord7-detail">
+                  <td colspan="9">
+                    <div class="ord-detail-box">
+                      <div class="ord-detail-grid">
+                        <div class="ord-detail-section">
+                          <div class="ord-detail-section-title">📦 주문 상품</div>
+                          <div class="ord-kv"><span class="ord-kv-label">상품명</span><span class="ord-kv-val">수분크림 50ml</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">옵션</span><span class="ord-kv-val">기본 / 1개</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">단가</span><span class="ord-kv-val">35,000원</span></div>
+                        </div>
+                        <div class="ord-detail-section">
+                          <div class="ord-detail-section-title">💳 환불 정보</div>
+                          <div class="ord-kv"><span class="ord-kv-label">결제금액</span><span class="ord-kv-val">35,000원</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">결제 수단</span><span class="ord-kv-val">카카오페이</span></div>
+                          <div class="ord-kv ord-kv-total"><span class="ord-kv-label" style="font-weight:700;">환불 예정금액</span><span class="ord-kv-val" style="color:var(--text-muted);">35,000원</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">환불 예정일</span><span class="ord-kv-val">2026-02-20</span></div>
+                        </div>
+                        <div class="ord-detail-section">
+                          <div class="ord-detail-section-title">📮 반품 정보</div>
+                          <div class="ord-kv"><span class="ord-kv-label">반품 사유</span><span class="ord-kv-val">단순 변심</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">반품 신청일</span><span class="ord-kv-val">2026-02-17</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">반품 완료일</span><span class="ord-kv-val">2026-02-19</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">반품 운송장</span><span class="ord-kv-val">771-9988-3344</span></div>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- 주문 8 (환불중) -->
+                <tr class="ord-row" data-date="2025-12-10" data-status="환불중" data-ch="온라인" onclick="openOrdModal(this)">
+                  <td>2025-12-10</td>
+                  <td style="font-size:12px;color:var(--text-muted);">ORD-20251210-0553</td>
+                  <td class="ord-col-nm"><strong>헤어 오일 100ml</strong></td>
+                  <td><span class="badge b-info">온라인</span></td>
+                  <td style="font-size:12px;color:var(--text-muted);">22,000원</td>
+                  <td><strong style="color:var(--warning);">환불처리중</strong></td>
+                  <td style="font-size:12px;color:var(--text-muted);">0 P</td>
+                  <td><span class="badge b-warning">환불중</span></td>
+                  <td style="text-align:center;"><span style="font-size:11px;color:var(--primary);font-weight:600;padding:3px 7px;background:var(--primary-light);border-radius:4px;white-space:nowrap;">보기</span></td>
+                </tr>
+                <tr class="ord-detail-row" id="ord8-detail">
+                  <td colspan="9">
+                    <div class="ord-detail-box">
+                      <div class="ord-detail-grid">
+                        <div class="ord-detail-section">
+                          <div class="ord-detail-section-title">📦 주문 상품</div>
+                          <div class="ord-kv"><span class="ord-kv-label">상품명</span><span class="ord-kv-val">헤어 오일 100ml</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">옵션</span><span class="ord-kv-val">기본 / 1개</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">단가</span><span class="ord-kv-val">22,000원</span></div>
+                        </div>
+                        <div class="ord-detail-section" style="background:#FFFBEB;border-color:#FDE68A;">
+                          <div class="ord-detail-section-title" style="color:var(--warning);">💳 환불 진행 중</div>
+                          <div class="ord-kv"><span class="ord-kv-label">결제금액</span><span class="ord-kv-val">22,000원</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">결제 수단</span><span class="ord-kv-val">신용카드 (KB국민)</span></div>
+                          <div class="ord-kv ord-kv-total"><span class="ord-kv-label" style="font-weight:700;">환불 금액</span><span class="ord-kv-val" style="color:var(--warning);">22,000원</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">환불 신청일</span><span class="ord-kv-val">2025-12-12</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">예상 환불 완료</span><span class="ord-kv-val">2025-12-17</span></div>
+                        </div>
+                        <div class="ord-detail-section">
+                          <div class="ord-detail-section-title">🚫 환불 사유</div>
+                          <div class="ord-kv"><span class="ord-kv-label">사유</span><span class="ord-kv-val">상품 불량 (내용물 누출)</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">처리 담당</span><span class="ord-kv-val">이마케터</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">비고</span><span class="ord-kv-val">사진 증빙 확인 완료</span></div>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- 주문 9 (결제취소) -->
+                <tr class="ord-row" data-date="2025-10-22" data-status="결제취소" data-ch="온라인" onclick="openOrdModal(this)">
+                  <td>2025-10-22</td>
+                  <td style="font-size:12px;color:var(--text-muted);">ORD-20251022-0189</td>
+                  <td class="ord-col-nm"><strong>선크림 SPF50+ 50ml</strong></td>
+                  <td><span class="badge b-info">온라인</span></td>
+                  <td style="font-size:12px;color:var(--text-muted);">29,000원</td>
+                  <td><strong style="color:var(--text-muted);">결제취소</strong></td>
+                  <td style="font-size:12px;color:var(--text-muted);">0 P</td>
+                  <td><span class="badge b-gray">결제취소</span></td>
+                  <td style="text-align:center;"><span style="font-size:11px;color:var(--primary);font-weight:600;padding:3px 7px;background:var(--primary-light);border-radius:4px;white-space:nowrap;">보기</span></td>
+                </tr>
+                <tr class="ord-detail-row" id="ord9-detail">
+                  <td colspan="9">
+                    <div class="ord-detail-box">
+                      <div class="ord-detail-grid">
+                        <div class="ord-detail-section">
+                          <div class="ord-detail-section-title">📦 주문 상품</div>
+                          <div class="ord-kv"><span class="ord-kv-label">상품명</span><span class="ord-kv-val">선크림 SPF50+ 50ml</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">옵션</span><span class="ord-kv-val">기본 / 1개</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">단가</span><span class="ord-kv-val">29,000원</span></div>
+                        </div>
+                        <div class="ord-detail-section">
+                          <div class="ord-detail-section-title">💳 결제 취소</div>
+                          <div class="ord-kv"><span class="ord-kv-label">주문 금액</span><span class="ord-kv-val">29,000원</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">취소 사유</span><span class="ord-kv-val">고객 변심 (결제 직후 취소)</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">취소 일시</span><span class="ord-kv-val">2025-10-22 14:33</span></div>
+                          <div class="ord-kv ord-kv-total"><span class="ord-kv-label" style="font-weight:700;">결제 취소 금액</span><span class="ord-kv-val danger">-29,000원</span></div>
+                        </div>
+                        <div class="ord-detail-section">
+                          <div class="ord-detail-section-title">ℹ️ 처리 정보</div>
+                          <div class="ord-kv"><span class="ord-kv-label">취소 처리 상태</span><span class="ord-kv-val">완료</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">결제 수단</span><span class="ord-kv-val">카카오페이 (즉시 취소)</span></div>
+                          <div class="ord-kv"><span class="ord-kv-label">처리 완료일</span><span class="ord-kv-val">2025-10-22</span></div>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+
               </tbody>
             </table>
           </div>
-          <div class="pagination"><div>총 17건</div><div class="page-nums"><button class="page-btn active">1</button><button class="page-btn">2</button><button class="page-btn">›</button></div><div></div></div>
+          <div id="ordEmpty" class="ord-empty" style="display:none;">검색 결과가 없습니다.</div>
+          <div class="pagination">
+            <div>총 17건</div>
+            <div class="page-nums">
+              <button class="page-btn active">1</button>
+              <button class="page-btn">2</button>
+              <button class="page-btn">›</button>
+            </div>
+            <div></div>
+          </div>
         </div>
+
       </div>
       <div class="detail-panel" id="dtab-behavior">
+
+        <!-- 현황 카드 (4개, 폰트 통일) -->
         <div class="metrics-row">
-          <div class="metric-card"><div class="metric-label">최근 30일 방문</div><div class="metric-value">23회</div><div class="metric-sub">평균 체류 4분 12초</div></div>
-          <div class="metric-card"><div class="metric-label">이탈 위험도</div><div class="metric-value" style="color:var(--success)">낮음 8%</div></div>
-          <div class="metric-card"><div class="metric-label">예측 다음 구매</div><div class="metric-value" style="font-size:14px">6월 12일</div><div class="metric-sub">구매 주기 30일</div></div>
-          <div class="metric-card"><div class="metric-label">예측 LTV</div><div class="metric-value" style="font-size:14px">3,200,000원</div></div>
+          <div class="metric-card">
+            <div class="metric-label">최근 30일 방문</div>
+            <div class="metric-value" style="font-size:16px;">23회</div>
+            <div><span class="metric-tag">⏱ 평균 체류 4분 12초</span></div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">이탈 위험도</div>
+            <div class="metric-value" style="font-size:16px;color:var(--success);">낮음 8%</div>
+            <div><span class="metric-tag" style="border-color:#A7F3D0;color:#065F46;background:#ECFDF5;">✅ 안정 구간</span></div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">예측 다음 구매</div>
+            <div class="metric-value" style="font-size:16px;">6월 12일</div>
+            <div><span class="metric-tag">🔄 구매 주기 30일</span></div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label" style="display:flex;align-items:center;">
+              예측 LTV
+              <span class="info-tip-wrap">
+                <span class="info-tip-icon">i</span>
+                <span class="info-tip-bubble">Life Time Value — 이 고객이 앞으로 발생시킬 것으로 예측되는 누적 매출액입니다. 과거 구매 이력·빈도·단가·이탈 확률을 기반으로 AI가 산출합니다.</span>
+              </span>
+            </div>
+            <div class="metric-value" style="font-size:16px;color:var(--primary);">3,200,000원</div>
+            <div><span class="metric-tag" style="border-color:#BFDBFE;color:#1D4ED8;background:#EFF6FF;">↑ 누적 대비 +149%</span></div>
+          </div>
         </div>
-        <div class="info-section">
-          <div class="info-section-title">📈 소비 주기 분석</div>
-          <div class="chart-ph" style="height:160px;">📊 소비 주기 차트 (평균 구매 간격: 30일)</div>
+
+        <!-- 상단 2열: 월별 구매금액 추이 + AI 예측 인사이트 -->
+        <div class="beh-grid-2" style="margin-bottom:14px;align-items:stretch;">
+
+          <!-- 📈 월별 구매금액 추이 -->
+          <div class="beh-section" style="margin-bottom:0;display:flex;flex-direction:column;">
+            <div class="beh-section-title">📈 월별 구매금액 추이 <span style="font-size:11px;font-weight:400;color:var(--text-muted);">(최근 12개월)</span></div>
+            <div class="purchase-chart-wrap" style="flex:1;">
+              <svg viewBox="0 0 630 157" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;overflow:visible;">
+                <!-- 가로 그리드 -->
+                <line x1="35" y1="20"  x2="625" y2="20"  stroke="#E2E8F0" stroke-width="1"/>
+                <line x1="35" y1="48"  x2="625" y2="48"  stroke="#E2E8F0" stroke-width="1" stroke-dasharray="3,3"/>
+                <line x1="35" y1="75"  x2="625" y2="75"  stroke="#E2E8F0" stroke-width="1" stroke-dasharray="3,3"/>
+                <line x1="35" y1="102" x2="625" y2="102" stroke="#E2E8F0" stroke-width="1" stroke-dasharray="3,3"/>
+                <line x1="35" y1="129" x2="625" y2="129" stroke="#CBD5E1" stroke-width="1.5"/>
+                <!-- Y축 레이블 -->
+                <text x="30" y="23"  text-anchor="end" font-size="9" fill="#94A3B8">20만</text>
+                <text x="30" y="51"  text-anchor="end" font-size="9" fill="#94A3B8">15만</text>
+                <text x="30" y="78"  text-anchor="end" font-size="9" fill="#94A3B8">10만</text>
+                <text x="30" y="105" text-anchor="end" font-size="9" fill="#94A3B8"> 5만</text>
+                <text x="30" y="132" text-anchor="end" font-size="9" fill="#94A3B8">   0</text>
+                <!-- 평균선 (약 10만) -->
+                <line x1="35" y1="75" x2="625" y2="75" stroke="#F59E0B" stroke-width="1.5" stroke-dasharray="5,3" opacity="0.7"/>
+                <text x="627" y="78" font-size="8" fill="#F59E0B" font-weight="600">평균</text>
+                <!-- 막대 (bar width=30, gap=19) -->
+                <!-- Jun'25 (9万) -->
+                <rect x="35"  y="80"  width="30" height="49" rx="3" fill="#93C5FD"/>
+                <text x="50"  y="144" text-anchor="middle" font-size="9" fill="#94A3B8">6월</text>
+                <!-- Jul'25 (0 - 미구매) -->
+                <text x="99"  y="144" text-anchor="middle" font-size="9" fill="#CBD5E1">7월</text>
+                <!-- Aug'25 (16万) -->
+                <rect x="133" y="42"  width="30" height="87" rx="3" fill="#2563EB" opacity="0.85"/>
+                <text x="148" y="144" text-anchor="middle" font-size="9" fill="#94A3B8">8월</text>
+                <!-- Sep'25 (5万) -->
+                <rect x="182" y="102" width="30" height="27" rx="3" fill="#93C5FD"/>
+                <text x="197" y="144" text-anchor="middle" font-size="9" fill="#94A3B8">9월</text>
+                <!-- Oct'25 (11万) -->
+                <rect x="231" y="69"  width="30" height="60" rx="3" fill="#2563EB" opacity="0.75"/>
+                <text x="246" y="144" text-anchor="middle" font-size="9" fill="#94A3B8">10월</text>
+                <!-- Nov'25 (0 - 미구매) -->
+                <text x="295" y="144" text-anchor="middle" font-size="9" fill="#CBD5E1">11월</text>
+                <!-- Dec'25 (20万 - 최고) -->
+                <rect x="329" y="20"  width="30" height="109" rx="3" fill="#2563EB"/>
+                <text x="344" y="144" text-anchor="middle" font-size="9" fill="#94A3B8">12월</text>
+                <text x="344" y="17"  text-anchor="middle" font-size="9" fill="#2563EB" font-weight="700">20만</text>
+                <!-- Jan'26 (7万) -->
+                <rect x="378" y="91"  width="30" height="38" rx="3" fill="#93C5FD"/>
+                <text x="393" y="144" text-anchor="middle" font-size="9" fill="#94A3B8">1월</text>
+                <!-- Feb'26 (0 - 미구매) -->
+                <text x="442" y="144" text-anchor="middle" font-size="9" fill="#CBD5E1">2월</text>
+                <!-- Mar'26 (4万 - 취소환불) -->
+                <rect x="476" y="107" width="30" height="22" rx="3" fill="#FECACA"/>
+                <text x="491" y="144" text-anchor="middle" font-size="9" fill="#94A3B8">3월</text>
+                <!-- Apr'26 (8万) -->
+                <rect x="525" y="85"  width="30" height="44" rx="3" fill="#93C5FD"/>
+                <text x="540" y="144" text-anchor="middle" font-size="9" fill="#94A3B8">4월</text>
+                <!-- May'26 (12万 - 이번달) -->
+                <rect x="574" y="63"  width="30" height="66" rx="3" fill="#2563EB"/>
+                <text x="589" y="144" text-anchor="middle" font-size="9" fill="#2563EB" font-weight="700">5월</text>
+              </svg>
+            </div>
+            <div class="chart-legend" style="flex-wrap:wrap;row-gap:4px;margin-top:auto;padding-top:10px;">
+              <span><span class="legend-dot" style="background:#2563EB;"></span>구매 발생</span>
+              <span><span class="legend-dot" style="background:#93C5FD;"></span>소액 구매</span>
+              <span><span class="legend-dot" style="background:#FECACA;"></span>취소/환불</span>
+              <span><span class="legend-dot" style="background:#F59E0B;width:14px;height:3px;border-radius:1px;margin-top:3px;"></span>월 평균선</span>
+              <span style="width:100%;font-size:11px;font-weight:600;color:var(--text-sub);margin-top:2px;">평균 구매 간격: <strong style="color:var(--text);">30일</strong></span>
+            </div>
+          </div>
+
+          <!-- 🔮 AI 예측 인사이트 -->
+          <div class="ai-insight-box" style="margin-bottom:0;">
+            <div class="ai-insight-title">🔮 AI 예측 인사이트</div>
+            <div class="ai-action-list">
+              <div class="ai-action-item">
+                <div class="ai-action-icon">🛒</div>
+                <div class="ai-action-text">
+                  <div class="ai-action-label">다음 구매 예측</div>
+                  <div class="ai-action-desc">2026-06-12 (약 12일 후) · 예상 구매금액 <strong>65,000 ~ 90,000원</strong> · 스킨케어 카테고리 가능성 높음</div>
+                  <span class="ai-action-badge" style="background:#EFF6FF;color:#1D4ED8;">신뢰도 84%</span>
+                </div>
+              </div>
+              <div class="ai-action-item">
+                <div class="ai-action-icon">🎯</div>
+                <div class="ai-action-text">
+                  <div class="ai-action-label">추천 캠페인</div>
+                  <div class="ai-action-desc">구매 주기(30일) 도달 5일 전 <strong>재구매 유도 알림톡</strong> 발송 권장 · 쿠폰 첨부 시 전환율 +18% 예상</div>
+                  <span class="ai-action-badge" style="background:#F5F3FF;color:#6D28D9;">자동화 캠페인 연동 가능</span>
+                </div>
+              </div>
+              <div class="ai-action-item">
+                <div class="ai-action-icon">📦</div>
+                <div class="ai-action-text">
+                  <div class="ai-action-label">추천 상품</div>
+                  <div class="ai-action-desc">구매 이력 기반 — <strong>나이트 크림 리필</strong>, <strong>비타민 앰플</strong>, <strong>수분 에센스</strong> 순</div>
+                </div>
+              </div>
+              <div class="ai-action-item">
+                <div class="ai-action-icon">💚</div>
+                <div class="ai-action-text">
+                  <div class="ai-action-label">이탈 방지 상태</div>
+                  <div class="ai-action-desc">이탈 위험도 8% — <strong>매우 안정적</strong>. VIP 등급 유지 캠페인 권장</div>
+                  <span class="ai-action-badge" style="background:#ECFDF5;color:#065F46;">별도 이탈방지 액션 불필요</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
+
+        <!-- 하단 2열: 구매 패턴 분석 + 채널 행동 분석 -->
+        <div class="beh-grid-2">
+
+          <!-- 🛒 구매 패턴 분석 -->
+          <div class="beh-section" style="margin-bottom:0;">
+            <div class="beh-section-title">🛒 구매 패턴 분석</div>
+            <div style="margin-bottom:14px;">
+              <div style="font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:8px;">카테고리 분포</div>
+              <div class="beh-bar-row">
+                <span class="beh-bar-label">스킨케어</span>
+                <div class="beh-bar-track"><div class="beh-bar-fill" style="width:68%;"></div></div>
+                <span class="beh-bar-val">68%</span>
+              </div>
+              <div class="beh-bar-row">
+                <span class="beh-bar-label">선케어</span>
+                <div class="beh-bar-track"><div class="beh-bar-fill" style="width:22%;background:#93C5FD;"></div></div>
+                <span class="beh-bar-val">22%</span>
+              </div>
+              <div class="beh-bar-row">
+                <span class="beh-bar-label">헤어케어</span>
+                <div class="beh-bar-track"><div class="beh-bar-fill" style="width:10%;background:#CBD5E1;"></div></div>
+                <span class="beh-bar-val">10%</span>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:12px;">
+              <div style="background:var(--bg);border-radius:var(--radius-sm);padding:10px;">
+                <div style="color:var(--text-muted);font-size:11px;margin-bottom:4px;">선호 구매 시간대</div>
+                <div style="font-weight:700;">오후 8 ~ 11시</div>
+                <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">전체 구매의 61%</div>
+              </div>
+              <div style="background:var(--bg);border-radius:var(--radius-sm);padding:10px;">
+                <div style="color:var(--text-muted);font-size:11px;margin-bottom:4px;">선호 구매 요일</div>
+                <div style="font-weight:700;">토 · 일 (주말)</div>
+                <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">전체 구매의 58%</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 📱 채널 행동 분석 -->
+          <div class="beh-section" style="margin-bottom:0;">
+            <div class="beh-section-title">📱 채널 행동 분석</div>
+            <div style="margin-bottom:14px;">
+              <div style="font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:8px;">방문 채널 비율</div>
+              <div class="beh-bar-row">
+                <span class="beh-bar-label">앱</span>
+                <div class="beh-bar-track"><div class="beh-bar-fill" style="width:45%;"></div></div>
+                <span class="beh-bar-val">45%</span>
+              </div>
+              <div class="beh-bar-row">
+                <span class="beh-bar-label">웹</span>
+                <div class="beh-bar-track"><div class="beh-bar-fill" style="width:35%;background:#93C5FD;"></div></div>
+                <span class="beh-bar-val">35%</span>
+              </div>
+              <div class="beh-bar-row">
+                <span class="beh-bar-label">오프라인</span>
+                <div class="beh-bar-track"><div class="beh-bar-fill" style="width:20%;background:#CBD5E1;"></div></div>
+                <span class="beh-bar-val">20%</span>
+              </div>
+            </div>
+            <div style="font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:8px;">캠페인 채널 반응률</div>
+            <table class="resp-table">
+              <thead><tr>
+                <th>채널</th><th>오픈율</th><th>클릭율</th><th>전환율</th>
+              </tr></thead>
+              <tbody>
+                <tr>
+                  <td>💬 알림톡</td>
+                  <td><span class="resp-bar-mini" style="width:46px;"></span>78%</td>
+                  <td>42%</td>
+                  <td style="color:var(--success);font-weight:600;">23%</td>
+                </tr>
+                <tr>
+                  <td>🔔 앱 푸시</td>
+                  <td><span class="resp-bar-mini" style="width:37px;background:#93C5FD;"></span>62%</td>
+                  <td>31%</td>
+                  <td style="color:var(--success);font-weight:600;">15%</td>
+                </tr>
+                <tr>
+                  <td>📧 이메일</td>
+                  <td><span class="resp-bar-mini" style="width:27px;background:#CBD5E1;"></span>45%</td>
+                  <td>18%</td>
+                  <td>8%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+
       </div>
       <div class="detail-panel" id="dtab-consult">
         <div class="notice">💡 다음 상담 시 참고: 지난 상담에서 배송 지연 불만 이력 있음. 보상 쿠폰 발급 완료.</div>
-        <div class="timeline">
-          <div class="tl-item">
-            <div class="tl-dot"></div>
-            <div class="tl-date">2026-05-10 · 채팅</div>
-            <div class="tl-title">배송 현황 문의</div>
-            <div class="tl-desc">주문 ORD-20260503-0218 배송 상태 확인 요청. 담당자 답변 완료(5분 이내). 만족도: ⭐⭐⭐⭐⭐</div>
-          </div>
-          <div class="tl-item">
-            <div class="tl-dot warn"></div>
-            <div class="tl-date">2026-03-28 · 이메일</div>
-            <div class="tl-title">배송 지연 불만 접수</div>
-            <div class="tl-desc">예정일보다 4일 지연. 고객 불만 표현. 사과 메시지 + 5,000P 보상 지급. 이후 불만 철회.</div>
-          </div>
-          <div class="tl-item">
-            <div class="tl-dot gray"></div>
-            <div class="tl-date">2026-01-15 · 전화</div>
-            <div class="tl-title">신제품 사용 방법 문의</div>
-            <div class="tl-desc">나이트 크림 사용 순서 및 병용 제품 문의. 상담사 안내 완료. 만족도: ⭐⭐⭐⭐</div>
-          </div>
+
+        <!-- 문의 요약 -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <div style="font-size:12px;color:var(--text-muted);">총 <strong style="color:var(--text);">3건</strong> 문의 · 마지막 문의 2026-05-10</div>
+          <button class="btn btn-secondary btn-sm" onclick="location.href='CRM_고객지원.html#ticket'">고객지원 바로가기 →</button>
+        </div>
+
+        <!-- 문의 목록 테이블 -->
+        <div style="border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;">
+          <table style="width:100%;border-collapse:collapse;font-size:12px;">
+            <thead>
+              <tr style="background:var(--bg);">
+                <th style="padding:9px 12px;text-align:left;font-weight:600;color:var(--text-muted);border-bottom:1px solid var(--border);white-space:nowrap;">문의 ID</th>
+                <th style="padding:9px 12px;text-align:left;font-weight:600;color:var(--text-muted);border-bottom:1px solid var(--border);">제목</th>
+                <th style="padding:9px 12px;text-align:left;font-weight:600;color:var(--text-muted);border-bottom:1px solid var(--border);white-space:nowrap;">채널</th>
+                <th style="padding:9px 12px;text-align:left;font-weight:600;color:var(--text-muted);border-bottom:1px solid var(--border);white-space:nowrap;">상태</th>
+                <th style="padding:9px 12px;text-align:left;font-weight:600;color:var(--text-muted);border-bottom:1px solid var(--border);white-space:nowrap;">담당자</th>
+                <th style="padding:9px 12px;text-align:left;font-weight:600;color:var(--text-muted);border-bottom:1px solid var(--border);white-space:nowrap;">접수일</th>
+                <th style="padding:9px 12px;text-align:left;font-weight:600;color:var(--text-muted);border-bottom:1px solid var(--border);white-space:nowrap;">만족도</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr onclick="location.href='CRM_문의상세.html?id=TK-2510'" style="cursor:pointer;border-bottom:1px solid var(--border);transition:background .15s;" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background=''">
+                <td style="padding:10px 12px;font-family:monospace;color:var(--text-muted);white-space:nowrap;">#TK-2510</td>
+                <td style="padding:10px 12px;font-weight:600;color:var(--text);">배송 현황 문의</td>
+                <td style="padding:10px 12px;"><span style="display:inline-flex;align-items:center;padding:2px 7px;border-radius:10px;font-size:11px;font-weight:600;background:#dbeafe;color:#2563eb;">💬 채팅</span></td>
+                <td style="padding:10px 12px;"><span style="display:inline-flex;align-items:center;padding:2px 7px;border-radius:10px;font-size:11px;font-weight:600;background:#d1fae5;color:#059669;">완료</span></td>
+                <td style="padding:10px 12px;color:var(--text-sub);">이마케터</td>
+                <td style="padding:10px 12px;color:var(--text-muted);white-space:nowrap;">2026-05-10</td>
+                <td style="padding:10px 12px;color:#f59e0b;">★★★★★</td>
+              </tr>
+              <tr onclick="location.href='CRM_문의상세.html?id=TK-2498'" style="cursor:pointer;border-bottom:1px solid var(--border);transition:background .15s;" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background=''">
+                <td style="padding:10px 12px;font-family:monospace;color:var(--text-muted);white-space:nowrap;">#TK-2498</td>
+                <td style="padding:10px 12px;font-weight:600;color:var(--text);">배송 지연 불만 접수</td>
+                <td style="padding:10px 12px;"><span style="display:inline-flex;align-items:center;padding:2px 7px;border-radius:10px;font-size:11px;font-weight:600;background:#f3f4f6;color:#6b7280;">✉️ 이메일</span></td>
+                <td style="padding:10px 12px;"><span style="display:inline-flex;align-items:center;padding:2px 7px;border-radius:10px;font-size:11px;font-weight:600;background:#d1fae5;color:#059669;">완료</span></td>
+                <td style="padding:10px 12px;color:var(--text-sub);">이마케터</td>
+                <td style="padding:10px 12px;color:var(--text-muted);white-space:nowrap;">2026-03-28</td>
+                <td style="padding:10px 12px;color:var(--text-muted);">—</td>
+              </tr>
+              <tr onclick="location.href='CRM_문의상세.html?id=TK-2463'" style="cursor:pointer;transition:background .15s;" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background=''">
+                <td style="padding:10px 12px;font-family:monospace;color:var(--text-muted);white-space:nowrap;">#TK-2463</td>
+                <td style="padding:10px 12px;font-weight:600;color:var(--text);">신제품 사용 방법 문의</td>
+                <td style="padding:10px 12px;"><span style="display:inline-flex;align-items:center;padding:2px 7px;border-radius:10px;font-size:11px;font-weight:600;background:#f3f4f6;color:#6b7280;">📞 전화</span></td>
+                <td style="padding:10px 12px;"><span style="display:inline-flex;align-items:center;padding:2px 7px;border-radius:10px;font-size:11px;font-weight:600;background:#d1fae5;color:#059669;">완료</span></td>
+                <td style="padding:10px 12px;color:var(--text-sub);">이마케터</td>
+                <td style="padding:10px 12px;color:var(--text-muted);white-space:nowrap;">2026-01-15</td>
+                <td style="padding:10px 12px;color:#f59e0b;">★★★★<span style="color:#e5e7eb;">★</span></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -1433,6 +2482,384 @@ select.form-input{appearance:none;background:var(--surface) url("data:image/svg+
   </div>
 </div>
 
+<!-- ── CS 담당자 배정 ── -->
+<div class="backdrop" id="modal-cs-assign">
+  <div class="modal" style="max-width:480px;">
+    <div class="modal-head">
+      <div class="modal-title">📋 CS 담당자 배정</div>
+      <button class="modal-close" onclick="closeModal('modal-cs-assign')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="cs-current-banner">현재 담당자: <strong>이마케터</strong> · 마케팅팀</div>
+
+      <div class="form-group">
+        <label class="form-label">담당자 선택</label>
+        <div class="cs-assign-list">
+
+          <label class="cs-assign-item" onclick="selectCsAssign(this)">
+            <input type="radio" name="csAssignee" value="admin_user">
+            <div class="cs-assign-avatar" style="background:var(--primary);">김</div>
+            <div class="cs-assign-info">
+              <div class="cs-assign-name">김운영</div>
+              <div class="cs-assign-dept">운영팀</div>
+            </div>
+            <span class="badge badge-primary">관리자</span>
+          </label>
+
+          <label class="cs-assign-item selected" onclick="selectCsAssign(this)">
+            <input type="radio" name="csAssignee" value="marketer_user" checked>
+            <div class="cs-assign-avatar" style="background:#059669;">이</div>
+            <div class="cs-assign-info">
+              <div class="cs-assign-name">이마케터</div>
+              <div class="cs-assign-dept">마케팅팀</div>
+            </div>
+            <span class="badge badge-success">마케터</span>
+          </label>
+
+          <label class="cs-assign-item" onclick="selectCsAssign(this)">
+            <input type="radio" name="csAssignee" value="analyst_user">
+            <div class="cs-assign-avatar" style="background:#D97706;">박</div>
+            <div class="cs-assign-info">
+              <div class="cs-assign-name">박분석</div>
+              <div class="cs-assign-dept">데이터분석팀</div>
+            </div>
+            <span class="badge badge-warning">분석가</span>
+          </label>
+
+          <label class="cs-assign-item" style="opacity:.45;pointer-events:none;">
+            <input type="radio" name="csAssignee" value="viewer_user" disabled>
+            <div class="cs-assign-avatar" style="background:var(--text-muted);">최</div>
+            <div class="cs-assign-info">
+              <div class="cs-assign-name">최뷰어</div>
+              <div class="cs-assign-dept">고객지원팀</div>
+            </div>
+            <span class="badge badge-muted">비활성</span>
+          </label>
+
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom:0;">
+        <label class="form-label">배정 메모 <span style="font-weight:400;color:var(--text-muted);">(선택)</span></label>
+        <textarea class="form-input" id="csAssignMemo" rows="3" placeholder="담당자에게 전달할 메모를 입력하세요." style="resize:none;"></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeModal('modal-cs-assign')">취소</button>
+      <button class="btn btn-primary" onclick="confirmCsAssign()">배정 완료</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── 수신거부 처리 ── -->
+<div class="backdrop" id="modal-optout">
+  <div class="modal" style="max-width:480px;">
+    <div class="modal-head">
+      <div class="modal-title">🚫 수신거부 처리</div>
+      <button class="modal-close" onclick="closeModal('modal-optout')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="optout-warn">
+        ⚠️ 수신거부 처리 시 선택한 채널로의 마케팅 메시지 발송이 즉시 차단됩니다. 복구하려면 고객의 재동의가 필요합니다.
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">현재 수신 동의 상태</label>
+        <div class="optout-status-row">
+          <span class="optout-status-item">📧 이메일 <span class="badge b-success">동의</span></span>
+          <span class="optout-status-item">💬 알림톡 <span class="badge b-success">동의</span></span>
+          <span class="optout-status-item">📱 SMS <span class="badge b-gray">미동의</span></span>
+          <span class="optout-status-item">🔔 앱 푸시 <span class="badge b-success">동의</span></span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <label class="form-label" style="margin:0;">수신거부 채널 선택</label>
+          <button class="btn btn-ghost btn-sm" id="optoutAllBtn" onclick="toggleAllOptout(this)">전체 선택</button>
+        </div>
+        <div class="optout-channel-grid">
+          <label class="optout-channel-card">
+            <input type="checkbox" name="optoutCh" value="email" onchange="onOptoutChange()">
+            <div class="optout-ch-icon">📧</div>
+            <div class="optout-ch-label">이메일</div>
+          </label>
+          <label class="optout-channel-card">
+            <input type="checkbox" name="optoutCh" value="kakao" onchange="onOptoutChange()">
+            <div class="optout-ch-icon">💬</div>
+            <div class="optout-ch-label">알림톡</div>
+          </label>
+          <label class="optout-channel-card disabled" style="opacity:.4;pointer-events:none;" title="이미 미동의 상태">
+            <input type="checkbox" name="optoutCh" value="sms" disabled>
+            <div class="optout-ch-icon">📱</div>
+            <div class="optout-ch-label">SMS</div>
+            <div style="font-size:10px;color:var(--text-muted);margin-top:2px;">미동의</div>
+          </label>
+          <label class="optout-channel-card">
+            <input type="checkbox" name="optoutCh" value="push" onchange="onOptoutChange()">
+            <div class="optout-ch-icon">🔔</div>
+            <div class="optout-ch-label">앱 푸시</div>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">수신거부 사유</label>
+        <select class="form-input" id="optoutReason">
+          <option value="">사유를 선택하세요</option>
+          <option value="customer">고객 직접 요청</option>
+          <option value="legal">법적 요구 (민원/규제)</option>
+          <option value="duplicated">중복 수신 처리</option>
+          <option value="etc">기타</option>
+        </select>
+      </div>
+
+      <label class="optout-confirm-check" id="optoutConfirmLabel" style="opacity:.4;pointer-events:none;">
+        <input type="checkbox" id="optoutAgree" onchange="onOptoutChange()">
+        <span>위 내용을 확인했으며, <strong>박서연</strong> 고객의 수신거부 처리에 동의합니다.</span>
+      </label>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeModal('modal-optout')">취소</button>
+      <button class="btn btn-danger" id="optoutSubmitBtn" disabled onclick="confirmOptout()">수신거부 처리</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── 리텐션 시작 모달 ── -->
+<div class="backdrop" id="modal-retention">
+  <div class="modal" style="max-width:560px;">
+    <div class="modal-head">
+      <div class="modal-title">🔄 리텐션 시작</div>
+      <button class="modal-close" onclick="closeModal('modal-retention')">×</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- 고객 정보 배너 -->
+      <div style="display:flex;align-items:center;gap:14px;background:var(--primary-light);border:1px solid #BFDBFE;border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:20px;">
+        <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--primary),#7C3AED);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;flex-shrink:0;">박</div>
+        <div style="flex:1;">
+          <div style="font-size:14px;font-weight:700;color:var(--text);">박서연</div>
+          <div style="font-size:12px;color:var(--text-sub);margin-top:2px;">Gold · 챔피언 94점 · 이탈 위험도 <strong style="color:var(--success);">낮음 8%</strong></div>
+        </div>
+        <span class="badge" style="background:#ECFDF5;color:#065F46;border:1px solid #6EE7B7;font-size:11px;">안정 고객</span>
+      </div>
+
+      <!-- 시나리오 선택 -->
+      <div class="form-group">
+        <label class="form-label">리텐션 시나리오 선택 <span class="req">*</span></label>
+        <div class="seg-radio-list" id="retentionScenarioList">
+
+          <label class="seg-radio-item" onclick="this.classList.add('selected');document.querySelectorAll('#retentionScenarioList .seg-radio-item').forEach(i=>i!==this&&i.classList.remove('selected'));updateRetentionDesc();">
+            <input type="radio" name="retentionScenario" value="churn_seq" onchange="updateRetentionDesc()">
+            <div style="flex:1;">
+              <div class="seg-radio-label">🔴 이탈 방지 시퀀스</div>
+              <div class="seg-radio-desc">즉시 → D+3 → D+7 CS 배정 → D+14 최대 오퍼. 이탈 위험 고객 표준 대응 · 4단계 · 14일.</div>
+            </div>
+          </label>
+
+          <label class="seg-radio-item" onclick="this.classList.add('selected');document.querySelectorAll('#retentionScenarioList .seg-radio-item').forEach(i=>i!==this&&i.classList.remove('selected'));updateRetentionDesc();">
+            <input type="radio" name="retentionScenario" value="vip_campaign" onchange="updateRetentionDesc()">
+            <div style="flex:1;">
+              <div class="seg-radio-label">👑 VIP 전환 유도 캠페인</div>
+              <div class="seg-radio-desc">등급 전환 혜택 안내 + 포인트 2배 쿠폰. 1회 즉시 발송.</div>
+            </div>
+          </label>
+
+          <label class="seg-radio-item" onclick="this.classList.add('selected');document.querySelectorAll('#retentionScenarioList .seg-radio-item').forEach(i=>i!==this&&i.classList.remove('selected'));updateRetentionDesc();">
+            <input type="radio" name="retentionScenario" value="welcome_seq" onchange="updateRetentionDesc()">
+            <div style="flex:1;">
+              <div class="seg-radio-label">🎉 신규 고객 웰컴 시퀀스</div>
+              <div class="seg-radio-desc">D+1 이메일 → D+3 쿠폰 → D+7 추천 상품. 온보딩 · 3단계 · 7일.</div>
+            </div>
+          </label>
+
+          <label class="seg-radio-item" onclick="this.classList.add('selected');document.querySelectorAll('#retentionScenarioList .seg-radio-item').forEach(i=>i!==this&&i.classList.remove('selected'));updateRetentionDesc();">
+            <input type="radio" name="retentionScenario" value="cs_auto" onchange="updateRetentionDesc()">
+            <div style="flex:1;">
+              <div class="seg-radio-label">🆘 CS 자동 배정 + 회복 메시지</div>
+              <div class="seg-radio-desc">즉시 CS 배정 + D+1 보상 혜택 발송. 불만 고객 즉시 대응.</div>
+            </div>
+          </label>
+
+          <label class="seg-radio-item" onclick="this.classList.add('selected');document.querySelectorAll('#retentionScenarioList .seg-radio-item').forEach(i=>i!==this&&i.classList.remove('selected'));updateRetentionDesc();">
+            <input type="radio" name="retentionScenario" value="repurchase" onchange="updateRetentionDesc()">
+            <div style="flex:1;">
+              <div class="seg-radio-label">🛒 재구매 리마인드</div>
+              <div class="seg-radio-desc">예측 구매일(6월 12일) 5일 전 재구매 유도 알림톡 발송. 쿠폰 첨부 여부 선택 가능.</div>
+            </div>
+          </label>
+
+        </div>
+      </div>
+
+      <!-- 시나리오 설명 카드 -->
+      <div id="retentionDescBox" style="display:none;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;margin-bottom:16px;font-size:12px;line-height:1.7;color:var(--text-sub);">
+      </div>
+
+      <!-- 쿠폰 첨부 (재구매 리마인드 선택 시) -->
+      <div id="retentionCouponRow" style="display:none;" class="form-group">
+        <label class="form-label">쿠폰 첨부</label>
+        <select class="form-input">
+          <option value="">첨부 안 함</option>
+          <option value="10">10% 할인 쿠폰</option>
+          <option value="15">15% 할인 쿠폰</option>
+          <option value="free">무료배송 쿠폰</option>
+        </select>
+      </div>
+
+      <!-- 발송 시점 -->
+      <div class="form-group" style="margin-bottom:0;">
+        <label class="form-label">시작 시점</label>
+        <div class="send-schedule-row">
+          <label style="display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="radio" name="retentionSchedule" value="now" checked> 즉시 시작</label>
+          <label style="display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="radio" name="retentionSchedule" value="reserve" onchange="document.getElementById('retentionReserveWrap').style.display=this.checked?'block':'none'"> 예약</label>
+        </div>
+        <div id="retentionReserveWrap" style="display:none;margin-top:8px;">
+          <input type="datetime-local" class="form-input" style="max-width:220px;">
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeModal('modal-retention')">취소</button>
+      <button class="btn btn-primary" id="retentionStartBtn" disabled onclick="startRetention()">🔄 리텐션 시작</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── 정보 수정 모달 ── -->
+<div class="backdrop" id="modal-edit-info">
+  <div class="modal modal-wide" style="max-width:640px;">
+    <div class="modal-head">
+      <div class="modal-title">✏️ 고객 정보 수정</div>
+      <button class="modal-close" onclick="closeModal('modal-edit-info')">×</button>
+    </div>
+    <div class="modal-body">
+
+      <div style="display:flex;align-items:center;gap:10px;background:var(--bg);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:20px;font-size:12px;color:var(--text-sub);">
+        ℹ️ 수정된 내용은 저장 후 즉시 반영됩니다. 연락처·이메일 변경 시 기존 마케팅 수신 동의 내역은 유지됩니다.
+      </div>
+
+      <!-- 기본 정보 -->
+      <div style="font-size:12px;font-weight:700;color:var(--text-muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px;">기본 정보</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">이름 <span class="req">*</span></label>
+          <input type="text" class="form-input" value="박서연">
+        </div>
+        <div class="form-group">
+          <label class="form-label">성별</label>
+          <select class="form-input">
+            <option>선택 안 함</option>
+            <option selected>여성</option>
+            <option>남성</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">연락처 <span class="req">*</span></label>
+          <input type="text" class="form-input" value="010-9234-1842">
+        </div>
+        <div class="form-group">
+          <label class="form-label">생년월일</label>
+          <input type="date" class="form-input" value="1987-04-22">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">이메일</label>
+        <input type="email" class="form-input" value="syk1987@naver.com">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">지역</label>
+          <select class="form-input">
+            <option>선택 안 함</option>
+            <option selected>서울 서초구</option>
+            <option>서울 강남구</option>
+            <option>서울 마포구</option>
+            <option>경기 성남시</option>
+            <option>경기 수원시</option>
+            <option>부산</option>
+            <option>대구</option>
+            <option>기타</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">유입 채널</label>
+          <select class="form-input">
+            <option>선택 안 함</option>
+            <option>네이버 검색</option>
+            <option selected>인스타그램</option>
+            <option>카카오 광고</option>
+            <option>유튜브</option>
+            <option>지인 추천</option>
+            <option>오프라인 매장</option>
+            <option>기타</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- 담당자 -->
+      <div style="border-top:1px solid var(--border);margin:16px 0;"></div>
+      <div style="font-size:12px;font-weight:700;color:var(--text-muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px;">담당자 / 메모</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">담당자</label>
+          <div style="display:flex;align-items:center;gap:8px;padding:7px 11px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);">
+            <div style="width:26px;height:26px;border-radius:50%;background:#059669;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">이</div>
+            <div style="flex:1;font-size:13px;">
+              <span id="editInfoAssigneeName" style="font-weight:600;">이마케터</span>
+              <span id="editInfoAssigneeDept" style="color:var(--text-muted);font-size:12px;margin-left:4px;">마케팅팀</span>
+            </div>
+            <button class="btn btn-ghost btn-sm" style="flex-shrink:0;" onclick="openCsAssignFromEdit()">변경</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">고객 등급</label>
+          <select class="form-input">
+            <option>Bronze</option>
+            <option>Silver</option>
+            <option selected>Gold</option>
+            <option>VIP</option>
+          </select>
+          <div class="form-hint">등급은 자동 산정이 원칙입니다. 수동 변경 시 다음 자동 산정 시점에 덮어씁니다.</div>
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label class="form-label">메모 / 특이사항</label>
+        <textarea class="form-input" style="min-height:80px;resize:vertical;" placeholder="관리자 내부용 메모를 입력하세요 (고객에게 노출되지 않습니다)">VIP 관심 고객. 배송 지연 이력 있음. 2026-03-28 보상 쿠폰 발급 완료.</textarea>
+      </div>
+
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeModal('modal-edit-info')">취소</button>
+      <button class="btn btn-primary" onclick="saveEditInfo()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── 주문 상세 모달 ── -->
+<div class="backdrop" id="modal-ord-detail">
+  <div class="modal modal-wide" style="max-width:900px;width:95%;">
+    <div class="modal-head">
+      <div style="flex:1;min-width:0;">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <div class="modal-title" id="ordModalOrderNum" style="font-size:15px;font-family:monospace;letter-spacing:.02em;"></div>
+          <div id="ordModalMeta" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;"></div>
+        </div>
+        <div id="ordModalDate" style="font-size:12px;color:var(--text-muted);margin-top:4px;"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal('modal-ord-detail')" style="flex-shrink:0;">×</button>
+    </div>
+    <div class="modal-body" id="ordModalBody" style="padding:20px;"></div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeModal('modal-ord-detail')">닫기</button>
+    </div>
+  </div>
+</div>
+
 </main>
 <script src="crm-layout.js"></script>
 <script src="crm-common.js"></script>
@@ -1465,8 +2892,7 @@ const SCREEN_META = {
 function renderBreadcrumb(name) {
   const meta = SCREEN_META[name];
   if (!meta) return;
-  const bc = document.getElementById('globalBreadcrumb');
-  bc.innerHTML = meta.crumbs.map((c, i) => {
+  const html = meta.crumbs.map((c, i) => {
     const isLast = i === meta.crumbs.length - 1;
     let item = c.curr || isLast
       ? `<span class="curr">${c.label}</span>`
@@ -1475,7 +2901,29 @@ function renderBreadcrumb(name) {
         : `<span>${c.label}</span>`;
     return isLast ? item : item + '<span class="sep">›</span>';
   }).join('');
+  const global = document.getElementById('globalBreadcrumb');
+  const detail = document.getElementById('detailBreadcrumb');
+  if (name === 'detail') {
+    global.style.display = 'none';
+    if (detail) detail.innerHTML = html;
+  } else {
+    global.style.display = '';
+    global.innerHTML = html;
+    if (detail) detail.innerHTML = '';
+  }
 }
+
+// ── 좌측 패널 sticky top 동기화 ─────────────────────────────────────
+function syncDetailLeftCol() {
+  const bar = document.querySelector('.detail-sticky-top');
+  const col = document.querySelector('.detail-left-col');
+  if (!bar || !col) return;
+  const barMarginBottom = parseFloat(window.getComputedStyle(bar).marginBottom) || 0;
+  const h = bar.getBoundingClientRect().height + barMarginBottom;
+  col.style.top = h + 'px';
+  col.style.maxHeight = 'calc(100vh - 60px - ' + h + 'px)';
+}
+window.addEventListener('resize', syncDetailLeftCol);
 
 // ── 화면 전환 (shell의 loadPage에서도 직접 호출됨) ─────────────────
 function showScreen(name, pushState = true) {
@@ -1484,6 +2932,7 @@ function showScreen(name, pushState = true) {
   const target = document.getElementById('screen-' + name);
   if (target) { target.classList.add('active'); document.querySelector('.content')?.scrollTo({ top: 0 }); }
   renderBreadcrumb(name);
+  if (name === 'detail') requestAnimationFrame(syncDetailLeftCol);
   if (pushState) {
     history.pushState({ screen: name }, '', '#' + name);
   } else {
@@ -1501,6 +2950,7 @@ window.addEventListener('popstate', e => {
 document.addEventListener('DOMContentLoaded', () => {
   const hash = location.hash.replace('#', '');
   showScreen(SCREEN_META[hash] ? hash : 'list', false);
+  requestAnimationFrame(syncDetailLeftCol);
 
   // 모달 backdrop 클릭 닫기
   document.querySelectorAll('.backdrop').forEach(b => {
@@ -1516,7 +2966,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function switchDetailTab(el, panelId) {
   el.closest('.detail-tabs').querySelectorAll('.detail-tab').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
-  el.closest('.detail-layout').querySelectorAll('.detail-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('#screen-detail .detail-panel').forEach(p => p.classList.remove('active'));
   document.getElementById(panelId).classList.add('active');
 }
 
@@ -1661,6 +3111,14 @@ const SMS_TPL_REF = [
 ];
 
 let _selectedMsgChannel = null;
+
+// 고객 상세에서 단일 고객에게 발송 (채널 자동 선택)
+function openDetailMessage(channel) {
+  openBulkMessage();
+  document.getElementById('bulkMsgCount').textContent = '1 (박서연)';
+  const card = document.querySelector(`.msg-channel-card[onclick*="'${channel}'"]`);
+  if (card) selectMsgChannel(card, channel);
+}
 
 function openBulkMessage() {
   _selectedMsgChannel = null;
@@ -2064,7 +3522,7 @@ function fallbackCopy(num) {
 }
 
 // ── 커스텀 다중 필터 ─────────────────────────────────────────────────
-const activeFilters = { segment:[], grade:[], health:[], period:[] };
+const activeFilters = { segment:[], grade:[], health:[], period:[], autotag:[], manualtag:[] };
 
 function toggleDD(id) {
   const dd = document.getElementById(id);
@@ -2139,7 +3597,7 @@ function renderFilterTags() {
 }
 
 function updateFilterBtnState() {
-  ['segment','grade','health','period'].forEach(group => {
+  ['segment','grade','health','period','autotag','manualtag'].forEach(group => {
     const btn = document.querySelector(`#fd-${group} .filter-dd-btn`);
     if (btn) btn.classList.toggle('has-filter', activeFilters[group].length > 0);
   });
@@ -2165,6 +3623,252 @@ document.addEventListener('click', e => {
   }
 });
 
+// ── 구매이력: 주문 상세 모달 ──────────────────────────────────────────
+function openOrdModal(row) {
+  const detailRow = row.nextElementSibling;
+  const detailBox = detailRow?.querySelector('.ord-detail-box');
+  if (!detailBox) return;
+
+  const tds = row.querySelectorAll('td');
+  const date      = tds[0]?.textContent?.trim() || '';
+  const orderNum  = tds[1]?.textContent?.trim() || '';
+  const channelHtml = tds[3]?.innerHTML || '';
+  const statusHtml  = tds[7]?.innerHTML || '';
+
+  document.getElementById('ordModalOrderNum').textContent = orderNum;
+  document.getElementById('ordModalDate').textContent = '📅 주문일: ' + date;
+  document.getElementById('ordModalMeta').innerHTML = channelHtml + statusHtml;
+  document.getElementById('ordModalBody').innerHTML = detailBox.innerHTML;
+  openModal('modal-ord-detail');
+}
+
+// ── 구매이력: 주문 필터 ───────────────────────────────────────────────
+const ordActiveFilters = { period: null, status: [], ch: [] };
+const ordFilterLabels  = { period: '기간', status: '상태', ch: '채널' };
+
+function onOrdFilterChange(group, value, label) {
+  // 기간: 단일 선택 (radio)
+  ordActiveFilters[group] = { value, label };
+  const btn = document.querySelector('#ord-fd-' + group + ' .filter-dd-btn');
+  if (btn) { btn.innerHTML = label + ' <span class="filter-dd-arrow">▾</span>'; btn.classList.add('has-filter'); }
+  renderOrdFilterTags();
+  filterOrders();
+  document.querySelectorAll('.filter-dd-panel').forEach(p => {
+    p.classList.remove('open');
+    p.closest('.filter-dropdown').querySelector('.filter-dd-btn').classList.remove('active');
+  });
+}
+
+function onOrdMultiFilter(group, value, cb) {
+  // 상태/채널: 다중 선택 (checkbox)
+  const arr = ordActiveFilters[group];
+  if (cb.checked) { if (!arr.includes(value)) arr.push(value); }
+  else { const i = arr.indexOf(value); if (i > -1) arr.splice(i, 1); }
+  const btn = document.querySelector('#ord-fd-' + group + ' .filter-dd-btn');
+  if (btn) {
+    const label = arr.length ? arr.join(' · ') : ordFilterLabels[group];
+    btn.innerHTML = label + ' <span class="filter-dd-arrow">▾</span>';
+    arr.length ? btn.classList.add('has-filter') : btn.classList.remove('has-filter');
+  }
+  renderOrdFilterTags();
+  filterOrders();
+}
+
+function removeOrdFilter(group, value) {
+  if (Array.isArray(ordActiveFilters[group])) {
+    const i = ordActiveFilters[group].indexOf(value);
+    if (i > -1) ordActiveFilters[group].splice(i, 1);
+    document.querySelectorAll('#ord-fd-' + group + ' input[type=checkbox]').forEach(cb => {
+      if (cb.value === value) cb.checked = false;
+    });
+    const arr = ordActiveFilters[group];
+    const btn = document.querySelector('#ord-fd-' + group + ' .filter-dd-btn');
+    if (btn) {
+      const label = arr.length ? arr.join(' · ') : ordFilterLabels[group];
+      btn.innerHTML = label + ' <span class="filter-dd-arrow">▾</span>';
+      arr.length ? btn.classList.add('has-filter') : btn.classList.remove('has-filter');
+    }
+  } else {
+    ordActiveFilters[group] = null;
+    document.querySelectorAll('#ord-fd-' + group + ' input[type=radio]').forEach(r => r.checked = false);
+    const btn = document.querySelector('#ord-fd-' + group + ' .filter-dd-btn');
+    if (btn) { btn.classList.remove('has-filter'); btn.innerHTML = ordFilterLabels[group] + ' <span class="filter-dd-arrow">▾</span>'; }
+  }
+  renderOrdFilterTags();
+  filterOrders();
+}
+
+function renderOrdFilterTags() {
+  const row = document.getElementById('ordTagsRow');
+  if (!row) return;
+  const tags = [];
+  Object.entries(ordActiveFilters).forEach(([g, v]) => {
+    if (!v) return;
+    if (Array.isArray(v)) {
+      v.forEach(val => tags.push('<span class="filter-tag">' + val + ' <span class="filter-tag-x" onclick="removeOrdFilter(\'' + g + '\',\'' + val + '\')">×</span></span>'));
+    } else {
+      tags.push('<span class="filter-tag">' + v.label + ' <span class="filter-tag-x" onclick="removeOrdFilter(\'' + g + '\')">×</span></span>');
+    }
+  });
+  row.innerHTML = tags.join('');
+  row.className = 'ord-tags-row' + (tags.length ? ' open' : '');
+}
+
+function filterOrders() {
+  const q        = (document.getElementById('ordSearchInput')?.value || '').toLowerCase();
+  const statuses = ordActiveFilters.status;
+  const chs      = ordActiveFilters.ch;
+  const period   = Array.isArray(ordActiveFilters.period) ? null : ordActiveFilters.period?.value || '';
+  const rows = document.querySelectorAll('#ordTbody .ord-row');
+  let visible = 0;
+  rows.forEach(row => {
+    const text = row.textContent.toLowerCase();
+    let dateOk = true;
+    if (period) {
+      const cut = new Date(); cut.setMonth(cut.getMonth() - parseInt(period));
+      dateOk = new Date(row.dataset.date) >= cut;
+    }
+    const statusOk = !statuses.length || statuses.includes(row.dataset.status);
+    const chOk     = !chs.length     || chs.includes(row.dataset.ch);
+    const match = (!q || text.includes(q)) && statusOk && chOk && dateOk;
+    const detail = row.nextElementSibling;
+    row.style.display = match ? '' : 'none';
+    if (detail?.classList.contains('ord-detail-row')) detail.style.display = 'none';
+    if (match) visible++;
+  });
+  document.getElementById('ordEmpty').style.display = visible === 0 ? 'block' : 'none';
+}
+
+function resetOrdFilter() {
+  document.getElementById('ordSearchInput').value = '';
+  ordActiveFilters.period = null;
+  ordActiveFilters.status = [];
+  ordActiveFilters.ch = [];
+  document.querySelectorAll('#ord-fd-period input[type=radio]').forEach(r => r.checked = false);
+  document.querySelectorAll('#ord-fd-status input[type=checkbox], #ord-fd-ch input[type=checkbox]').forEach(cb => cb.checked = false);
+  ['period','status','ch'].forEach(g => {
+    const btn = document.querySelector('#ord-fd-' + g + ' .filter-dd-btn');
+    if (btn) { btn.classList.remove('has-filter'); btn.innerHTML = ordFilterLabels[g] + ' <span class="filter-dd-arrow">▾</span>'; }
+  });
+  renderOrdFilterTags();
+  filterOrders();
+}
+
+// ── URL 파라미터 자동 필터 적용 (?tag= 자동태그 / ?manualtag= 수동태그) ───
+(function() {
+  const params = new URLSearchParams(location.search);
+  const autoTag   = params.get('tag');
+  const manualTag = params.get('manualtag');
+  if (!autoTag && !manualTag) return;
+  showScreen('list');
+  if (autoTag) {
+    const cb = document.querySelector(`#fd-autotag input[value="${autoTag}"]`);
+    if (cb) { cb.checked = true; onFilterChange('autotag', cb); }
+  }
+  if (manualTag) {
+    const cb = document.querySelector(`#fd-manualtag input[value="${manualTag}"]`);
+    if (cb) { cb.checked = true; onFilterChange('manualtag', cb); }
+  }
+})();
+
+// ── 수동 태그 추가 ────────────────────────────────────────────────────
+function toggleManualTagAdd() {
+  const wrap = document.getElementById('manualTagAdd');
+  if (!wrap) return;
+  wrap.classList.toggle('open');
+  if (wrap.classList.contains('open')) document.getElementById('manualTagInput')?.focus();
+}
+function addManualTag() {
+  const input = document.getElementById('manualTagInput');
+  const val = (input?.value || '').trim();
+  if (!val) return;
+  const wrap = document.getElementById('autoTagWrap');
+  if (!wrap) return;
+  const tag = document.createElement('span');
+  tag.className = 'tag manual-tag';
+  tag.innerHTML = val + ' <span style="cursor:pointer;margin-left:3px;opacity:.6;" onclick="this.parentElement.remove()">×</span>';
+  wrap.appendChild(tag);
+  if (input) input.value = '';
+  showToast('success','태그 추가','"' + val + '" 수동 태그가 추가되었습니다.');
+}
+
+// ── CS 담당자 배정 ───────────────────────────────────────────────────
+function openCsAssign() {
+  document.getElementById('csAssignMemo').value = '';
+  openModal('modal-cs-assign');
+}
+
+function selectCsAssign(el) {
+  document.querySelectorAll('.cs-assign-item').forEach(i => i.classList.remove('selected'));
+  el.classList.add('selected');
+  el.querySelector('input[type=radio]').checked = true;
+}
+
+let _csAssignFromEdit = false;
+function openCsAssignFromEdit() {
+  _csAssignFromEdit = true;
+  closeModal('modal-edit-info');
+  openModal('modal-cs-assign');
+}
+
+function confirmCsAssign() {
+  const selected = document.querySelector('input[name="csAssignee"]:checked');
+  if (!selected) { showToast('warning', '담당자 미선택', '배정할 담당자를 선택해주세요.'); return; }
+  const item = selected.closest('.cs-assign-item');
+  const name = item.querySelector('.cs-assign-name').textContent;
+  const dept = item.querySelector('.cs-assign-dept').textContent;
+  closeModal('modal-cs-assign');
+  if (_csAssignFromEdit) {
+    _csAssignFromEdit = false;
+    document.getElementById('editInfoAssigneeName').textContent = name;
+    document.getElementById('editInfoAssigneeDept').textContent = dept;
+    openModal('modal-edit-info');
+  } else {
+    showToast('success', '담당자 배정 완료', `${name} (${dept})으로 배정되었습니다.`);
+  }
+}
+
+// ── 수신거부 처리 ────────────────────────────────────────────────────
+function openOptout() {
+  document.querySelectorAll('input[name="optoutCh"]').forEach(c => c.checked = false);
+  document.getElementById('optoutReason').value = '';
+  document.getElementById('optoutAgree').checked = false;
+  document.getElementById('optoutSubmitBtn').disabled = true;
+  document.getElementById('optoutAllBtn').textContent = '전체 선택';
+  const lbl = document.getElementById('optoutConfirmLabel');
+  lbl.style.opacity = '.4';
+  lbl.style.pointerEvents = 'none';
+  openModal('modal-optout');
+}
+
+function toggleAllOptout(btn) {
+  const cbs = document.querySelectorAll('input[name="optoutCh"]:not(:disabled)');
+  const allChecked = [...cbs].every(c => c.checked);
+  cbs.forEach(c => c.checked = !allChecked);
+  btn.textContent = allChecked ? '전체 선택' : '전체 해제';
+  onOptoutChange();
+}
+
+function onOptoutChange() {
+  const cbs = document.querySelectorAll('input[name="optoutCh"]:not(:disabled)');
+  const anyChecked = [...cbs].some(c => c.checked);
+  const allChecked = [...cbs].every(c => c.checked);
+  const lbl = document.getElementById('optoutConfirmLabel');
+  lbl.style.opacity = anyChecked ? '1' : '.4';
+  lbl.style.pointerEvents = anyChecked ? 'auto' : 'none';
+  if (!anyChecked) document.getElementById('optoutAgree').checked = false;
+  document.getElementById('optoutAllBtn').textContent = allChecked ? '전체 해제' : '전체 선택';
+  const agreed = document.getElementById('optoutAgree').checked;
+  document.getElementById('optoutSubmitBtn').disabled = !(anyChecked && agreed);
+}
+
+function confirmOptout() {
+  const chMap = { email: '이메일', kakao: '알림톡', sms: 'SMS', push: '앱 푸시' };
+  const channels = [...document.querySelectorAll('input[name="optoutCh"]:checked')].map(c => chMap[c.value]).join(', ');
+  closeModal('modal-optout');
+  showToast('success', '수신거부 처리 완료', `${channels} 수신거부가 처리되었습니다.`);
+}
+
 // ── 엑셀 다운로드 사유 확인 ─────────────────────────────────────────
 function confirmExcelDownload() {
   const category = document.getElementById('excelReasonCategory').value;
@@ -2175,6 +3879,46 @@ function confirmExcelDownload() {
   if (!agree) { alert('개인정보 처리 동의가 필요합니다.'); return; }
   closeModal('excelReasonModal');
   showToast('success', '다운로드 시작', '고객 목록 파일을 준비 중입니다. 잠시 후 자동 다운로드됩니다.');
+}
+
+// ── 리텐션 시작 모달 ─────────────────────────────────────────────────
+const RETENTION_DESC = {
+  churn_seq:    '① <strong>즉시</strong> 💬 — 개인화 혜택 메시지 + 쿠폰 발송<br>② <strong>D+3</strong> 📱 — SMS 재시도 발송 (미오픈 고객 대상)<br>③ <strong>D+7</strong> 👤 — CS 팀 자동 배정 + 전화 상담 요청<br>④ <strong>D+14</strong> 💬 — 최대 할인 오퍼 + 피드백 요청',
+  vip_campaign: '① <strong>즉시</strong> 💬 — VIP 등급 전환 혜택 안내 + 포인트 2배 쿠폰 발송 (1회성)',
+  welcome_seq:  '① <strong>D+1</strong> 📧 — 웰컴 메시지 + 브랜드 스토리 소개<br>② <strong>D+3</strong> 💬 — 첫 구매 혜택 쿠폰 발송<br>③ <strong>D+7</strong> 🔔 — 맞춤 추천 상품 안내',
+  cs_auto:      '① <strong>즉시</strong> 👤 — CS 담당자 자동 배정 + 내부 알림<br>② <strong>D+1</strong> 💬 — 고객 만족 확인 + 보상 혜택 발송',
+  repurchase:   '① <strong>즉시</strong> 💬 — 재구매 유도 알림톡 발송. 예측 구매일(2026-06-12) 기준 발동.<br>아래에서 쿠폰 첨부 여부를 선택하세요.',
+};
+
+function updateRetentionDesc() {
+  const val = document.querySelector('input[name="retentionScenario"]:checked')?.value;
+  const box = document.getElementById('retentionDescBox');
+  const coupon = document.getElementById('retentionCouponRow');
+  const btn = document.getElementById('retentionStartBtn');
+  if (val) {
+    box.style.display = 'block';
+    box.innerHTML = '<strong>시나리오 흐름</strong><br><span style="font-size:12px;line-height:1.8;">' + (RETENTION_DESC[val] || '') + '</span>';
+    coupon.style.display = val === 'reorder' ? 'block' : 'none';
+    btn.disabled = false;
+  } else {
+    box.style.display = 'none';
+    coupon.style.display = 'none';
+    btn.disabled = true;
+  }
+}
+
+function startRetention() {
+  const val = document.querySelector('input[name="retentionScenario"]:checked')?.value;
+  if (!val) return;
+  const labels = { churn_seq:'이탈 방지 시퀀스', vip_campaign:'VIP 전환 유도 캠페인', welcome_seq:'신규 고객 웰컴 시퀀스', cs_auto:'CS 자동 배정 + 회복 메시지', repurchase:'재구매 리마인드' };
+  closeModal('modal-retention');
+  showToast('success', '리텐션 시작', `박서연 고객에게 [${labels[val]}]이 시작되었습니다.`);
+}
+
+// ── 정보 수정 저장 ───────────────────────────────────────────────────
+function saveEditInfo() {
+  closeModal('modal-edit-info');
+  showToast('success', '저장 완료', '고객 정보가 업데이트되었습니다.');
 }
 </script>
 </body>

@@ -439,7 +439,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr onclick="showToast('info','문의 상세','준비 중입니다.')" style="cursor:pointer">
+          <tr onclick="goTicketDetail(this)" style="cursor:pointer">
             <td><span class="ticket-id">#TK-2501</span></td>
             <td>삼성SDS</td>
             <td class="ticket-subject">API 연동 오류로 데이터 미전송</td>
@@ -450,7 +450,7 @@
             <td>2026-05-28 09:12</td>
             <td style="color:var(--danger);font-weight:600">2026-05-28</td>
           </tr>
-          <tr onclick="showToast('info','문의 상세','준비 중입니다.')" style="cursor:pointer">
+          <tr onclick="goTicketDetail(this)" style="cursor:pointer">
             <td><span class="ticket-id">#TK-2499</span></td>
             <td>LG CNS</td>
             <td class="ticket-subject">대시보드 로딩 속도 지연 문의</td>
@@ -461,7 +461,7 @@
             <td>2026-05-27 15:44</td>
             <td>2026-05-29</td>
           </tr>
-          <tr onclick="showToast('info','문의 상세','준비 중입니다.')" style="cursor:pointer">
+          <tr onclick="goTicketDetail(this)" style="cursor:pointer">
             <td><span class="ticket-id">#TK-2497</span></td>
             <td>현대오토에버</td>
             <td class="ticket-subject">월별 리포트 CSV 다운로드 오류</td>
@@ -472,7 +472,7 @@
             <td>2026-05-27 11:30</td>
             <td>2026-05-30</td>
           </tr>
-          <tr onclick="showToast('info','문의 상세','준비 중입니다.')" style="cursor:pointer">
+          <tr onclick="goTicketDetail(this)" style="cursor:pointer">
             <td><span class="ticket-id">#TK-2495</span></td>
             <td>카카오엔터프라이즈</td>
             <td class="ticket-subject">사용자 권한 설정 변경 요청</td>
@@ -483,7 +483,7 @@
             <td>2026-05-27 10:05</td>
             <td style="color:var(--danger);font-weight:600">2026-05-28</td>
           </tr>
-          <tr onclick="showToast('info','문의 상세','준비 중입니다.')" style="cursor:pointer">
+          <tr onclick="goTicketDetail(this)" style="cursor:pointer">
             <td><span class="ticket-id">#TK-2493</span></td>
             <td>네이버클라우드</td>
             <td class="ticket-subject">멀티 테넌트 설정 가이드 요청</td>
@@ -494,7 +494,7 @@
             <td>2026-05-26 14:22</td>
             <td>2026-05-28</td>
           </tr>
-          <tr onclick="showToast('info','문의 상세','준비 중입니다.')" style="cursor:pointer">
+          <tr onclick="goTicketDetail(this)" style="cursor:pointer">
             <td><span class="ticket-id">#TK-2490</span></td>
             <td>두산디지털이노베이션</td>
             <td class="ticket-subject">슬랙 연동 웹훅 토큰 만료</td>
@@ -505,7 +505,7 @@
             <td>2026-05-26 09:55</td>
             <td>2026-05-29</td>
           </tr>
-          <tr onclick="showToast('info','문의 상세','준비 중입니다.')" style="cursor:pointer">
+          <tr onclick="goTicketDetail(this)" style="cursor:pointer">
             <td><span class="ticket-id">#TK-2488</span></td>
             <td>SK하이닉스</td>
             <td class="ticket-subject">세금계산서 재발행 요청</td>
@@ -516,7 +516,7 @@
             <td>2026-05-25 16:40</td>
             <td>2026-05-31</td>
           </tr>
-          <tr onclick="showToast('info','문의 상세','준비 중입니다.')" style="cursor:pointer">
+          <tr onclick="goTicketDetail(this)" style="cursor:pointer">
             <td><span class="ticket-id">#TK-2485</span></td>
             <td>GS리테일</td>
             <td class="ticket-subject">모바일 앱 푸시 수신 안됨</td>
@@ -527,7 +527,7 @@
             <td>2026-05-25 13:15</td>
             <td style="color:var(--danger);font-weight:600">2026-05-28</td>
           </tr>
-          <tr onclick="showToast('info','문의 상세','준비 중입니다.')" style="cursor:pointer">
+          <tr onclick="goTicketDetail(this)" style="cursor:pointer">
             <td><span class="ticket-id">#TK-2481</span></td>
             <td>롯데이노베이트</td>
             <td class="ticket-subject">데이터 마이그레이션 일정 조율</td>
@@ -538,7 +538,7 @@
             <td>2026-05-24 11:00</td>
             <td>2026-05-27</td>
           </tr>
-          <tr onclick="showToast('info','문의 상세','준비 중입니다.')" style="cursor:pointer">
+          <tr onclick="goTicketDetail(this)" style="cursor:pointer">
             <td><span class="ticket-id">#TK-2478</span></td>
             <td>CJ올리브네트웍스</td>
             <td class="ticket-subject">계정 이메일 변경 후 로그인 불가</td>
@@ -1225,6 +1225,15 @@ document.addEventListener('DOMContentLoaded', () => {
 window.addEventListener('popstate', e => {
   showScreen(e.state?.screen || 'ticket', false);
 });
+
+/* ═══════════════════════════════════════════
+   TICKET — 문의 상세 이동
+═══════════════════════════════════════════ */
+function goTicketDetail(row) {
+  const idEl = row.querySelector('.ticket-id');
+  const rawId = idEl ? idEl.textContent.replace('#', '').trim() : '';
+  location.href = 'CRM_문의상세.html' + (rawId ? '?id=' + rawId : '');
+}
 
 /* ═══════════════════════════════════════════
    CHURN — 위험도 탭

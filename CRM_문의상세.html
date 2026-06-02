@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>문의 상세 — ENTWIZ CRM</title>
+  <link rel="stylesheet" href="crm-layout.css" />
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-light: #ede9fe;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --info: #3b82f6;
+      --border: #e5e7eb;
+      --text: #111827;
+      --text-sub: #374151;
+      --text-muted: #6b7280;
+      --bg: #f9fafb;
+      --surface: #ffffff;
+      --radius: 10px;
+      --radius-sm: 7px;
+    }
+
+    body { padding: 0; margin: 0; }
+
+    /* ── 배지 ── */
+    .badge {
+      display: inline-flex; align-items: center;
+      padding: 3px 9px; border-radius: 20px;
+      font-size: 0.75rem; font-weight: 600; white-space: nowrap;
+    }
+    .badge-danger  { background: #fee2e2; color: #dc2626; }
+    .badge-warning { background: #fef3c7; color: #d97706; }
+    .badge-info    { background: #dbeafe; color: #2563eb; }
+    .badge-success { background: #d1fae5; color: #059669; }
+    .badge-muted   { background: #f3f4f6; color: #6b7280; }
+    .badge-purple  { background: var(--primary-light); color: var(--primary); }
+
+    /* ── 버튼 ── */
+    .btn {
+      padding: 8px 18px; border-radius: 8px; border: none;
+      cursor: pointer; font-size: 0.875rem; font-weight: 600;
+      transition: opacity .2s, transform .1s;
+    }
+    .btn:active { transform: scale(.97); }
+    .btn-primary  { background: var(--primary); color: #fff; }
+    .btn-primary:hover { opacity: .9; }
+    .btn-secondary { background: #fff; border: 1px solid var(--border); color: var(--text-sub); }
+    .btn-secondary:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-danger   { background: var(--danger); color: #fff; }
+    .btn-success  { background: var(--success); color: #fff; }
+    .btn-ghost    { background: transparent; color: var(--text-muted); }
+    .btn-ghost:hover { background: var(--bg); color: var(--text); }
+    .btn-sm { padding: 5px 12px; font-size: 0.78rem; }
+
+    /* ── 레이아웃 ── */
+    .detail-layout {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 20px;
+      align-items: start;
+    }
+
+    /* ── 헤더 카드 ── */
+    .inquiry-header-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-bottom: 16px;
+    }
+    .inquiry-id-row {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 10px;
+    }
+    .inquiry-id {
+      font-family: monospace; font-size: 0.85rem;
+      color: var(--text-muted); background: var(--bg);
+      padding: 3px 8px; border-radius: 5px;
+      border: 1px solid var(--border);
+    }
+    .inquiry-title {
+      font-size: 1.15rem; font-weight: 700;
+      color: var(--text); margin-bottom: 12px;
+    }
+    .inquiry-meta-row {
+      display: flex; flex-wrap: wrap; gap: 18px;
+      font-size: 0.8rem; color: var(--text-muted);
+    }
+    .inquiry-meta-row .meta-item {
+      display: flex; align-items: center; gap: 5px;
+    }
+    .inquiry-meta-row .meta-label { font-weight: 600; color: var(--text-sub); }
+    .inquiry-actions-row {
+      display: flex; gap: 8px; margin-top: 16px;
+      padding-top: 16px; border-top: 1px solid var(--border);
+    }
+
+    /* ── 대화 스레드 ── */
+    .thread-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .thread-card-title {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.875rem; font-weight: 700; color: var(--text);
+      background: #fafafa;
+    }
+    .thread-list { padding: 0; }
+
+    .msg-item {
+      display: flex; gap: 12px;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .msg-item:last-child { border-bottom: none; }
+    .msg-item.agent-msg { background: #f8faff; }
+    .msg-avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .msg-avatar.customer { background: #dbeafe; color: #2563eb; }
+    .msg-avatar.agent    { background: #d1fae5; color: #059669; }
+    .msg-avatar.system   { background: #f3f4f6; color: #6b7280; }
+    .msg-body { flex: 1; }
+    .msg-header {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 6px;
+    }
+    .msg-name { font-weight: 700; font-size: 0.875rem; color: var(--text); }
+    .msg-role { font-size: 0.75rem; color: var(--text-muted); }
+    .msg-time { font-size: 0.75rem; color: var(--text-muted); margin-left: auto; }
+    .msg-text {
+      font-size: 0.875rem; color: var(--text-sub);
+      line-height: 1.6; white-space: pre-wrap;
+    }
+    .msg-text.system-text {
+      color: var(--text-muted); font-style: italic; font-size: 0.8rem;
+    }
+    .msg-attachments {
+      display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;
+    }
+    .attach-chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 10px; border-radius: 6px;
+      border: 1px solid var(--border); background: var(--bg);
+      font-size: 0.78rem; color: var(--text-sub); cursor: pointer;
+    }
+    .attach-chip:hover { border-color: var(--primary); color: var(--primary); }
+
+    /* ── 답변 작성 카드 ── */
+    .reply-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .reply-card-title {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.875rem; font-weight: 700; color: var(--text);
+      background: #fafafa;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .reply-tabs {
+      display: flex; gap: 4px;
+    }
+    .reply-tab {
+      padding: 4px 12px; border-radius: 6px;
+      font-size: 0.78rem; font-weight: 600; cursor: pointer;
+      color: var(--text-muted);
+      border: 1px solid transparent;
+    }
+    .reply-tab.active {
+      background: var(--primary-light); color: var(--primary);
+      border-color: var(--primary);
+    }
+    .reply-body { padding: 16px 20px; }
+    .reply-textarea {
+      width: 100%; min-height: 120px;
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      padding: 12px 14px; font-size: 0.875rem; color: var(--text);
+      resize: vertical; outline: none; font-family: inherit;
+      box-sizing: border-box;
+      transition: border-color .2s;
+    }
+    .reply-textarea:focus { border-color: var(--primary); }
+    .reply-footer {
+      display: flex; align-items: center; gap: 8px;
+      margin-top: 10px;
+    }
+    .reply-footer .spacer { flex: 1; }
+    .reply-status-select {
+      padding: 6px 10px; border-radius: 7px;
+      border: 1px solid var(--border); font-size: 0.8rem;
+      color: var(--text); background: var(--bg); outline: none;
+    }
+
+    /* ── 사이드바 카드 ── */
+    .side-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+    .side-card-title {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.8rem; font-weight: 700; color: var(--text);
+      background: #fafafa;
+    }
+    .side-card-body { padding: 14px 16px; }
+    .side-row {
+      display: flex; align-items: flex-start;
+      gap: 8px; margin-bottom: 10px;
+      font-size: 0.8rem;
+    }
+    .side-row:last-child { margin-bottom: 0; }
+    .side-label {
+      width: 68px; flex-shrink: 0;
+      color: var(--text-muted); font-weight: 500; padding-top: 1px;
+    }
+    .side-val { color: var(--text-sub); flex: 1; line-height: 1.5; }
+    .side-val.bold { font-weight: 700; color: var(--text); }
+
+    /* 고객 프로필 미니 카드 */
+    .customer-mini {
+      display: flex; align-items: center; gap: 10px;
+      padding: 14px 16px;
+    }
+    .cust-avatar {
+      width: 42px; height: 42px; border-radius: 50%;
+      background: #dbeafe; color: #2563eb;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; font-weight: 700; flex-shrink: 0;
+    }
+    .cust-name { font-weight: 700; font-size: 0.9rem; color: var(--text); }
+    .cust-sub  { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+    .cust-link {
+      display: inline-block; margin-top: 4px;
+      font-size: 0.75rem; color: var(--primary);
+      text-decoration: none; font-weight: 600;
+    }
+    .cust-link:hover { text-decoration: underline; }
+
+    /* SLA 게이지 */
+    .sla-bar-wrap { margin-top: 6px; }
+    .sla-bar-track {
+      height: 6px; background: #e5e7eb; border-radius: 3px;
+      overflow: hidden; margin-bottom: 4px;
+    }
+    .sla-bar-fill {
+      height: 100%; border-radius: 3px;
+    }
+    .sla-label { font-size: 0.75rem; color: var(--text-muted); }
+
+    /* 관련 주문 */
+    .order-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 10px; border-radius: 7px;
+      border: 1px solid var(--border); background: var(--bg);
+      font-size: 0.78rem; font-weight: 600; color: var(--text-sub);
+      cursor: pointer; margin-bottom: 6px; width: 100%; box-sizing: border-box;
+    }
+    .order-chip:hover { border-color: var(--primary); color: var(--primary); }
+    .order-chip .order-id { font-family: monospace; color: var(--text-muted); font-weight: 400; }
+
+    /* ── 만족도 스타 ── */
+    .stars { color: #f59e0b; }
+
+    /* ── 이력 타임라인 (사이드바) ── */
+    .mini-timeline { padding: 12px 16px; }
+    .mini-tl-item {
+      display: flex; gap: 10px; margin-bottom: 12px;
+      font-size: 0.78rem;
+    }
+    .mini-tl-item:last-child { margin-bottom: 0; }
+    .mini-tl-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--primary); flex-shrink: 0; margin-top: 4px;
+    }
+    .mini-tl-dot.warn { background: var(--warning); }
+    .mini-tl-dot.gray { background: #94a3b8; }
+    .mini-tl-text { color: var(--text-sub); line-height: 1.5; }
+    .mini-tl-date { color: var(--text-muted); font-size: 0.72rem; }
+  </style>
+</head>
+<body>
+
+<main class="content">
+
+  <!-- 브레드크럼 -->
+  <div class="breadcrumb">
+    <span>ENTWIZ CRM</span>
+    <span class="sep">›</span>
+    <span onclick="location.href='CRM_고객지원.html#ticket'" style="cursor:pointer;color:var(--primary);">고객 지원</span>
+    <span class="sep">›</span>
+    <span onclick="location.href='CRM_고객지원.html#ticket'" style="cursor:pointer;color:var(--primary);">문의 목록</span>
+    <span class="sep">›</span>
+    <span class="curr" id="bcTicketId">문의 상세</span>
+  </div>
+
+  <!-- 페이지 헤더 -->
+  <div class="page-header" style="margin-bottom:20px;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <button class="btn btn-secondary btn-sm" onclick="history.back()">← 목록으로</button>
+    </div>
+    <div class="page-actions">
+      <button class="btn btn-secondary btn-sm" onclick="showToast('info','인쇄','인쇄 미리보기를 불러옵니다.')">🖨️ 인쇄</button>
+      <button class="btn btn-secondary btn-sm" onclick="showToast('info','내보내기','PDF로 내보냅니다.')">⬇️ 내보내기</button>
+    </div>
+  </div>
+
+  <!-- 2열 레이아웃 -->
+  <div class="detail-layout">
+
+    <!-- ── 왼쪽: 메인 영역 ── -->
+    <div>
+
+      <!-- 문의 헤더 카드 -->
+      <div class="inquiry-header-card">
+        <div class="inquiry-id-row">
+          <span class="inquiry-id">#TK-2510</span>
+          <span class="badge badge-success">완료</span>
+          <span class="badge badge-info">보통</span>
+          <span class="badge badge-muted">배송 문의</span>
+          <span class="badge badge-info">💬 채팅</span>
+        </div>
+        <div class="inquiry-title">배송 현황 문의</div>
+        <div class="inquiry-meta-row">
+          <div class="meta-item">
+            <span class="meta-label">접수일시</span>
+            <span>2026-05-10 14:23</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">완료일시</span>
+            <span>2026-05-10 14:31</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">소요시간</span>
+            <span>8분</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">만족도</span>
+            <span class="stars">★★★★★</span>
+            <span style="font-size:0.78rem;color:var(--text-muted);">(5.0)</span>
+          </div>
+        </div>
+        <div class="inquiry-actions-row">
+          <button class="btn btn-secondary btn-sm" onclick="showToast('info','재오픈','문의를 재오픈합니다.')">🔄 재오픈</button>
+          <button class="btn btn-secondary btn-sm" onclick="showToast('info','이관','다른 담당자에게 이관합니다.')">↗️ 이관</button>
+          <button class="btn btn-secondary btn-sm" onclick="showToast('info','병합','다른 문의와 병합합니다.')">🔗 병합</button>
+          <div style="flex:1;"></div>
+          <button class="btn btn-ghost btn-sm" style="color:var(--danger);" onclick="showToast('warning','삭제','문의를 삭제하려면 확인이 필요합니다.')">🗑️ 삭제</button>
+        </div>
+      </div>
+
+      <!-- 대화 스레드 -->
+      <div class="thread-card">
+        <div class="thread-card-title">💬 대화 내역 <span style="color:var(--text-muted);font-weight:400;font-size:0.8rem;">· 4건</span></div>
+        <div class="thread-list">
+
+          <!-- 고객 첫 문의 -->
+          <div class="msg-item">
+            <div class="msg-avatar customer">박</div>
+            <div class="msg-body">
+              <div class="msg-header">
+                <span class="msg-name">박서연</span>
+                <span class="msg-role">고객</span>
+                <span class="msg-time">2026-05-10 14:23</span>
+              </div>
+              <div class="msg-text">안녕하세요. 지난주에 주문한 제품 배송 상태가 궁금해서 문의드립니다.
+
+주문번호는 ORD-20260503-0218이고, 현재 어느 단계에 있는지 확인 부탁드립니다. 앱에서 조회가 안 되고 있어요.</div>
+            </div>
+          </div>
+
+          <!-- 상담원 답변 -->
+          <div class="msg-item agent-msg">
+            <div class="msg-avatar agent">이</div>
+            <div class="msg-body">
+              <div class="msg-header">
+                <span class="msg-name">이마케터</span>
+                <span class="msg-role badge badge-success" style="padding:2px 7px;font-size:0.7rem;">상담원</span>
+                <span class="msg-time">2026-05-10 14:26</span>
+              </div>
+              <div class="msg-text">안녕하세요, 박서연 고객님! 이마케터 상담원입니다. 문의 주셔서 감사합니다.
+
+주문번호 ORD-20260503-0218을 확인해 드렸습니다.
+
+📦 배송 현황: <strong>배송 중</strong>
+🚚 택배사: CJ대한통운
+📋 운송장번호: 123456789012
+🕐 예상 도착: 2026-05-11 (내일) 오후 중
+
+현재 출발지 터미널을 출발하여 고객님 지역 배송센터로 이동 중입니다. 내일 중 배송 완료될 예정입니다.
+
+앱 조회가 안 되셨다면 운송장번호로 직접 조회해 보시거나, 잠시 후 재시도해 주세요. 추가 문의 사항이 있으시면 알려주세요! 😊</div>
+            </div>
+          </div>
+
+          <!-- 고객 재문의 -->
+          <div class="msg-item">
+            <div class="msg-avatar customer">박</div>
+            <div class="msg-body">
+              <div class="msg-header">
+                <span class="msg-name">박서연</span>
+                <span class="msg-role">고객</span>
+                <span class="msg-time">2026-05-10 14:29</span>
+              </div>
+              <div class="msg-text">빠른 답변 감사해요! 내일 배송이군요. 운송장번호로 조회해 볼게요. 감사합니다 :)</div>
+            </div>
+          </div>
+
+          <!-- 시스템 이벤트 -->
+          <div class="msg-item" style="background:#f8f9fb;">
+            <div class="msg-avatar system" style="font-size:16px;">✅</div>
+            <div class="msg-body">
+              <div class="msg-header">
+                <span class="msg-name" style="color:var(--text-muted);">시스템</span>
+                <span class="msg-time">2026-05-10 14:31</span>
+              </div>
+              <div class="msg-text system-text">문의가 완료(CLOSED) 처리되었습니다. 담당자: 이마케터 · 소요시간: 8분 · 만족도: ★★★★★</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 답변 작성 -->
+      <div class="reply-card">
+        <div class="reply-card-title">
+          <span>✏️ 추가 답변 작성</span>
+          <div class="reply-tabs" style="margin-left:auto;">
+            <div class="reply-tab active" onclick="setReplyTab(this)">답변</div>
+            <div class="reply-tab" onclick="setReplyTab(this)">내부 메모</div>
+          </div>
+        </div>
+        <div class="reply-body">
+          <textarea class="reply-textarea" placeholder="고객에게 보낼 답변을 작성하세요…&#10;(Ctrl+Enter로 전송)"></textarea>
+          <div class="reply-footer">
+            <button class="btn btn-secondary btn-sm" onclick="showToast('info','첨부','파일 첨부 기능은 준비 중입니다.')">📎 파일 첨부</button>
+            <button class="btn btn-secondary btn-sm" onclick="showToast('info','템플릿','답변 템플릿을 선택하세요.')">📋 템플릿</button>
+            <div class="spacer"></div>
+            <span style="font-size:0.78rem;color:var(--text-muted);">전송 후 상태:</span>
+            <select class="reply-status-select">
+              <option>완료로 변경</option>
+              <option>처리중 유지</option>
+              <option>대기중으로 변경</option>
+            </select>
+            <button class="btn btn-primary btn-sm" onclick="sendReply()">전송 →</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── 오른쪽: 사이드바 ── -->
+    <div>
+
+      <!-- 고객 정보 -->
+      <div class="side-card">
+        <div class="side-card-title">👤 고객 정보</div>
+        <div class="customer-mini">
+          <div class="cust-avatar">박</div>
+          <div>
+            <div class="cust-name">박서연</div>
+            <div class="cust-sub">Gold 등급 · 건강도 72점</div>
+            <a class="cust-link" href="CRM_고객관리.html#detail">고객 상세 보기 →</a>
+          </div>
+        </div>
+        <div class="side-card-body" style="padding-top:0;border-top:1px solid var(--border);margin-top:0;padding-top:12px;">
+          <div class="side-row">
+            <span class="side-label">연락처</span>
+            <span class="side-val">010-3948-2751</span>
+          </div>
+          <div class="side-row">
+            <span class="side-label">이메일</span>
+            <span class="side-val">seo-yeon@email.com</span>
+          </div>
+          <div class="side-row">
+            <span class="side-label">총 구매</span>
+            <span class="side-val bold">127만원 · 18회</span>
+          </div>
+          <div class="side-row">
+            <span class="side-label">총 문의</span>
+            <span class="side-val">3건 (완료 3건)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 문의 상세 정보 -->
+      <div class="side-card">
+        <div class="side-card-title">📋 문의 정보</div>
+        <div class="side-card-body">
+          <div class="side-row">
+            <span class="side-label">담당자</span>
+            <span class="side-val" style="display:flex;align-items:center;gap:6px;">
+              <span style="width:22px;height:22px;border-radius:50%;background:#059669;color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;">이</span>
+              이마케터
+            </span>
+          </div>
+          <div class="side-row">
+            <span class="side-label">채널</span>
+            <span class="side-val"><span class="badge badge-info" style="font-size:0.7rem;">💬 채팅</span></span>
+          </div>
+          <div class="side-row">
+            <span class="side-label">카테고리</span>
+            <span class="side-val">배송 문의</span>
+          </div>
+          <div class="side-row">
+            <span class="side-label">우선순위</span>
+            <span class="side-val"><span class="badge badge-info" style="font-size:0.7rem;">보통</span></span>
+          </div>
+          <div class="side-row">
+            <span class="side-label">상태</span>
+            <span class="side-val"><span class="badge badge-success" style="font-size:0.7rem;">완료</span></span>
+          </div>
+          <div class="side-row">
+            <span class="side-label">접수</span>
+            <span class="side-val">2026-05-10 14:23</span>
+          </div>
+          <div class="side-row">
+            <span class="side-label">완료</span>
+            <span class="side-val">2026-05-10 14:31</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLA 정보 -->
+      <div class="side-card">
+        <div class="side-card-title">⏱️ SLA 현황</div>
+        <div class="side-card-body">
+          <div class="side-row" style="margin-bottom:4px;">
+            <span class="side-label">최초 응답</span>
+            <span class="side-val bold" style="color:var(--success);">3분 <span style="color:var(--text-muted);font-weight:400;">(목표: 10분)</span></span>
+          </div>
+          <div class="sla-bar-wrap" style="margin-bottom:14px;">
+            <div class="sla-bar-track">
+              <div class="sla-bar-fill" style="width:30%;background:var(--success);"></div>
+            </div>
+            <div class="sla-label">목표 대비 30% 소요 — 우수</div>
+          </div>
+          <div class="side-row" style="margin-bottom:4px;">
+            <span class="side-label">해결 시간</span>
+            <span class="side-val bold" style="color:var(--success);">8분 <span style="color:var(--text-muted);font-weight:400;">(목표: 2시간)</span></span>
+          </div>
+          <div class="sla-bar-wrap">
+            <div class="sla-bar-track">
+              <div class="sla-bar-fill" style="width:7%;background:var(--success);"></div>
+            </div>
+            <div class="sla-label">목표 대비 7% 소요 — 우수</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 관련 주문 -->
+      <div class="side-card">
+        <div class="side-card-title">🛍️ 관련 주문</div>
+        <div class="side-card-body">
+          <div class="order-chip" onclick="showToast('info','주문 상세','커머스 관리 > 주문 상세로 이동합니다.')">
+            <span>📦</span>
+            <span>나이트 크림 세트 외 2건</span>
+            <span class="order-id">ORD-20260503-0218</span>
+          </div>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px;">결제금액: 87,000원 · 2026-05-03</div>
+        </div>
+      </div>
+
+      <!-- 이 고객의 다른 문의 -->
+      <div class="side-card">
+        <div class="side-card-title">📂 이 고객의 다른 문의</div>
+        <div class="mini-timeline">
+          <div class="mini-tl-item">
+            <div class="mini-tl-dot warn"></div>
+            <div>
+              <div class="mini-tl-text" style="cursor:pointer;color:var(--primary);font-weight:600;" onclick="loadInquiry('TK-2498')">배송 지연 불만 접수</div>
+              <div class="mini-tl-date">#TK-2498 · 2026-03-28 · 이메일</div>
+            </div>
+          </div>
+          <div class="mini-tl-item">
+            <div class="mini-tl-dot gray"></div>
+            <div>
+              <div class="mini-tl-text" style="cursor:pointer;color:var(--primary);font-weight:600;" onclick="loadInquiry('TK-2463')">신제품 사용 방법 문의</div>
+              <div class="mini-tl-date">#TK-2463 · 2026-01-15 · 전화</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /detail-layout -->
+
+</main>
+
+<script src="crm-layout.js"></script>
+<script src="crm-common.js"></script>
+<script>
+/* ── 현재 문의 ID (URL 파라미터 또는 기본값) ── */
+const urlParams = new URLSearchParams(location.search);
+const ticketId = urlParams.get('id') || 'TK-2510';
+
+const TICKET_DATA = {
+  'TK-2510': { id: '#TK-2510', title: '배송 현황 문의', status: '완료', customer: '박서연' },
+  'TK-2498': { id: '#TK-2498', title: '배송 지연 불만 접수', status: '완료', customer: '박서연' },
+  'TK-2463': { id: '#TK-2463', title: '신제품 사용 방법 문의', status: '완료', customer: '박서연' },
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  const t = TICKET_DATA[ticketId];
+  if (t) {
+    document.getElementById('bcTicketId').textContent = t.id + ' ' + t.title;
+  }
+});
+
+function setReplyTab(el) {
+  document.querySelectorAll('.reply-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function sendReply() {
+  const ta = document.querySelector('.reply-textarea');
+  if (!ta.value.trim()) {
+    showToast('warning', '내용 없음', '답변 내용을 입력해주세요.');
+    return;
+  }
+  showToast('success', '전송 완료', '답변이 전송되었습니다.');
+  ta.value = '';
+}
+
+function loadInquiry(id) {
+  location.href = 'CRM_문의상세.html?id=' + id;
+}
+</script>
+
+</body>
+</html>

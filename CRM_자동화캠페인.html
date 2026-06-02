@@ -142,10 +142,53 @@ select.input{cursor:pointer;}
 .backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center;}
 .backdrop.open{display:flex;}
 .modal{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow-md);padding:28px;width:520px;max-width:90vw;max-height:80vh;overflow-y:auto;}
-.modal-title{font-size:16px;font-weight:800;margin-bottom:18px;display:flex;align-items:center;gap:8px;}
 .modal-footer{display:flex;justify-content:flex-end;gap:8px;margin-top:20px;padding-top:16px;border-top:1px solid var(--border);}
 .form-row{margin-bottom:14px;}
 .form-label{font-size:12px;font-weight:700;color:var(--text-sub);margin-bottom:5px;}
+.form-hint{font-size:11px;color:var(--text-muted);margin-top:4px;}
+
+/* ── settings-card ── */
+.settings-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:16px;}
+.settings-card-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.settings-card-title{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px;}
+.settings-card-body{padding:20px;}
+
+/* ── data-table ── */
+.data-table{width:100%;border-collapse:collapse;}
+.data-table th{padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:.05em;text-transform:uppercase;border-bottom:2px solid var(--border);background:var(--bg);}
+.data-table td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle;}
+.data-table tr:last-child td{border-bottom:none;}
+.data-table tr:hover td{background:var(--bg);}
+
+/* ── modal (설정 페이지 패턴) ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal-overlay[style*="z-index:2100"]{z-index:2100;}
+.modal-box{background:var(--surface);border-radius:12px;width:600px;max-width:100%;max-height:calc(100vh - 140px);display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.22);animation:mFadeUp .18s ease;}
+@keyframes mFadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.modal-head{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:var(--surface);}
+.modal-title{font-size:16px;font-weight:700;}
+.modal-close{background:none;border:none;font-size:24px;line-height:1;color:var(--text-muted);cursor:pointer;padding:0 2px;}
+.modal-close:hover{color:var(--text);}
+.modal-body{padding:24px;overflow-y:auto;flex:1;min-height:0;}
+.modal-foot{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;background:var(--bg);border-radius:0 0 12px 12px;flex-shrink:0;}
+
+/* ── section-group ── */
+.section-group{background:var(--bg);border-radius:var(--radius);padding:16px;margin-bottom:16px;}
+.section-group:last-child{margin-bottom:0;}
+.section-group-title{font-size:12px;font-weight:700;color:var(--text-sub);margin-bottom:14px;}
+
+/* ── toggle ── */
+.toggle{position:relative;width:44px;height:24px;flex-shrink:0;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-track{position:absolute;inset:0;background:var(--border);border-radius:12px;cursor:pointer;transition:background .2s;}
+.toggle input:checked+.toggle-track{background:var(--primary);}
+.toggle-track::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:50%;transform:translateY(-50%);background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.toggle input:checked+.toggle-track::before{transform:translateY(-50%) translateX(17px);}
+.toggle-setting-row{display:flex;align-items:center;gap:12px;}
+.toggle-setting-chip{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;transition:all .2s;}
+.toggle-setting-chip.on{background:var(--success-bg);color:var(--success);border:1px solid #6EE7B7;}
+.toggle-setting-chip.off{background:var(--bg);color:var(--text-muted);border:1px solid var(--border);}
 </style>
 </head>
 <body>
@@ -1060,6 +1103,210 @@ select.input{cursor:pointer;}
   </div>
 </div>
 
+<!-- ══════════════ SCREEN: 태그 자동화 시나리오 ══════════════ -->
+<div id="screen-tagscenario" class="screen">
+  <div class="breadcrumb">
+    <span class="bc-link" onclick="showScreen('tagscenario')">자동화 캠페인</span>
+    <span class="sep">›</span>
+    <span class="curr">태그 자동화 시나리오</span>
+  </div>
+  <div class="page-header">
+    <div>
+      <div class="page-title">태그 자동화 시나리오</div>
+      <div class="page-desc">자동 태그 부여 시 실행할 시나리오를 연결하고 발동 조건을 설정합니다.</div>
+    </div>
+    <div class="page-actions">
+      <button class="btn btn-secondary" onclick="openScenarioCreate()">+ 시나리오 추가</button>
+    </div>
+  </div>
+
+  <div class="settings-card">
+    <div class="settings-card-head">
+      <span class="settings-card-title">🔗 태그별 연결 자동화 시나리오</span>
+      <span style="font-size:12px;color:var(--text-muted);">연결됨 4개 / 미연결 3개</span>
+    </div>
+    <div class="settings-card-body" style="padding:0;">
+      <table class="data-table" id="tbl-scenario-rules" style="margin:0;">
+        <thead><tr>
+          <th style="width:130px;">태그명</th>
+          <th style="width:200px;">연결 시나리오</th>
+          <th style="width:100px;">발동 시점</th>
+          <th style="width:120px;">발동 채널</th>
+          <th style="width:110px;">마지막 실행</th>
+          <th style="width:80px;">상태</th>
+          <th style="width:90px;text-align:right;">관리</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>이탈직전</strong><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">389명</div></td>
+            <td><div style="font-weight:600;color:var(--primary);font-size:13px;">이탈 방지 시퀀스</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Step 1~4 · 8일 · 4회 발송</div></td>
+            <td style="font-size:12px;color:var(--text-sub);">즉시 실행</td>
+            <td style="font-size:15px;letter-spacing:2px;">💬 📧</td>
+            <td style="font-size:12px;color:var(--text-muted);">2026-05-31</td>
+            <td><span class="badge badge-success">연결됨</span></td>
+            <td style="text-align:right;"><button class="btn btn-ghost btn-sm">편집</button></td>
+          </tr>
+          <tr>
+            <td><strong>VIP후보</strong><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">156명</div></td>
+            <td><div style="font-weight:600;color:var(--primary);font-size:13px;">VIP 전환 유도 캠페인</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">1회 발송 · 혜택 안내</div></td>
+            <td style="font-size:12px;color:var(--text-sub);">D+1</td>
+            <td style="font-size:15px;letter-spacing:2px;">💬</td>
+            <td style="font-size:12px;color:var(--text-muted);">2026-05-30</td>
+            <td><span class="badge badge-success">연결됨</span></td>
+            <td style="text-align:right;"><button class="btn btn-ghost btn-sm">편집</button></td>
+          </tr>
+          <tr>
+            <td><strong>불만고객</strong><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">147명</div></td>
+            <td><div style="font-weight:600;color:var(--primary);font-size:13px;">CS 자동 배정 + 회복 메시지</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">CS 즉시 알림 + 회복 시퀀스</div></td>
+            <td style="font-size:12px;color:var(--text-sub);">즉시 실행</td>
+            <td style="font-size:15px;letter-spacing:2px;">💬 📱</td>
+            <td style="font-size:12px;color:var(--text-muted);">2026-05-31</td>
+            <td><span class="badge badge-success">연결됨</span></td>
+            <td style="text-align:right;"><button class="btn btn-ghost btn-sm">편집</button></td>
+          </tr>
+          <tr>
+            <td><strong>신규유망</strong><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">204명</div></td>
+            <td><div style="font-weight:600;color:var(--primary);font-size:13px;">신규 고객 웰컴 시퀀스</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Step 1~3 · 7일 · 온보딩</div></td>
+            <td style="font-size:12px;color:var(--text-sub);">D+1</td>
+            <td style="font-size:15px;letter-spacing:2px;">📧 🔔</td>
+            <td style="font-size:12px;color:var(--text-muted);">2026-05-29</td>
+            <td><span class="badge badge-success">연결됨</span></td>
+            <td style="text-align:right;"><button class="btn btn-ghost btn-sm">편집</button></td>
+          </tr>
+          <tr>
+            <td><strong>챔피언</strong><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">93명</div></td>
+            <td><span style="font-size:12px;color:var(--text-muted);">—</span></td>
+            <td style="font-size:12px;color:var(--text-muted);">—</td>
+            <td style="font-size:12px;color:var(--text-muted);">—</td>
+            <td style="font-size:12px;color:var(--text-muted);">—</td>
+            <td><span class="badge badge-muted">미연결</span></td>
+            <td style="text-align:right;"><button class="btn btn-ghost btn-sm" style="color:var(--primary);">+ 연결</button></td>
+          </tr>
+          <tr>
+            <td><strong>가격민감형</strong><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">1,024명</div></td>
+            <td><span style="font-size:12px;color:var(--text-muted);">—</span></td>
+            <td style="font-size:12px;color:var(--text-muted);">—</td>
+            <td style="font-size:12px;color:var(--text-muted);">—</td>
+            <td style="font-size:12px;color:var(--text-muted);">—</td>
+            <td><span class="badge badge-muted">미연결</span></td>
+            <td style="text-align:right;"><button class="btn btn-ghost btn-sm" style="color:var(--primary);">+ 연결</button></td>
+          </tr>
+          <tr>
+            <td><strong>충성고객</strong><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">342명</div></td>
+            <td><span style="font-size:12px;color:var(--text-muted);">—</span></td>
+            <td style="font-size:12px;color:var(--text-muted);">—</td>
+            <td style="font-size:12px;color:var(--text-muted);">—</td>
+            <td style="font-size:12px;color:var(--text-muted);">—</td>
+            <td><span class="badge badge-muted">미연결</span></td>
+            <td style="text-align:right;"><button class="btn btn-ghost btn-sm" style="color:var(--primary);">+ 연결</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 모달: 시나리오 생성/편집 ══ -->
+<div id="modal-scenario-create" class="modal-overlay" style="z-index:2100;">
+  <div class="modal-box" style="width:660px;display:flex;flex-direction:column;max-height:calc(100vh - 140px);overflow:hidden;">
+    <div class="modal-head" style="flex-shrink:0;">
+      <span class="modal-title" id="scenarioCreateTitle">+ 시나리오 추가</span>
+      <button class="modal-close" onclick="closeModal('modal-scenario-create')">×</button>
+    </div>
+    <div class="modal-body" style="overflow-y:auto;flex:1;">
+      <div class="section-group">
+        <div class="section-group-title">기본 정보</div>
+        <div class="form-row">
+          <label class="form-label">시나리오명 <span style="color:var(--danger);">*</span></label>
+          <input type="text" id="scCreateName" placeholder="예: 장바구니 이탈 회수 시퀀스" style="max-width:300px;">
+        </div>
+        <div class="form-row" style="margin-bottom:0;">
+          <label class="form-label">설명</label>
+          <input type="text" id="scCreateDesc" placeholder="어떤 상황에 사용하는 시나리오인지 간략히 설명합니다.">
+        </div>
+      </div>
+      <div class="section-group" style="margin-bottom:0;">
+        <div class="section-group-title">단계 구성 <span style="font-size:11px;font-weight:400;color:var(--text-muted);">— 태그 부여 후 순서대로 실행됩니다</span></div>
+        <div id="scStepList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px;"></div>
+        <button class="btn btn-secondary btn-sm" onclick="addScenarioStep()">+ 단계 추가</button>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button id="scCreateDeleteBtn" class="btn btn-sm btn-secondary" style="margin-right:auto;color:var(--danger);display:none;" onclick="closeModal('modal-scenario-create');showToast('info','삭제 완료','시나리오가 삭제되었습니다.')">🗑 시나리오 삭제</button>
+      <button class="btn btn-secondary" onclick="closeModal('modal-scenario-create')">취소</button>
+      <button class="btn btn-primary" onclick="saveScenarioCreate()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 모달: 자동화 시나리오 연결 편집 ══ -->
+<div id="modal-scenario-edit" class="modal-overlay">
+  <div class="modal-box" style="width:620px;display:flex;flex-direction:column;max-height:calc(100vh - 140px);overflow:hidden;">
+    <div class="modal-head" style="flex-shrink:0;">
+      <span class="modal-title">🔗 자동화 시나리오 설정</span>
+      <button class="modal-close" onclick="closeModal('modal-scenario-edit')">×</button>
+    </div>
+    <div class="modal-body" style="overflow-y:auto;flex:1;">
+      <div style="display:flex;align-items:center;gap:10px;background:var(--bg);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:16px;">
+        <span style="font-size:12px;color:var(--text-muted);flex-shrink:0;">대상 태그</span>
+        <span id="scenarioTagName" style="font-size:14px;font-weight:800;color:var(--text);"></span>
+        <span id="scenarioTagDesc" style="font-size:12px;color:var(--text-muted);"></span>
+      </div>
+      <div class="section-group">
+        <div class="section-group-title">연결 시나리오 <span style="color:var(--danger);">*</span></div>
+        <div id="scenarioRadioList" style="display:flex;flex-direction:column;gap:6px;"></div>
+        <button class="btn btn-ghost btn-sm" style="margin-top:8px;color:var(--primary);" onclick="openScenarioCreate()">+ 새 시나리오 만들기</button>
+        <div id="scenarioFlowPreview" style="display:none;margin-top:12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;">
+          <div style="font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:8px;letter-spacing:.05em;">시나리오 흐름</div>
+          <div id="scenarioFlowSteps" style="display:flex;flex-direction:column;gap:6px;"></div>
+        </div>
+      </div>
+      <div class="section-group">
+        <div class="section-group-title">발동 설정</div>
+        <div class="form-row">
+          <label class="form-label">발동 시점</label>
+          <select id="scenarioTrigger" style="width:220px;">
+            <option value="immediate">즉시 (태그 부여 직후)</option>
+            <option value="d1">D+1 (태그 부여 익일 오전 10시)</option>
+            <option value="d3">D+3</option>
+            <option value="d7">D+7</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label class="form-label">발동 채널</label>
+          <div style="display:flex;gap:16px;flex-wrap:wrap;">
+            <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;"><input type="checkbox" id="scenarioCh_kakao" style="accent-color:var(--primary);"> 💬 알림톡</label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;"><input type="checkbox" id="scenarioCh_email" style="accent-color:var(--primary);"> 📧 이메일</label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;"><input type="checkbox" id="scenarioCh_sms" style="accent-color:var(--primary);"> 📱 SMS</label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;"><input type="checkbox" id="scenarioCh_push" style="accent-color:var(--primary);"> 🔔 앱 푸시</label>
+          </div>
+        </div>
+        <div class="form-row" style="flex-direction:row;align-items:center;justify-content:space-between;padding:8px 0;margin-bottom:0;">
+          <div><div class="form-label">반복 실행</div><div class="form-hint">동일 고객이 태그 재취득 시 시나리오를 다시 실행합니다.</div></div>
+          <div class="toggle-setting-row">
+            <label class="toggle"><input type="checkbox" id="scenarioRepeat" onchange="syncToggleChip(this,'scenarioRepeatChip')"><span class="toggle-track"></span></label>
+            <span id="scenarioRepeatChip" class="toggle-setting-chip off">● 비활성</span>
+          </div>
+        </div>
+      </div>
+      <div class="section-group" style="margin-bottom:0;">
+        <div class="form-row" style="flex-direction:row;align-items:center;justify-content:space-between;padding:4px 0;margin-bottom:0;">
+          <div><div class="form-label">시나리오 연결 활성화</div><div class="form-hint">비활성화 시 태그 부여 후에도 시나리오가 실행되지 않습니다.</div></div>
+          <div class="toggle-setting-row">
+            <label class="toggle"><input type="checkbox" id="scenarioActive" checked onchange="syncToggleChip(this,'scenarioActiveChip')"><span class="toggle-track"></span></label>
+            <span id="scenarioActiveChip" class="toggle-setting-chip on">● 활성화됨</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button id="scenarioDisconnectBtn" class="btn btn-sm btn-secondary" style="margin-right:auto;color:var(--danger);display:none;" onclick="disconnectScenario()">🔗 연결 해제</button>
+      <button class="btn btn-secondary" onclick="closeModal('modal-scenario-edit')">취소</button>
+      <button class="btn btn-primary" onclick="saveScenario()">저장</button>
+    </div>
+  </div>
+</div>
+
 </main>
 <script src="crm-layout.js"></script>
 <script src="crm-common.js"></script>
@@ -1073,6 +1320,7 @@ const SCREEN_META = {
   reactivate:  { lnb: 5, label: '휴면 고객 재활성',         parent: '자동화 캠페인' },
   vip:         { lnb: 6, label: 'VIP 자동화 설정',          parent: '자동화 캠페인' },
   aioptimize:  { lnb: 7, label: 'AI 발송 최적화 설정',      parent: '자동화 캠페인' },
+  tagscenario: { lnb: 8, label: '태그 자동화 시나리오', parent: '자동화 캠페인' },
 };
 
 function showScreen(name, pushState = true) {
@@ -1100,6 +1348,202 @@ document.addEventListener('DOMContentLoaded', () => {
 window.addEventListener('popstate', e => {
   const name = e.state?.screen || 'upsell';
   showScreen(name, false);
+});
+
+/* ═══ 태그 자동화 시나리오 ═══════════════════════════════════════ */
+const SHARED_SCENARIOS = [
+  { v:'churn_seq',    icon:'🔴', l:'이탈 방지 시퀀스',          desc:'이탈 위험 고객 표준 대응 · 4단계 · 14일', isDefault:true,
+    steps:[{day:'즉시',ch:'💬 알림톡',act:'개인화 혜택 메시지 + 쿠폰 발송'},{day:'D+3',ch:'📱 SMS',act:'재시도 발송 (미오픈 고객 대상)'},{day:'D+7',ch:'👤 CS',act:'CS 팀 자동 배정 + 전화 상담 요청'},{day:'D+14',ch:'💬 알림톡',act:'최대 할인 오퍼 + 피드백 요청'}] },
+  { v:'vip_campaign', icon:'👑', l:'VIP 전환 유도 캠페인',       desc:'등급 전환 임박 고객 · 1단계 · 즉시', isDefault:true,
+    steps:[{day:'즉시',ch:'💬 알림톡',act:'VIP 등급 전환 혜택 안내 + 포인트 2배 쿠폰'}] },
+  { v:'welcome_seq',  icon:'🎉', l:'신규 고객 웰컴 시퀀스',      desc:'신규 고관여 고객 온보딩 · 3단계 · 7일', isDefault:true,
+    steps:[{day:'D+1',ch:'📧 이메일',act:'웰컴 메시지 + 브랜드 스토리'},{day:'D+3',ch:'💬 알림톡',act:'첫 구매 혜택 쿠폰'},{day:'D+7',ch:'🔔 앱 푸시',act:'맞춤 추천 상품 안내'}] },
+  { v:'cs_auto',      icon:'🆘', l:'CS 자동 배정 + 회복 메시지', desc:'불만 감지 즉시 대응 · 2단계', isDefault:true,
+    steps:[{day:'즉시',ch:'👤 CS',act:'CS 담당자 자동 배정 + 내부 알림'},{day:'D+1',ch:'💬 알림톡',act:'고객 만족 확인 + 보상 혜택'}] },
+  { v:'repurchase',   icon:'🛒', l:'재구매 리마인드',             desc:'구매 주기 도래 고객 · 1단계 · 즉시', isDefault:true,
+    steps:[{day:'즉시',ch:'💬 알림톡',act:'재구매 유도 메시지 + 쿠폰 첨부 (선택)'}] },
+  { v:'grade_up',     icon:'⬆️', l:'등급 업그레이드 안내',       desc:'등급 상향 고객 · 1단계 · 즉시', isDefault:false,
+    steps:[{day:'즉시',ch:'💬 알림톡',act:'등급 업그레이드 축하 + 신규 혜택 안내'}] },
+  { v:'discount',     icon:'🎁', l:'할인 쿠폰 자동 발송',         desc:'특정 조건 충족 고객 · 1단계 · 즉시', isDefault:false,
+    steps:[{day:'즉시',ch:'💬 알림톡',act:'즉시 사용 가능 할인 쿠폰 발송'}] },
+];
+const SCENARIO_DATA = {
+  '이탈직전':{ scenario:'churn_seq',    trigger:'immediate', channels:['kakao','email'], repeat:false, active:true, connected:true },
+  'VIP후보':  { scenario:'vip_campaign', trigger:'d1',       channels:['kakao'],         repeat:false, active:true, connected:true },
+  '불만고객':{ scenario:'cs_auto',      trigger:'immediate', channels:['kakao','sms'],   repeat:true,  active:true, connected:true },
+  '신규유망':{ scenario:'welcome_seq',  trigger:'d1',        channels:['email','push'],  repeat:false, active:true, connected:true },
+};
+let _scenarioTagName = '';
+
+function renderScenarioFlow(val) {
+  const s = SHARED_SCENARIOS.find(x=>x.v===val);
+  const preview = document.getElementById('scenarioFlowPreview');
+  const stepsEl = document.getElementById('scenarioFlowSteps');
+  if (!s||!preview||!stepsEl) return;
+  stepsEl.innerHTML = s.steps.map((st,i)=>
+    '<div style="display:flex;align-items:center;gap:8px;font-size:12px;">' +
+    '<span style="width:18px;height:18px;border-radius:50%;background:var(--primary);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">'+(i+1)+'</span>' +
+    '<span style="font-weight:700;color:var(--text-muted);min-width:36px;">'+st.day+'</span>' +
+    '<span style="color:var(--text-muted);">'+st.ch+'</span>' +
+    '<span style="color:var(--text-sub);">— '+st.act+'</span></div>'
+  ).join('');
+  preview.style.display='block';
+}
+function openScenarioEdit(tr,isNew){
+  const tagName=tr?.cells[0]?.querySelector('strong')?.textContent?.trim()||'';
+  const tagDesc=tr?.cells[0]?.querySelector('div')?.textContent?.trim()||'';
+  _scenarioTagName=tagName;
+  document.getElementById('scenarioTagName').textContent=tagName;
+  document.getElementById('scenarioTagDesc').textContent=tagDesc?'· '+tagDesc:'';
+  document.getElementById('scenarioFlowPreview').style.display='none';
+  const data=SCENARIO_DATA[tagName]||{};
+  const list=document.getElementById('scenarioRadioList');
+  list.innerHTML=SHARED_SCENARIOS.map(s=>
+    '<label style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1.5px solid '+(data.scenario===s.v?'var(--primary)':'var(--border)')+';border-radius:var(--radius-sm);cursor:pointer;background:'+(data.scenario===s.v?'var(--primary-light)':'')+'" onclick="highlightScenarioRadio(this,\''+s.v+'\')">' +
+    '<input type="radio" name="scenarioChoice" value="'+s.v+'" style="accent-color:var(--primary);margin-top:2px;flex-shrink:0;" '+(data.scenario===s.v?'checked':'')+' onchange="renderScenarioFlow(\''+s.v+'\')">' +
+    '<div><div style="font-size:13px;font-weight:700;">'+s.icon+' '+s.l+'</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">'+s.desc+'</div></div></label>'
+  ).join('');
+  if(data.scenario) renderScenarioFlow(data.scenario);
+  document.getElementById('scenarioTrigger').value=data.trigger||'immediate';
+  ['kakao','email','sms','push'].forEach(ch=>{
+    const el=document.getElementById('scenarioCh_'+ch);
+    if(el) el.checked=(data.channels||[]).includes(ch);
+  });
+  const rEl=document.getElementById('scenarioRepeat'); rEl.checked=!!data.repeat; syncToggleChip(rEl,'scenarioRepeatChip');
+  const aEl=document.getElementById('scenarioActive'); aEl.checked=data.connected?(data.active!==false):true; syncToggleChip(aEl,'scenarioActiveChip');
+  document.getElementById('scenarioDisconnectBtn').style.display=data.connected?'block':'none';
+  openModal('modal-scenario-edit');
+}
+function highlightScenarioRadio(label,val){
+  document.querySelectorAll('#scenarioRadioList label').forEach(l=>{l.style.borderColor='var(--border)';l.style.background='';});
+  label.style.borderColor='var(--primary)'; label.style.background='var(--primary-light)';
+  renderScenarioFlow(val);
+}
+function saveScenario(){
+  const sel=document.querySelector('#scenarioRadioList input[name="scenarioChoice"]:checked');
+  if(!sel){showToast('warning','시나리오 미선택','연결할 시나리오를 선택해주세요.');return;}
+  const chs=['kakao','email','sms','push'].filter(ch=>document.getElementById('scenarioCh_'+ch)?.checked);
+  if(!chs.length){showToast('warning','채널 미선택','발동 채널을 1개 이상 선택해주세요.');return;}
+  closeModal('modal-scenario-edit');
+  showToast('success','저장 완료','['+_scenarioTagName+'] 자동화 시나리오 설정이 저장되었습니다.');
+}
+function disconnectScenario(){
+  closeModal('modal-scenario-edit');
+  showToast('info','연결 해제','['+_scenarioTagName+'] 시나리오 연결이 해제되었습니다.');
+}
+const STEP_TEMPLATES={
+  kakao:[
+    {v:'coupon_tpl',l:'이탈 방지 쿠폰 발송',preview:'[ENTWIZ] {고객명}님을 위한 특별 쿠폰이 도착했어요!\n쿠폰코드: {쿠폰코드}'},
+    {v:'vip_tpl',l:'VIP 혜택 안내',preview:'[ENTWIZ] {고객명}님, VIP 전용 혜택을 안내드립니다.\n포인트 2배 + 무료배송!'},
+    {v:'repurchase_tpl',l:'재구매 유도 알림톡',preview:'[ENTWIZ] {고객명}님, {상품명} 재구매 시 10% 할인!'},
+    {v:'welcome_tpl',l:'신규 고객 웰컴',preview:'[ENTWIZ] {고객명}님, ENTWIZ에 오신 것을 환영합니다!\n첫 구매 15% 할인 쿠폰을 드려요.'},
+    {v:'reminder_tpl',l:'구매 리마인드',preview:'[ENTWIZ] {고객명}님, 장바구니 상품이 기다리고 있어요!'},
+    {v:'cs_recover_tpl',l:'CS 만족 회복 메시지',preview:'[ENTWIZ] {고객명}님, 불편을 드려 죄송합니다.\n{보상내용}을 준비했습니다.'},
+  ],
+  email:[
+    {v:'welcome_email',l:'신규 고객 웰컴 이메일',preview:'제목: ENTWIZ에 오신 것을 환영합니다!\n내용: 브랜드 스토리 + 첫 구매 쿠폰'},
+    {v:'promo_email',l:'프로모션 뉴스레터',preview:'제목: 이번 주 특가! {고객명}님만을 위한 혜택\n내용: 신상품 + 특가 + 쿠폰'},
+    {v:'vip_email',l:'VIP 전용 혜택 이메일',preview:'제목: [VIP 전용] 특별한 혜택이 도착했습니다\n내용: VIP 혜택 + 등급 유지 가이드'},
+    {v:'cs_email',l:'CS 처리 완료 안내',preview:'제목: {고객명}님의 문의가 처리되었습니다\n내용: 처리 내역 + 담당자 안내'},
+  ],
+  sms:[
+    {v:'churn_sms',l:'이탈 방지 SMS',preview:'[ENTWIZ] {고객명}님, 특별 할인 쿠폰! {단축URL}'},
+    {v:'coupon_sms',l:'쿠폰 발송 SMS',preview:'[ENTWIZ] {고객명}님께 {쿠폰명} 쿠폰 발송. 만료: {만료일}'},
+    {v:'remind_sms',l:'구매 리마인드 SMS',preview:'[ENTWIZ] {고객명}님, 장바구니 상품 기다려요! {단축URL}'},
+  ],
+  push:[
+    {v:'promo_push',l:'프로모션 앱 푸시',preview:'제목: 오늘만! 특별 혜택\n내용: 맞춤 추천 상품 확인'},
+    {v:'remind_push',l:'재방문 유도 푸시',preview:'제목: 새 상품 도착!\n내용: 관심 카테고리 신상품 안내'},
+    {v:'coupon_push',l:'쿠폰 알림 푸시',preview:'제목: 쿠폰 발급!\n내용: {쿠폰명} 만료: {만료일}'},
+  ],
+  cs:[
+    {v:'auto_assign',l:'시스템 자동 배정',preview:'건강도·담당자 부하 기반 자동 배정'},
+    {v:'marketing_cs',l:'마케팅팀 담당자',preview:'마케팅팀 CS 담당자에게 직접 배정'},
+    {v:'cs_team',l:'CS 전담팀',preview:'CS 전담팀 배정 + 슬랙/이메일 알림'},
+    {v:'escalate',l:'팀장급 에스컬레이션',preview:'VIP·불만 고객 전용 팀장급 직접 대응'},
+  ],
+};
+const COUPON_LIST=[
+  {v:'coupon_10',l:'10% 할인 쿠폰',desc:'최소 구매 금액 없음 · 유효 7일'},
+  {v:'coupon_15',l:'15% 할인 쿠폰',desc:'최소 구매 1만원 · 유효 7일'},
+  {v:'coupon_20',l:'20% 할인 쿠폰',desc:'최소 구매 3만원 · 유효 14일'},
+  {v:'coupon_free',l:'무료배송 쿠폰',desc:'3만원 이상 구매 · 유효 30일'},
+  {v:'coupon_3k',l:'3,000원 즉시할인',desc:'최소 구매 1만원 · 유효 7일'},
+  {v:'coupon_5k',l:'5,000원 즉시할인',desc:'최소 구매 3만원 · 유효 7일'},
+];
+function _chKey(ch){return ch.includes('알림톡')?'kakao':ch.includes('이메일')?'email':ch.includes('SMS')?'sms':ch.includes('푸시')?'push':'cs';}
+function renderStepBody(container,ch,prefill){
+  const key=_chKey(ch); const tpls=STEP_TEMPLATES[key]||[]; const needsCoupon=key==='kakao'||key==='sms';
+  if(key==='cs'){
+    container.innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">' +
+      '<div><label style="font-size:11px;font-weight:700;color:var(--text-muted);display:block;margin-bottom:4px;">배정 방식 <span style="color:var(--danger);">*</span></label>' +
+      '<select style="width:100%;font-size:12px;padding:7px 8px;border:1px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;">'+tpls.map(t=>'<option value="'+t.v+'">'+t.l+'</option>').join('')+'</select></div>' +
+      '<div><label style="font-size:11px;font-weight:700;color:var(--text-muted);display:block;margin-bottom:4px;">내부 알림</label>' +
+      '<select style="width:100%;font-size:12px;padding:7px 8px;border:1px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;"><option>슬랙 알림</option><option>이메일 알림</option><option>슬랙 + 이메일</option><option>알림 없음</option></select></div></div>' +
+      '<div style="background:var(--bg);border-radius:var(--radius-sm);padding:8px 10px;font-size:11px;color:var(--text-muted);">ℹ️ 배정 방식 세부 설정은 권한/계정 관리에서 확인하세요.</div>';
+  } else {
+    container.innerHTML='<div style="margin-bottom:10px;"><label style="font-size:11px;font-weight:700;color:var(--text-muted);display:block;margin-bottom:4px;">발송 템플릿 <span style="color:var(--danger);">*</span></label>' +
+      '<select class="sc-tpl-sel" onchange="onStepTplChange(this)" style="width:100%;font-size:12px;padding:7px 8px;border:1px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;">' +
+      '<option value="">— 템플릿 선택 —</option>'+tpls.map(t=>'<option value="'+t.v+'" data-preview="'+t.preview.replace(/"/g,'&quot;').replace(/\n/g,'&#10;')+'">'+t.l+'</option>').join('')+'</select></div>' +
+      '<div class="sc-tpl-preview" style="display:none;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:10px;font-size:12px;color:var(--text-sub);line-height:1.7;white-space:pre-line;"></div>' +
+      (needsCoupon?'<div><label style="font-size:11px;font-weight:700;color:var(--text-muted);display:block;margin-bottom:4px;">쿠폰 연결 <span style="font-weight:400;">(선택)</span></label>' +
+      '<select style="width:100%;font-size:12px;padding:7px 8px;border:1px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;">' +
+      '<option value="">쿠폰 없음</option>'+COUPON_LIST.map(c=>'<option value="'+c.v+'">'+c.l+' · '+c.desc+'</option>').join('')+'</select></div>':'');
+  }
+}
+function onStepTplChange(sel){
+  const preview=sel.closest('.sc-step-body').querySelector('.sc-tpl-preview');
+  if(!preview) return;
+  const text=sel.options[sel.selectedIndex]?.dataset?.preview?.replace(/&#10;/g,'\n')||'';
+  preview.textContent=text; preview.style.display=text&&sel.value?'block':'none';
+}
+function onStepChChange(sel){renderStepBody(sel.closest('.sc-step-card').querySelector('.sc-step-body'),sel.value,null);}
+function renumberSteps(){
+  const nums=['①','②','③','④','⑤'];
+  document.querySelectorAll('#scStepList .sc-step-card').forEach((card,i)=>{const n=card.querySelector('.sc-step-num');if(n)n.textContent=nums[i]||(i+1)+'.';});
+}
+function addScenarioStep(prefill){
+  const list=document.getElementById('scStepList'); const idx=list.children.length;
+  const nums=['①','②','③','④','⑤']; const ch=prefill?.ch||'💬 알림톡';
+  const dayOpts=['즉시','D+1','D+2','D+3','D+5','D+7','D+14','D+30'];
+  const chOpts=['💬 알림톡','📧 이메일','📱 SMS','🔔 앱 푸시','👤 CS 배정'];
+  const card=document.createElement('div'); card.className='sc-step-card';
+  card.style.cssText='background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;';
+  card.innerHTML='<div style="display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--border);background:var(--bg);">' +
+    '<span class="sc-step-num" style="font-size:13px;font-weight:800;color:var(--primary);flex-shrink:0;">'+(nums[idx]||idx+1+'.')+'</span>' +
+    '<select class="sc-day-sel" style="font-size:12px;padding:5px 6px;border:1px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;">'+
+      dayOpts.map(d=>'<option'+(prefill?.day===d?' selected':d==='즉시'&&!prefill?' selected':'')+'>'+d+'</option>').join('')+'</select>' +
+    '<select class="sc-ch-sel" onchange="onStepChChange(this)" style="font-size:12px;padding:5px 6px;border:1px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;">'+
+      chOpts.map(c=>'<option'+(ch===c?' selected':'')+'>'+c+'</option>').join('')+'</select>' +
+    '<button onclick="this.closest(\'.sc-step-card\').remove();renumberSteps()" style="margin-left:auto;background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:16px;padding:2px;">×</button>' +
+    '</div><div class="sc-step-body" style="padding:12px;"></div>';
+  list.appendChild(card);
+  renderStepBody(card.querySelector('.sc-step-body'),ch,prefill);
+}
+function openScenarioCreate(editVal){
+  const s=editVal?SHARED_SCENARIOS.find(x=>x.v===editVal):null;
+  document.getElementById('scenarioCreateTitle').textContent=s?'편집: '+s.l:'+ 시나리오 추가';
+  document.getElementById('scCreateName').value=s?s.l:'';
+  document.getElementById('scCreateDesc').value=s?s.desc:'';
+  document.getElementById('scCreateDeleteBtn').style.display=(s&&!s.isDefault)?'block':'none';
+  const stepList=document.getElementById('scStepList'); stepList.innerHTML='';
+  if(s){s.steps.forEach(st=>addScenarioStep(st));}else{addScenarioStep();}
+  openModal('modal-scenario-create');
+}
+function saveScenarioCreate(){
+  const name=document.getElementById('scCreateName').value.trim();
+  if(!name){showToast('warning','시나리오명 필수','시나리오명을 입력해주세요.');return;}
+  const steps=document.querySelectorAll('#scStepList > .sc-step-card');
+  if(!steps.length){showToast('warning','단계 필수','단계를 1개 이상 추가해주세요.');return;}
+  closeModal('modal-scenario-create');
+  showToast('success','저장 완료','['+name+'] 시나리오가 저장되었습니다.');
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('tbl-scenario-rules')?.addEventListener('click',e=>{
+    const btn=e.target.closest('button'); if(!btn) return;
+    const tr=btn.closest('tr'); const label=btn.textContent.trim();
+    if(label==='편집'||label==='+ 연결') openScenarioEdit(tr,label==='+ 연결');
+  });
 });
 </script>
 </body>

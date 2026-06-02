@@ -56,7 +56,7 @@
     '      <div class="lnb-item" data-page="CRM_고객관리.html" data-hash="segment"',
     '           onclick="crmNavigate(\'CRM_고객관리.html\',\'segment\')">세그먼트 관리</div>',
     '      <div class="lnb-item" data-page="CRM_고객관리.html" data-hash="autotag"',
-    '           onclick="crmNavigate(\'CRM_고객관리.html\',\'autotag\')">자동 태그 관리</div>',
+    '           onclick="crmNavigate(\'CRM_고객관리.html\',\'autotag\')">태그 관리</div>',
     '      <div class="lnb-item" data-page="CRM_고객관리.html" data-hash="grade"',
     '           onclick="crmNavigate(\'CRM_고객관리.html\',\'grade\')">등급 관리</div>',
     '    </div>',
@@ -82,6 +82,8 @@
     '           onclick="crmNavigate(\'CRM_자동화캠페인.html\',\'vip\')">VIP 자동화 설정</div>',
     '      <div class="lnb-item" data-page="CRM_자동화캠페인.html" data-hash="aioptimize"',
     '           onclick="crmNavigate(\'CRM_자동화캠페인.html\',\'aioptimize\')">AI 발송 최적화 설정</div>',
+    '      <div class="lnb-item" data-page="CRM_자동화캠페인.html" data-hash="tagscenario"',
+    '           onclick="crmNavigate(\'CRM_자동화캠페인.html\',\'tagscenario\')">태그 자동화 시나리오</div>',
     '    </div>',
 
     '    <div class="gnb-item" onclick="toggleGnb(this)">',
@@ -172,6 +174,7 @@
     '      <div class="lnb-item" data-page="CRM_설정.html" data-hash="data" onclick="crmNavigate(\'CRM_설정.html\',\'data\')">데이터 관리</div>',
     '      <div class="lnb-item" data-page="CRM_설정.html" data-hash="permission" onclick="crmNavigate(\'CRM_설정.html\',\'permission\')">권한/계정 관리</div>',
     '      <div class="lnb-item" data-page="CRM_설정.html" data-hash="notification" onclick="crmNavigate(\'CRM_설정.html\',\'notification\')">알림 설정</div>',
+    '      <div class="lnb-item" data-page="CRM_설정.html" data-hash="autotag" onclick="crmNavigate(\'CRM_설정.html\',\'autotag\')">태그 관리</div>',
     '    </div>',
     '  </div>',
     '</aside>'
