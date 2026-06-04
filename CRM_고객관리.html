@@ -1889,61 +1889,6 @@ select.form-input{appearance:none;background:var(--surface) url("data:image/svg+
 </div>
 
 
-<!-- ══════════════════════════════════════
-     SCREEN 4: 자동 태그 관리
-══════════════════════════════════════ -->
-<div class="screen" id="screen-autotag">
-  <div class="page-header">
-    <div>
-      <div class="page-title">자동 태그 관리</div>
-      <div class="page-desc">AI가 고객 행동 데이터를 분석해 자동으로 태그를 부여합니다. 태그별 조건과 연결 시나리오를 설정하세요.</div>
-    </div>
-    <div class="page-actions"><button class="btn btn-primary">＋ 태그 추가</button></div>
-  </div>
-  <div class="tag-grid">
-    <div class="tag-card">
-      <div class="tag-header"><span class="tag-name">💛 충성고객</span><span class="tag-count-badge" style="background:var(--primary-light);color:var(--primary)">3,241명</span></div>
-      <div class="tag-condition">구매 빈도 <strong>월 2회 이상</strong> × <strong>연속 6개월</strong> 달성<br><span style="color:var(--text-muted)">OR 누적 구매액 500,000원 이상 + 구매 이력 10회 이상</span></div>
-      <div style="display:flex;justify-content:space-between;align-items:center;"><div class="tag-scenario">→ 연결된 시나리오: VIP 자동화</div><div style="display:flex;gap:6px;"><button class="btn btn-ghost btn-sm">✏️ 수정</button><div class="toggle-wrap"><label class="toggle"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></label></div></div></div>
-    </div>
-    <div class="tag-card">
-      <div class="tag-header"><span class="tag-name">🔴 이탈직전</span><span class="tag-count-badge" style="background:var(--danger-bg);color:#991B1B">348명</span></div>
-      <div class="tag-condition"><strong>30일 이상 미로그인</strong><br>OR 이메일 오픈율 <strong>최근 4주 연속 0%</strong><br>OR 구매 주기 <strong>평균의 2배 이상</strong> 초과</div>
-      <div style="display:flex;justify-content:space-between;align-items:center;"><div class="tag-scenario" style="color:var(--danger)">→ 연결된 시나리오: 이탈 방지 시퀀스</div><div style="display:flex;gap:6px;"><button class="btn btn-ghost btn-sm">✏️ 수정</button><div class="toggle-wrap"><label class="toggle"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></label></div></div></div>
-    </div>
-    <div class="tag-card">
-      <div class="tag-header"><span class="tag-name">💰 가격민감형</span><span class="tag-count-badge" style="background:var(--warning-bg);color:#92400E">1,120명</span></div>
-      <div class="tag-condition"><strong>할인 적용 시에만 구매</strong> 패턴 3회 이상<br>OR 쿠폰 사용률 <strong>90% 이상</strong></div>
-      <div style="display:flex;justify-content:space-between;align-items:center;"><div class="tag-scenario">→ 연결된 시나리오: 가격민감형 오퍼</div><div style="display:flex;gap:6px;"><button class="btn btn-ghost btn-sm">✏️ 수정</button><div class="toggle-wrap"><label class="toggle"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></label></div></div></div>
-    </div>
-    <div class="tag-card">
-      <div class="tag-header"><span class="tag-name">👑 VIP후보</span><span class="tag-count-badge" style="background:var(--primary-light);color:#1D4ED8">412명</span></div>
-      <div class="tag-condition">Gold 등급 + 누적 구매액 <strong>3,000,000원 이상</strong><br>OR 월 평균 구매액 <strong>200,000원 이상</strong> × 3개월</div>
-      <div style="display:flex;justify-content:space-between;align-items:center;"><div class="tag-scenario">→ 연결된 시나리오: VIP 전환 유도</div><div style="display:flex;gap:6px;"><button class="btn btn-ghost btn-sm">✏️ 수정</button><div class="toggle-wrap"><label class="toggle"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></label></div></div></div>
-    </div>
-    <div class="tag-card">
-      <div class="tag-header"><span class="tag-name">😡 불만고객</span><span class="tag-count-badge" style="background:var(--danger-bg);color:#991B1B">89명</span></div>
-      <div class="tag-condition">CS 상담 내 <strong>부정 감정 감지</strong> 2회 이상<br>OR 낮은 별점(1~2점) 리뷰 작성 이력</div>
-      <div style="display:flex;justify-content:space-between;align-items:center;"><div class="tag-scenario" style="color:var(--danger)">→ 연결된 시나리오: CS 우선 배정</div><div style="display:flex;gap:6px;"><button class="btn btn-ghost btn-sm">✏️ 수정</button><div class="toggle-wrap"><label class="toggle"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></label></div></div></div>
-    </div>
-    <div class="tag-card">
-      <div class="tag-header"><span class="tag-name">🔄 정기구매자</span><span class="tag-count-badge" style="background:var(--success-bg);color:#065F46">2,034명</span></div>
-      <div class="tag-condition">동일 상품 <strong>30±7일 주기</strong>로 3회 이상 반복 구매<br>OR 구독 상품 활성 상태</div>
-      <div style="display:flex;justify-content:space-between;align-items:center;"><div class="tag-scenario">→ 연결된 시나리오: 재구매 리마인드</div><div style="display:flex;gap:6px;"><button class="btn btn-ghost btn-sm">✏️ 수정</button><div class="toggle-wrap"><label class="toggle"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></label></div></div></div>
-    </div>
-    <div class="tag-card">
-      <div class="tag-header"><span class="tag-name">🔍 탐색형</span><span class="tag-count-badge" style="background:#F5F5F5;color:var(--text-sub)">3,882명</span></div>
-      <div class="tag-condition">방문 빈도 높음 + 구매 전환 낮음<br>상품 상세 페이지 <strong>30초 이상 체류</strong> × 5회 이상 · 미구매</div>
-      <div style="display:flex;justify-content:space-between;align-items:center;"><div class="tag-scenario">→ 연결된 시나리오: 전환 유도 쿠폰</div><div style="display:flex;gap:6px;"><button class="btn btn-ghost btn-sm">✏️ 수정</button><div class="toggle-wrap"><label class="toggle"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></label></div></div></div>
-    </div>
-    <div class="tag-card">
-      <div class="tag-header"><span class="tag-name">✨ 신규유망</span><span class="tag-count-badge" style="background:var(--success-bg);color:#065F46">891명</span></div>
-      <div class="tag-condition">가입 30일 이내 + 첫 구매 완료<br>OR 리드 스코어 <strong>70점 이상</strong>으로 전환</div>
-      <div style="display:flex;justify-content:space-between;align-items:center;"><div class="tag-scenario">→ 연결된 시나리오: 신규 환영 시퀀스</div><div style="display:flex;gap:6px;"><button class="btn btn-ghost btn-sm">✏️ 수정</button><div class="toggle-wrap"><label class="toggle"><input type="checkbox" checked><div class="t-track"><div class="t-thumb"></div></div></label></div></div></div>
-    </div>
-  </div>
-</div>
-
 
 <!-- ══════════════════════════════════════
      SCREEN 5: 등급 관리
@@ -2878,10 +2823,6 @@ const SCREEN_META = {
     lnb: 1,
     crumbs: [{ label: '홈' }, { label: '고객 관리' }, { label: '세그먼트 관리', curr: true }]
   },
-  autotag: {
-    lnb: 2,
-    crumbs: [{ label: '홈' }, { label: '고객 관리' }, { label: '자동 태그 관리', curr: true }]
-  },
   grade: {
     lnb: 3,
     crumbs: [{ label: '홈' }, { label: '고객 관리' }, { label: '등급 관리', curr: true }]
@@ -3647,16 +3588,37 @@ const ordActiveFilters = { period: null, status: [], ch: [] };
 const ordFilterLabels  = { period: '기간', status: '상태', ch: '채널' };
 
 function onOrdFilterChange(group, value, label) {
-  // 기간: 단일 선택 (radio)
   ordActiveFilters[group] = { value, label };
   const btn = document.querySelector('#ord-fd-' + group + ' .filter-dd-btn');
   if (btn) { btn.innerHTML = label + ' <span class="filter-dd-arrow">▾</span>'; btn.classList.add('has-filter'); }
+  if (group === 'period' && value === 'custom') {
+    document.getElementById('ordPeriodCustomWrap').classList.add('open');
+    return; // 직접설정: 드롭다운 유지, 적용 버튼으로 확정
+  }
+  document.getElementById('ordPeriodCustomWrap')?.classList.remove('open');
   renderOrdFilterTags();
   filterOrders();
   document.querySelectorAll('.filter-dd-panel').forEach(p => {
     p.classList.remove('open');
     p.closest('.filter-dropdown').querySelector('.filter-dd-btn').classList.remove('active');
   });
+}
+
+function applyOrdCustomPeriod() {
+  const from = document.getElementById('ordDateFrom').value;
+  const to   = document.getElementById('ordDateTo').value;
+  if (!from || !to) { showToast('warning','날짜 선택','시작일과 종료일을 모두 선택해주세요.'); return; }
+  if (from > to) { showToast('warning','날짜 오류','시작일은 종료일보다 이전이어야 합니다.'); return; }
+  const label = from.replace(/-/g,'.') + ' ~ ' + to.replace(/-/g,'.');
+  ordActiveFilters['period'] = { value: 'custom', label };
+  renderOrdFilterTags();
+  filterOrders();
+  document.querySelectorAll('.filter-dd-panel').forEach(p => {
+    p.classList.remove('open');
+    p.closest('.filter-dropdown').querySelector('.filter-dd-btn').classList.remove('active');
+  });
+  const btn = document.querySelector('#ord-fd-period .filter-dd-btn');
+  if (btn) { btn.innerHTML = label + ' <span class="filter-dd-arrow">▾</span>'; btn.classList.add('has-filter'); }
 }
 
 function onOrdMultiFilter(group, value, cb) {
@@ -3724,7 +3686,11 @@ function filterOrders() {
   rows.forEach(row => {
     const text = row.textContent.toLowerCase();
     let dateOk = true;
-    if (period) {
+    if (period === 'custom') {
+      const from = document.getElementById('ordDateFrom').value;
+      const to   = document.getElementById('ordDateTo').value;
+      if (from && to) dateOk = row.dataset.date >= from && row.dataset.date <= to;
+    } else if (period) {
       const cut = new Date(); cut.setMonth(cut.getMonth() - parseInt(period));
       dateOk = new Date(row.dataset.date) >= cut;
     }
@@ -3745,6 +3711,9 @@ function resetOrdFilter() {
   ordActiveFilters.status = [];
   ordActiveFilters.ch = [];
   document.querySelectorAll('#ord-fd-period input[type=radio]').forEach(r => r.checked = false);
+  document.getElementById('ordPeriodCustomWrap')?.classList.remove('open');
+  document.getElementById('ordDateFrom').value = '';
+  document.getElementById('ordDateTo').value = '';
   document.querySelectorAll('#ord-fd-status input[type=checkbox], #ord-fd-ch input[type=checkbox]').forEach(cb => cb.checked = false);
   ['period','status','ch'].forEach(g => {
     const btn = document.querySelector('#ord-fd-' + g + ' .filter-dd-btn');

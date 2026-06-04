@@ -55,8 +55,7 @@
     '           onclick="crmNavigate(\'CRM_고객관리.html\',\'list\')">고객 목록/검색</div>',
     '      <div class="lnb-item" data-page="CRM_고객관리.html" data-hash="segment"',
     '           onclick="crmNavigate(\'CRM_고객관리.html\',\'segment\')">세그먼트 관리</div>',
-    '      <div class="lnb-item" data-page="CRM_고객관리.html" data-hash="autotag"',
-    '           onclick="crmNavigate(\'CRM_고객관리.html\',\'autotag\')">태그 관리</div>',
+
     '      <div class="lnb-item" data-page="CRM_고객관리.html" data-hash="grade"',
     '           onclick="crmNavigate(\'CRM_고객관리.html\',\'grade\')">등급 관리</div>',
     '    </div>',

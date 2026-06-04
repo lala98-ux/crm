@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
   <link rel="stylesheet" href="crm-layout.css">
@@ -474,6 +474,65 @@
     .prod-badge-sale{background:var(--primary-light);color:var(--primary);}
     .prod-badge-nosale{background:var(--danger-bg);color:var(--danger);}
     .prod-modal-empty{padding:32px;text-align:center;color:var(--text-muted);font-size:13px;}
+
+    /* ── 캠페인 탭 ── */
+    .cpn-tab-bar { display:flex; border-bottom:2px solid var(--border); margin-bottom:24px; }
+    .cpn-tab-btn { padding:10px 20px; font-size:14px; font-weight:600; border:none; background:none; cursor:pointer; color:var(--text-muted); border-bottom:2px solid transparent; margin-bottom:-2px; font-family:inherit; transition:all .15s; }
+    .cpn-tab-btn.active { color:var(--primary); border-bottom-color:var(--primary); }
+
+    /* ── 3열 그리드 ── */
+    .cpn-3col { display:grid; grid-template-columns:260px 1fr 300px; gap:20px; align-items:start; }
+    .cpn-3col-manual { display:grid; grid-template-columns:200px 1fr 300px; gap:20px; align-items:start; }
+    .cpn-left-panel { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; }
+    .cpn-right-sticky { position:sticky; top:80px; }
+
+    /* ── 프리셋 카드 ── */
+    .cpn-preset-card { display:flex; align-items:center; gap:10px; padding:12px 14px; cursor:pointer; border-bottom:1px solid var(--border); transition:background .1s; border-left:3px solid transparent; }
+    .cpn-preset-card:last-child { border-bottom:none; }
+    .cpn-preset-card:hover { background:var(--bg); }
+    .cpn-preset-card.selected { background:var(--primary-light); border-left-color:var(--primary); }
+    .cpn-preset-name { font-size:13px; font-weight:600; color:var(--text); margin-bottom:3px; }
+    .cpn-preset-meta { display:flex; align-items:center; gap:8px; font-size:11px; }
+    .cpn-preset-time { color:var(--primary); font-weight:600; }
+    .cpn-preset-count { color:var(--text-muted); }
+
+    /* ── 데이터라이즈 스타일 조건 표시 ── */
+    .cond-block { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:16px 18px; margin-bottom:12px; }
+    .cond-block-header { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+    .cond-toggle-on { display:inline-flex; align-items:center; justify-content:center; width:44px; height:24px; background:#10B981; border-radius:12px; font-size:10px; font-weight:800; color:#fff; flex-shrink:0; }
+    .cond-block-title { font-size:13px; font-weight:700; color:var(--text); }
+    .cond-row { display:flex; align-items:center; gap:8px; margin-bottom:10px; font-size:13px; flex-wrap:wrap; }
+    .cond-tree { padding-left:16px; border-left:2px solid var(--border); margin-left:8px; }
+    .cond-connector { font-size:11px; font-weight:700; color:#10B981; background:#ECFDF5; border:1px solid #6EE7B7; border-radius:4px; padding:1px 8px; flex-shrink:0; }
+    .cond-label { color:var(--text-sub); }
+    .cond-value { color:var(--text); font-weight:700; background:var(--bg); border:1.5px dashed var(--border); border-radius:6px; padding:3px 10px; }
+    .cond-value-editable { color:var(--primary); font-weight:700; background:var(--primary-light); border:1.5px dashed var(--primary); border-radius:6px; padding:3px 6px; }
+    .cond-input-inline { width:60px; text-align:center; font-size:13px; font-weight:700; color:var(--primary); background:var(--primary-light); border:1.5px solid var(--primary); border-radius:6px; padding:3px 8px; font-family:inherit; outline:none; }
+    .cond-select-inline { font-size:12px; font-weight:600; color:var(--primary); background:var(--primary-light); border:1.5px solid var(--primary); border-radius:6px; padding:3px 8px; font-family:inherit; outline:none; cursor:pointer; }
+    .cond-bar-wrap { margin-top:12px; padding:12px 14px; background:var(--bg); border-radius:var(--radius-sm); }
+    .cond-bar-track { height:6px; background:#E2E8F0; border-radius:3px; position:relative; margin:8px 0; }
+    .cond-bar-fill { position:absolute; right:0; top:0; height:100%; background:var(--primary); border-radius:3px; }
+    .cond-bar-dot { position:absolute; top:50%; transform:translate(-50%,-50%); width:14px; height:14px; border-radius:50%; background:var(--primary); border:2px solid #fff; box-shadow:0 1px 4px rgba(0,0,0,.2); }
+    .cond-bar-labels { display:flex; justify-content:space-between; font-size:11px; color:var(--text-muted); }
+    .cond-bar-label-active { color:var(--primary); font-weight:600; }
+
+    /* ── 단계 네비게이터 ── */
+    .cpn-step-nav { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:16px; position:sticky; top:80px; }
+    .cpn-step-item { display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:var(--radius-sm); cursor:pointer; color:var(--text-sub); font-size:13px; font-weight:600; transition:all .15s; }
+    .cpn-step-item:hover { background:var(--bg); }
+    .cpn-step-item.active { background:var(--primary-light); color:var(--primary); }
+    .cpn-step-num { width:22px; height:22px; border-radius:50%; background:var(--border); color:var(--text-muted); font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .cpn-step-item.active .cpn-step-num { background:var(--primary); color:#fff; }
+
+    /* ── 미리보기 패널 ── */
+    .cpn-preview-panel { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:16px; }
+    .cpn-preview-title { font-size:12px; font-weight:700; color:var(--text-sub); margin-bottom:12px; }
+    .cpn-kakao-bg { background:#B2C7D7; border-radius:var(--radius); padding:16px; }
+    .cpn-kakao-sender { display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+    .cpn-kakao-avatar { width:34px; height:34px; border-radius:9px; background:var(--primary); color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0; }
+    .cpn-kakao-name { font-size:12px; font-weight:700; color:#222; }
+    .cpn-kakao-bubble { background:#fff; border-radius:4px 12px 12px 12px; padding:12px 14px; font-size:12px; line-height:1.7; color:var(--text); box-shadow:0 1px 3px rgba(0,0,0,.12); white-space:pre-line; }
+    .cpn-kakao-cta { background:#fff; border-radius:6px; padding:8px; text-align:center; font-size:12px; font-weight:600; color:var(--primary); margin-top:8px; border:1px solid #ddd; cursor:default; }
   </style>
 </head>
 <body>
@@ -557,6 +616,7 @@
             <th>오픈율</th>
             <th>클릭률</th>
             <th>전환율</th>
+            <th>ROAS</th>
             <th>상태</th>
             <th>관리</th>
           </tr>
@@ -574,6 +634,7 @@
             <td><strong style="color:var(--success)">38.2%</strong></td>
             <td>14.7%</td>
             <td>3.1%</td>
+            <td><strong style="color:var(--primary)">310%</strong></td>
             <td><span class="badge badge-success"><span class="badge-dot"></span>발송완료</span></td>
             <td>
               <div class="actions">
@@ -594,6 +655,7 @@
             <td><strong style="color:var(--success)">54.8%</strong></td>
             <td>27.3%</td>
             <td>8.9%</td>
+            <td><strong style="color:var(--primary)">2,847%</strong></td>
             <td><span class="badge badge-success"><span class="badge-dot"></span>발송완료</span></td>
             <td>
               <div class="actions">
@@ -614,6 +676,7 @@
             <td><strong style="color:var(--primary)">42.1%</strong></td>
             <td>19.4%</td>
             <td>5.6%</td>
+            <td><strong style="color:var(--primary)">8,241%</strong></td>
             <td><span class="badge badge-primary"><span class="badge-dot"></span>발송중</span></td>
             <td>
               <div class="actions">
@@ -634,6 +697,7 @@
             <td><strong style="color:var(--success)">61.4%</strong></td>
             <td>33.2%</td>
             <td>12.1%</td>
+            <td><strong style="color:var(--primary)">1,523%</strong></td>
             <td><span class="badge badge-primary"><span class="badge-dot"></span>발송중</span></td>
             <td>
               <div class="actions">
@@ -650,6 +714,7 @@
             <td><span style="font-size:12px;">📧 이메일</span></td>
             <td>30일 미구매</td>
             <td>2025.06.01</td>
+            <td>—</td>
             <td>—</td>
             <td>—</td>
             <td>—</td>
@@ -674,6 +739,7 @@
             <td>—</td>
             <td>—</td>
             <td>—</td>
+            <td>—</td>
             <td><span class="badge badge-warning"><span class="badge-dot"></span>예약</span></td>
             <td>
               <div class="actions">
@@ -690,6 +756,7 @@
             <td><span style="font-size:12px;">📱 SMS</span></td>
             <td>전체 회원</td>
             <td>미정</td>
+            <td>—</td>
             <td>—</td>
             <td>—</td>
             <td>—</td>
@@ -724,183 +791,228 @@
   <!-- ═══════════════════════════════ SCREEN: CREATE ═══════════════════════════════ -->
   <div class="screen" id="screen-create">
     <div class="breadcrumb">
-      <a href="#" onclick="showScreen('list'); return false;">메시지 캠페인</a>
+      <a href="#" onclick="showScreen('list');return false;">메시지 캠페인</a>
       <span class="sep">›</span>
       <span class="curr">캠페인 만들기</span>
     </div>
-
     <div class="page-header">
       <div class="page-header-left">
         <h1 class="page-title">새 캠페인 만들기</h1>
-        <p class="page-desc" id="cpnPageDesc">채널·템플릿·대상을 설정하고 발송합니다.</p>
+        <p class="page-desc">발송 유형을 선택하고 캠페인을 설정합니다.</p>
       </div>
       <div class="page-header-actions">
         <button class="btn btn-ghost" onclick="showScreen('list')">← 목록으로</button>
         <button class="btn btn-secondary" onclick="navWIP('임시저장')">임시저장</button>
-        <button class="btn btn-primary" onclick="submitCampaign()">캠페인 저장</button>
       </div>
     </div>
 
-    <!-- ① 기본 정보 -->
-    <div class="form-section">
-      <div class="form-section-title">① 기본 정보</div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">캠페인 이름 <span class="req">*</span></label>
-          <input type="text" class="form-input" id="cpnName" placeholder="예) 6월 VIP 감사 메시지">
-        </div>
-        <div class="form-group">
-          <label class="form-label">캠페인 유형</label>
-          <input type="text" class="form-input" id="cpnTypeDisp" readonly style="background:var(--bg);color:var(--text-sub);">
-        </div>
-      </div>
-      <div class="form-group" style="margin-bottom:0;">
-        <label class="form-label">담당자</label>
-        <input type="text" class="form-input" style="max-width:240px;" placeholder="담당자 이름" value="김운영">
-      </div>
+    <!-- 탭 -->
+    <div class="cpn-tab-bar">
+      <button class="cpn-tab-btn active" id="tabAuto" onclick="switchCpnTab('auto')">자동 생성형 캠페인</button>
+      <button class="cpn-tab-btn" id="tabManual" onclick="switchCpnTab('manual')">직접 생성형 캠페인</button>
     </div>
 
-    <!-- ② 발송 대상 -->
-    <div class="form-section">
-      <div class="form-section-title">② 발송 대상</div>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;">
-        <label class="cpn-aud-card selected" onclick="selectCpnAud(this,'all',12847)">
-          <input type="radio" name="cpnAud" value="all" checked style="accent-color:var(--primary);">
-          <div>
-            <div style="font-size:13px;font-weight:600;">전체 고객</div>
-            <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">12,847명</div>
-          </div>
-        </label>
-        <label class="cpn-aud-card" onclick="selectCpnAud(this,'vip',184)">
-          <input type="radio" name="cpnAud" value="vip" style="accent-color:var(--primary);">
-          <div>
-            <div style="font-size:13px;font-weight:600;">👑 VIP 고객</div>
-            <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">184명</div>
-          </div>
-        </label>
-        <label class="cpn-aud-card" onclick="selectCpnAud(this,'inactive',2847)">
-          <input type="radio" name="cpnAud" value="inactive" style="accent-color:var(--primary);">
-          <div>
-            <div style="font-size:13px;font-weight:600;">😴 90일+ 미구매</div>
-            <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">2,847명</div>
-          </div>
-        </label>
-        <label class="cpn-aud-card" onclick="selectCpnAud(this,'cart',1284)">
-          <input type="radio" name="cpnAud" value="cart" style="accent-color:var(--primary);">
-          <div>
-            <div style="font-size:13px;font-weight:600;">🛒 장바구니 이탈</div>
-            <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">1,284명</div>
-          </div>
-        </label>
-        <label class="cpn-aud-card" onclick="selectCpnAud(this,'birthday',312)">
-          <input type="radio" name="cpnAud" value="birthday" style="accent-color:var(--primary);">
-          <div>
-            <div style="font-size:13px;font-weight:600;">🎂 이번 달 생일</div>
-            <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">312명</div>
-          </div>
-        </label>
-        <label class="cpn-aud-card" onclick="selectCpnAud(this,'new',567)">
-          <input type="radio" name="cpnAud" value="new" style="accent-color:var(--primary);">
-          <div>
-            <div style="font-size:13px;font-weight:600;">🆕 신규 (30일)</div>
-            <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">567명</div>
-          </div>
-        </label>
-      </div>
-      <div style="font-size:13px;color:var(--text-sub);">발송 예정: <strong style="color:var(--primary);" id="cpnAudNum">12,847</strong>명</div>
-    </div>
+    <!-- ═══ 자동 생성형 패널 ═══ -->
+    <div id="cpnAutoPanel">
+      <div class="cpn-3col">
 
-    <!-- ③ 메시지 설정 -->
-    <div class="form-section">
-      <div class="form-section-title">③ 메시지 설정</div>
-
-      <!-- 채널 선택 -->
-      <div class="form-group">
-        <label class="form-label">발송 채널 <span class="req">*</span></label>
-        <div class="channel-select-grid" style="grid-template-columns:repeat(3,1fr);">
-          <label class="channel-select-card" onclick="selectCpnChannel(this,'kakao')">
-            <input type="radio" name="cpnChannel" value="kakao">
-            <div class="channel-icon">💬</div>
-            <div class="channel-name">카카오 알림톡</div>
-          </label>
-          <label class="channel-select-card" onclick="selectCpnChannel(this,'sms')">
-            <input type="radio" name="cpnChannel" value="sms">
-            <div class="channel-icon">📱</div>
-            <div class="channel-name">SMS</div>
-          </label>
-          <label class="channel-select-card" onclick="selectCpnChannel(this,'email')">
-            <input type="radio" name="cpnChannel" value="email">
-            <div class="channel-icon">📧</div>
-            <div class="channel-name">이메일</div>
-          </label>
-        </div>
-      </div>
-
-      <!-- 2-col: 설정 | 미리보기 -->
-      <div id="cpnMsgArea" style="display:none;">
-        <div class="cpn-msg-grid">
-
-          <!-- 왼쪽: 채널별 설정 -->
-          <div>
-            <!-- 카카오 -->
-            <div id="cpnKakaoArea" style="display:none;animation:cpnFade .18s ease;">
-              <div class="cpn-notice">💡 카카오 비즈니스 포털에서 승인된 템플릿입니다. 추가/수정은 <strong style="cursor:pointer;color:var(--primary);" onclick="showScreen('channel')">설정 › 채널 연동</strong>에서 관리하세요.</div>
-              <div class="form-group">
-                <label class="form-label">템플릿 선택 <span class="req">*</span></label>
-                <select class="form-select" id="cpnKakaoTpl" onchange="onCpnKakaoTplChange()">
-                  <option value="">-- 템플릿을 선택하세요 --</option>
-                </select>
-              </div>
-              <div id="cpnKakaoVarsWrap" style="display:none;background:var(--bg);border-radius:var(--radius-sm);padding:12px;margin-bottom:16px;">
-                <div class="form-label" style="margin-bottom:8px;">변수 설정</div>
-                <div id="cpnKakaoVarFields"></div>
+        <!-- Left: 프리셋 목록 -->
+        <div class="cpn-left-panel">
+          <div style="padding:12px 14px;border-bottom:1px solid var(--border);font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;">추천 프리셋</div>
+          <div id="autoPresetList">
+            <div class="cpn-preset-card selected" onclick="selectPreset(this,'welcome')">
+              <input type="radio" name="cpnPreset" value="welcome" checked style="accent-color:var(--primary);flex-shrink:0;">
+              <div style="flex:1;min-width:0;">
+                <div class="cpn-preset-name">🎉 회원가입 감사쿠폰</div>
+                <div class="cpn-preset-meta"><span class="cpn-preset-time">📅 D+1 즉시</span><span class="cpn-preset-count">26명</span></div>
               </div>
             </div>
+            <div class="cpn-preset-card" onclick="selectPreset(this,'first_purchase')">
+              <input type="radio" name="cpnPreset" value="first_purchase" style="accent-color:var(--primary);flex-shrink:0;">
+              <div style="flex:1;min-width:0;">
+                <div class="cpn-preset-name">🙏 첫구매 감사쿠폰</div>
+                <div class="cpn-preset-meta"><span class="cpn-preset-time">📅 D+1 즉시</span><span class="cpn-preset-count">34명</span></div>
+              </div>
+            </div>
+            <div class="cpn-preset-card" onclick="selectPreset(this,'cart_abandon')">
+              <input type="radio" name="cpnPreset" value="cart_abandon" style="accent-color:var(--primary);flex-shrink:0;">
+              <div style="flex:1;min-width:0;">
+                <div class="cpn-preset-name">🛒 장바구니 이탈</div>
+                <div class="cpn-preset-meta"><span class="cpn-preset-time">📅 24시간 후</span><span class="cpn-preset-count">1,284명</span></div>
+              </div>
+            </div>
+            <div class="cpn-preset-card" onclick="selectPreset(this,'repurchase')">
+              <input type="radio" name="cpnPreset" value="repurchase" style="accent-color:var(--primary);flex-shrink:0;">
+              <div style="flex:1;min-width:0;">
+                <div class="cpn-preset-name">🔄 재구매 유도</div>
+                <div class="cpn-preset-meta"><span class="cpn-preset-time">🔁 매일 09:00</span><span class="cpn-preset-count">487명</span></div>
+              </div>
+            </div>
+            <div class="cpn-preset-card" onclick="selectPreset(this,'coupon_expire')">
+              <input type="radio" name="cpnPreset" value="coupon_expire" style="accent-color:var(--primary);flex-shrink:0;">
+              <div style="flex:1;min-width:0;">
+                <div class="cpn-preset-name">⏰ 만료 예정 쿠폰</div>
+                <div class="cpn-preset-meta"><span class="cpn-preset-time">🔁 만료 3일 전</span><span class="cpn-preset-count">238명</span></div>
+              </div>
+            </div>
+            <div class="cpn-preset-card" onclick="selectPreset(this,'birthday')">
+              <input type="radio" name="cpnPreset" value="birthday" style="accent-color:var(--primary);flex-shrink:0;">
+              <div style="flex:1;min-width:0;">
+                <div class="cpn-preset-name">🎂 생일 쿠폰</div>
+                <div class="cpn-preset-meta"><span class="cpn-preset-time">📅 생일 D-3</span><span class="cpn-preset-count">312명</span></div>
+              </div>
+            </div>
+            <div class="cpn-preset-card" onclick="selectPreset(this,'purchase_thanks')">
+              <input type="radio" name="cpnPreset" value="purchase_thanks" style="accent-color:var(--primary);flex-shrink:0;">
+              <div style="flex:1;min-width:0;">
+                <div class="cpn-preset-name">⭐ 구매 감사+리뷰</div>
+                <div class="cpn-preset-meta"><span class="cpn-preset-time">📅 배송 D+3</span><span class="cpn-preset-count">892명</span></div>
+              </div>
+            </div>
+            <div class="cpn-preset-card" onclick="selectPreset(this,'reactivate')">
+              <input type="radio" name="cpnPreset" value="reactivate" style="accent-color:var(--primary);flex-shrink:0;">
+              <div style="flex:1;min-width:0;">
+                <div class="cpn-preset-name">💚 휴면 고객 재활성</div>
+                <div class="cpn-preset-meta"><span class="cpn-preset-time">🔁 매주 월요일</span><span class="cpn-preset-count">2,847명</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-            <!-- SMS -->
-            <div id="cpnSmsArea" style="display:none;animation:cpnFade .18s ease;">
-              <div class="form-group">
-                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-                  <label class="form-label" style="margin-bottom:0;">메시지 내용 <span class="req">*</span></label>
-                  <button class="btn btn-ghost btn-sm" onclick="toggleCpnSmsTplPanel()">📋 템플릿 불러오기</button>
+        <!-- Center: 조건 설정 -->
+        <div id="autoCondCenter">
+          <!-- JS로 동적 렌더 -->
+        </div>
+
+        <!-- Right: 미리보기 -->
+        <div class="cpn-right-sticky">
+          <div class="cpn-preview-panel">
+            <div class="cpn-preview-title">발송 미리보기</div>
+            <div class="cpn-kakao-bg">
+              <div class="cpn-kakao-sender">
+                <div class="cpn-kakao-avatar">E</div>
+                <div class="cpn-kakao-name">ENTWIZ</div>
+              </div>
+              <div class="cpn-kakao-bubble" id="autoPreviewBubble">[ENTWIZ] {고객명}님, 회원 가입을 환영합니다! 🎉
+첫 구매 시 15% 할인 쿠폰을 드립니다.
+쿠폰 코드: WELCOME15</div>
+              <div class="cpn-kakao-cta">쿠폰 사용하기</div>
+            </div>
+            <div style="margin-top:10px;font-size:11px;color:var(--text-muted);text-align:center;">💬 카카오 알림톡 미리보기</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ═══ 직접 생성형 패널 ═══ -->
+    <div id="cpnManualPanel" style="display:none;">
+      <div class="cpn-3col-manual">
+
+        <!-- Left: 단계 네비게이터 -->
+        <div class="cpn-step-nav" id="manualStepNav">
+          <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px;">진행 단계</div>
+          <div class="cpn-step-item active" onclick="scrollToStep('cpnStep1','stepNav1')">
+            <span class="cpn-step-num">1</span>기본 정보
+          </div>
+          <div class="cpn-step-item" onclick="scrollToStep('cpnStep2','stepNav2')">
+            <span class="cpn-step-num">2</span>발송 대상
+          </div>
+          <div class="cpn-step-item" onclick="scrollToStep('cpnStep3','stepNav3')">
+            <span class="cpn-step-num">3</span>메시지 설정
+          </div>
+          <div class="cpn-step-item" onclick="scrollToStep('cpnStep4','stepNav4')">
+            <span class="cpn-step-num">4</span>발송 일정
+          </div>
+        </div>
+
+        <!-- Center: 폼 -->
+        <div>
+          <div class="form-section" id="cpnStep1">
+            <div class="form-section-title">① 기본 정보</div>
+            <div class="form-group">
+              <label class="form-label">캠페인 이름 <span class="req">*</span></label>
+              <input type="text" class="form-input" id="cpnName" placeholder="예) 6월 VIP 감사 메시지">
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">담당자</label>
+              <input type="text" class="form-input" style="max-width:240px;" placeholder="담당자 이름" value="김운영">
+            </div>
+          </div>
+
+          <div class="form-section" id="cpnStep2">
+            <div class="form-section-title">② 발송 대상 조건</div>
+
+            <!-- 조건 빌더 -->
+            <div class="cond-block">
+              <div class="cond-block-header">
+                <span class="cond-toggle-on" id="manualCondToggle">ON</span>
+                <span class="cond-block-title">고객 조건</span>
+                <span style="font-size:11px;color:var(--text-muted);margin-left:auto;">발송 예정: <strong style="color:var(--primary);" id="manualAudCount">—</strong></span>
+              </div>
+
+              <!-- 조건 목록 -->
+              <div id="manualCondList" style="display:flex;flex-direction:column;gap:0;"></div>
+
+              <!-- 조건 추가 버튼 -->
+              <button class="btn btn-ghost btn-sm" style="margin-top:10px;color:var(--primary);" onclick="addManualCond()">+ 조건 추가</button>
+            </div>
+          </div>
+
+          <div class="form-section" id="cpnStep3">
+            <div class="form-section-title">③ 메시지 설정</div>
+            <div class="form-group">
+              <label class="form-label">발송 채널 <span class="req">*</span></label>
+              <div class="channel-select-grid" style="grid-template-columns:repeat(3,1fr);">
+                <label class="channel-select-card" onclick="selectCpnChannel(this,'kakao')"><input type="radio" name="cpnChannel" value="kakao"><div class="channel-icon">💬</div><div class="channel-name">카카오 알림톡</div></label>
+                <label class="channel-select-card" onclick="selectCpnChannel(this,'sms')"><input type="radio" name="cpnChannel" value="sms"><div class="channel-icon">📱</div><div class="channel-name">SMS</div></label>
+                <label class="channel-select-card" onclick="selectCpnChannel(this,'email')"><input type="radio" name="cpnChannel" value="email"><div class="channel-icon">📧</div><div class="channel-name">이메일</div></label>
+              </div>
+            </div>
+            <div id="cpnMsgArea" style="display:none;">
+              <div id="cpnKakaoArea" style="display:none;">
+                <div class="cpn-notice">💡 카카오 비즈니스 포털에서 승인된 템플릿입니다.</div>
+                <div class="form-group">
+                  <label class="form-label">템플릿 선택 <span class="req">*</span></label>
+                  <select class="form-select" id="cpnKakaoTpl" onchange="onCpnKakaoTplChange()"><option value="">-- 템플릿을 선택하세요 --</option></select>
                 </div>
-                <div id="cpnSmsTplPanel" style="display:none;border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:8px;max-height:160px;overflow-y:auto;">
-                  <div id="cpnSmsTplList"></div>
+              </div>
+              <div id="cpnSmsArea" style="display:none;">
+                <div class="form-group">
+                  <label class="form-label">메시지 내용 <span class="req">*</span></label>
+                  <textarea class="form-textarea" id="cpnSmsBody" rows="5" placeholder="[ENTWIZ] 메시지를 입력하세요." oninput="updateCpnSmsPreview()"></textarea>
                 </div>
-                <textarea class="form-textarea" id="cpnSmsBody" rows="5" placeholder="[ENTWIZ] 메시지를 입력하거나 위에서 템플릿을 불러오세요." oninput="updateCpnSmsPreview();updateCpnSmsCount()"></textarea>
-                <div style="display:flex;justify-content:flex-end;font-size:11px;color:var(--text-muted);margin-top:4px;" id="cpnSmsCharRow"><span id="cpnSmsCharCount">0</span>자</div>
               </div>
-            </div>
-
-            <!-- 이메일 -->
-            <div id="cpnEmailArea" style="display:none;animation:cpnFade .18s ease;">
-              <div class="cpn-notice">💡 이메일 템플릿은 <strong style="cursor:pointer;color:var(--primary);" onclick="showScreen('channel')">설정 › 채널 연동 › 이메일</strong>에서 관리합니다.</div>
-              <div class="form-group">
-                <label class="form-label">이메일 템플릿</label>
-                <select class="form-select" id="cpnEmailTpl" onchange="onCpnEmailTplChange()">
-                  <option value="">직접 작성 (빈 템플릿)</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label class="form-label">이메일 제목 <span class="req">*</span></label>
-                <input type="text" class="form-input" id="cpnEmailSubject" placeholder="예: 이번 달 특별 혜택을 확인해보세요 🎁" oninput="updateCpnEmailPreview()">
-              </div>
-              <div id="cpnEmailVarsWrap" style="display:none;background:var(--bg);border-radius:var(--radius-sm);padding:12px;margin-bottom:16px;">
-                <div class="form-label" style="margin-bottom:8px;">변수 설정</div>
-                <div id="cpnEmailVarFields"></div>
+              <div id="cpnEmailArea" style="display:none;">
+                <div class="form-group">
+                  <label class="form-label">이메일 제목 <span class="req">*</span></label>
+                  <input type="text" class="form-input" id="cpnEmailSubject" placeholder="이메일 제목을 입력하세요." oninput="updateCpnEmailPreview()">
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- 오른쪽: 미리보기 -->
-          <div class="cpn-preview-pane">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-              <span style="font-size:12px;font-weight:700;color:var(--text-sub);">미리보기</span>
-              <div class="cpn-device-toggle" id="cpnDeviceToggle" style="display:none;">
-                <button class="cpn-device-btn active" onclick="setCpnDevice(this,'mobile')">📱</button>
-                <button class="cpn-device-btn" onclick="setCpnDevice(this,'pc')">💻</button>
-              </div>
+          <div class="form-section" id="cpnStep4">
+            <div class="form-section-title">④ 발송 일정</div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <label class="radio-card cpn-sched-card selected" onclick="selectCpnSched(this,'now')"><input type="radio" name="cpnSched" value="now" checked><div><div style="font-size:13px;font-weight:600;">⚡ 즉시 발송</div><div style="font-size:12px;color:var(--text-muted);margin-top:2px;">저장 즉시 발송됩니다.</div></div></label>
+              <label class="radio-card cpn-sched-card" onclick="selectCpnSched(this,'reserve')"><input type="radio" name="cpnSched" value="reserve"><div style="flex:1;"><div style="font-size:13px;font-weight:600;">📅 예약 발송</div><div style="font-size:12px;color:var(--text-muted);margin-top:2px;">지정한 날짜·시간에 1회 발송됩니다.</div><div id="schedReserveDetail" style="display:none;margin-top:8px;"><input type="datetime-local" class="form-input" style="max-width:240px;"></div></div></label>
+              <label class="radio-card cpn-sched-card" onclick="selectCpnSched(this,'repeat')"><input type="radio" name="cpnSched" value="repeat"><div style="flex:1;"><div style="font-size:13px;font-weight:600;">🔁 반복 발송</div><div style="font-size:12px;color:var(--text-muted);margin-top:2px;">주기적으로 자동 발송됩니다.</div><div id="schedRepeatDetail" style="display:none;margin-top:8px;"><div style="display:flex;gap:10px;align-items:center;font-size:13px;flex-wrap:wrap;"><select class="form-select" id="schedRepeatUnit" style="width:auto;" onchange="updateSchedSummary()"><option>매일</option><option selected>매주</option><option>매월</option></select><select class="form-select" id="schedRepeatTime" style="width:auto;" onchange="updateSchedSummary()"><option>08:00</option><option>09:00</option><option selected>10:00</option><option>12:00</option><option>18:00</option></select></div></div></div></label>
             </div>
+            <div id="schedSummaryBox" style="display:none;margin-top:12px;background:var(--primary-light);border:1px solid #BFDBFE;border-radius:var(--radius-sm);padding:12px 16px;font-size:13px;color:var(--primary);font-weight:600;">📋 <span id="schedSummaryText"></span></div>
+          </div>
+
+          <div class="form-footer">
+            <button class="btn btn-ghost" onclick="showScreen('list')">← 목록으로</button>
+            <button class="btn btn-secondary" onclick="navWIP('임시저장')">임시저장</button>
+            <button class="btn btn-primary" onclick="submitCampaign()">캠페인 저장</button>
+          </div>
+        </div>
+
+        <!-- Right: 미리보기 -->
+        <div class="cpn-right-sticky">
+          <div class="cpn-preview-panel">
+            <div class="cpn-preview-title">발송 미리보기</div>
             <div id="cpnKakaoPrev" style="display:none;">
               <div class="cpn-kakao-bg">
                 <div class="cpn-kakao-sender"><div class="cpn-kakao-avatar">E</div><div class="cpn-kakao-name">ENTWIZ</div></div>
@@ -909,68 +1021,19 @@
               </div>
             </div>
             <div id="cpnSmsPrev" style="display:none;">
-              <div class="cpn-sms-preview">
-                <div class="cpn-sms-bubble" id="cpnSmsBubble" style="color:var(--text-muted);">메시지를 입력하면 미리보기가 표시됩니다.</div>
-              </div>
+              <div style="background:#f0f0f0;border-radius:var(--radius);padding:16px;"><div style="background:#fff;border-radius:16px 16px 4px 16px;padding:12px;font-size:12px;line-height:1.7;max-width:200px;" id="cpnSmsBubble">메시지를 입력하세요.</div></div>
             </div>
             <div id="cpnEmailPrev" style="display:none;">
-              <div class="cpn-email-preview">
-                <div class="cpn-email-prev-head">
-                  <div class="cpn-email-prev-row"><span class="cpn-email-prev-label">발신:</span><span>ENTWIZ &lt;no-reply@entwiz.com&gt;</span></div>
-                  <div class="cpn-email-prev-row"><span class="cpn-email-prev-label">제목:</span><span id="cpnEmailPrevSubject" style="font-weight:600;color:var(--text);"></span></div>
-                </div>
-                <div class="cpn-email-prev-body" id="cpnEmailPrevBody"><span style="color:var(--text-muted);">템플릿을 선택하면 미리보기가 표시됩니다.</span></div>
+              <div style="border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;">
+                <div style="background:var(--bg);padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text-muted);">제목: <span id="cpnEmailPrevSubj" style="color:var(--text);font-weight:600;">—</span></div>
+                <div style="padding:14px;font-size:13px;line-height:1.8;color:var(--text);min-height:80px;" id="cpnEmailPrevBody">내용이 여기에 표시됩니다.</div>
               </div>
             </div>
-            <div id="cpnEmptyPrev" style="padding:40px 20px;text-align:center;color:var(--text-muted);font-size:13px;">← 채널을 선택하면<br>미리보기가 표시됩니다</div>
+            <div id="cpnPrevEmpty" style="text-align:center;padding:32px;color:var(--text-muted);font-size:13px;">채널을 선택하면<br>미리보기가 표시됩니다.</div>
           </div>
-
         </div>
-      </div>
-    </div>
 
-    <!-- ④ 발송 일정 -->
-    <div class="form-section">
-      <div class="form-section-title">④ 발송 일정</div>
-      <div style="display:flex;flex-direction:column;gap:8px;">
-        <label class="radio-card cpn-sched-card selected" onclick="selectCpnSched(this,'now')">
-          <input type="radio" name="cpnSched" value="now" checked>
-          <div>
-            <div style="font-size:13px;font-weight:600;">⚡ 즉시 발송</div>
-            <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">저장 즉시 발송됩니다.</div>
-          </div>
-        </label>
-        <label class="radio-card cpn-sched-card" onclick="selectCpnSched(this,'reserve')">
-          <input type="radio" name="cpnSched" value="reserve">
-          <div style="flex:1;">
-            <div style="font-size:13px;font-weight:600;">📅 예약 발송</div>
-            <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">지정한 날짜·시간에 1회 발송됩니다.</div>
-            <div id="schedReserveDetail" style="display:none;margin-top:8px;">
-              <input type="datetime-local" class="form-input" style="max-width:240px;">
-            </div>
-          </div>
-        </label>
-        <label class="radio-card cpn-sched-card" onclick="selectCpnSched(this,'repeat')">
-          <input type="radio" name="cpnSched" value="repeat">
-          <div style="flex:1;">
-            <div style="font-size:13px;font-weight:600;">🔁 반복 발송</div>
-            <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">주기적으로 자동 발송됩니다.</div>
-            <div id="schedRepeatDetail" style="display:none;margin-top:8px;display:none;">
-              <div style="display:flex;gap:10px;align-items:center;font-size:13px;">
-                <select class="form-select" style="width:auto;"><option>매일</option><option>매주</option><option>매월</option></select>
-                <span style="color:var(--text-muted);">시작일:</span>
-                <input type="date" class="form-input" style="width:auto;">
-              </div>
-            </div>
-          </div>
-        </label>
       </div>
-    </div>
-
-    <div class="form-footer">
-      <button class="btn btn-ghost" onclick="showScreen('list')">← 목록으로</button>
-      <button class="btn btn-secondary" onclick="navWIP('임시저장')">임시저장</button>
-      <button class="btn btn-primary" onclick="submitCampaign()">캠페인 저장</button>
     </div>
   </div>
 
@@ -2066,8 +2129,594 @@
 </script>
 
 <script>
+/* ═══ 캠페인 만들기 ═══════════════════════════════════════════════ */
+
+// 탭 전환
+function switchCpnTab(tab) {
+  const isAuto = tab === 'auto';
+  document.getElementById('cpnAutoPanel').style.display = isAuto ? 'block' : 'none';
+  document.getElementById('cpnManualPanel').style.display = isAuto ? 'none' : 'block';
+  document.getElementById('tabAuto').classList.toggle('active', isAuto);
+  document.getElementById('tabManual').classList.toggle('active', !isAuto);
+}
+
+// 프리셋 데이터
+const PRESET_DATA = {
+  welcome: {
+    name: '회원가입 감사쿠폰 발송',
+    tip: '💡 가입 후 첫구매를 망설이는 신규 고객의 전환을 돕고 싶을 때',
+    preview: '[ENTWIZ] {고객명}님, 회원 가입을 환영합니다! 🎉\n첫 구매 시 15% 할인 쿠폰을 드립니다.\n쿠폰 코드: WELCOME15',
+    cta: '쿠폰 사용하기',
+    coupon: true,
+    renderCenter: function() {
+      return `
+        <div class="cond-block">
+          <div class="cond-block-header"><span class="cond-toggle-on">ON</span><span class="cond-block-title">고객 조건</span></div>
+          <div class="cond-row"><span class="cond-label">고객의 가입 상태가</span></div>
+          <div class="cond-tree">
+            <div class="cond-row"><span class="cond-value">신규 가입 고객</span></div>
+            <div class="cond-row"><span class="cond-connector">and</span><span class="cond-label">발송일 기준 / 가입일이</span><span class="cond-value">7일 이내</span></div>
+            <div class="cond-bar-wrap">
+              <div class="cond-bar-track"><div class="cond-bar-fill" style="width:70%;"></div><div class="cond-bar-dot" style="right:0;transform:translateY(-50%);left:auto;"></div></div>
+              <div class="cond-bar-labels"><span>7일 이상 지난</span><span class="cond-bar-label-active">7일 이내 · 발송일</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="cond-block">
+          <div class="cond-block-header"><span class="cond-toggle-on">ON</span><span class="cond-block-title">발송 설정</span></div>
+          <div class="cond-row"><span class="cond-label">채널</span><span class="cond-value">💬 카카오 알림톡</span></div>
+          <div class="cond-row"><span class="cond-label">발송 시점</span><span class="cond-value">가입 D+1 자동 발송</span></div>
+        </div>
+        ${renderCouponSection(true)}
+        <div style="display:flex;justify-content:flex-end;margin-top:16px;"><button class="btn btn-primary" onclick="submitCampaign()">캠페인 저장</button></div>`;
+    }
+  },
+  first_purchase: {
+    name: '첫구매 감사쿠폰 발급',
+    tip: '💡 첫구매 고객에게 지속적인 재구매를 유도하고 싶을 때',
+    preview: '[ENTWIZ] {고객명}님, 첫 구매 감사드립니다! 😊\n다음 구매 시 10% 할인 쿠폰을 드려요.\n유효기간: 발급 후 7일',
+    cta: '쿠폰 사용하기',
+    coupon: true,
+    renderCenter: function() {
+      return `
+        <div class="cond-block">
+          <div class="cond-block-header"><span class="cond-toggle-on">ON</span><span class="cond-block-title">고객 조건</span></div>
+          <div class="cond-row"><span class="cond-label">고객의 구매 횟수가</span></div>
+          <div class="cond-tree">
+            <div class="cond-row"><span class="cond-value">정확히 1회</span><span class="cond-label">(첫 구매 완료)</span></div>
+            <div class="cond-row"><span class="cond-connector">and</span><span class="cond-label">발송일 기준 / 첫 구매일이</span><span class="cond-value">1일 이내</span></div>
+            <div class="cond-bar-wrap">
+              <div class="cond-bar-track"><div class="cond-bar-fill" style="width:85%;"></div><div class="cond-bar-dot" style="right:0;transform:translateY(-50%);left:auto;"></div></div>
+              <div class="cond-bar-labels"><span>1일 이상 지난</span><span class="cond-bar-label-active">1일 이내 · 발송일</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="cond-block">
+          <div class="cond-block-header"><span class="cond-toggle-on">ON</span><span class="cond-block-title">발송 설정</span></div>
+          <div class="cond-row"><span class="cond-label">채널</span><span class="cond-value">💬 카카오 알림톡</span></div>
+          <div class="cond-row"><span class="cond-label">발송 시점</span><span class="cond-value">첫 구매 완료 D+1 자동 발송</span></div>
+        </div>
+        ${renderCouponSection(true)}
+        <div style="display:flex;justify-content:flex-end;margin-top:16px;"><button class="btn btn-primary" onclick="submitCampaign()">캠페인 저장</button></div>`;
+    }
+  },
+  cart_abandon: {
+    name: '장바구니 이탈 리마인드',
+    tip: '💡 장바구니에 담고 구매하지 않은 고객을 다시 끌어오고 싶을 때',
+    preview: '[ENTWIZ] {고객명}님, 장바구니에 담아두신\n상품이 아직 기다리고 있어요! 🛒\n지금 구매하면 무료배송 혜택을 드립니다.',
+    cta: '장바구니 확인하기',
+    coupon: false,
+    renderCenter: function() {
+      return `
+        <div class="cond-block">
+          <div class="cond-block-header"><span class="cond-toggle-on">ON</span><span class="cond-block-title">고객 조건</span></div>
+          <div class="cond-row"><span class="cond-label">고객의 장바구니 상태가</span></div>
+          <div class="cond-tree">
+            <div class="cond-row"><span class="cond-value">상품 담음 후 미결제</span></div>
+            <div class="cond-row"><span class="cond-connector">and</span><span class="cond-label">장바구니에 담은 후</span><span class="cond-value">24시간 경과</span></div>
+            <div class="cond-bar-wrap">
+              <div class="cond-bar-track"><div class="cond-bar-fill" style="width:0%;background:#E2E8F0;"></div><div class="cond-bar-dot" style="left:0;transform:translateY(-50%);"></div></div>
+              <div class="cond-bar-labels"><span class="cond-bar-label-active">24시간 경과 · 발송</span><span>이후</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="cond-block">
+          <div class="cond-block-header"><span class="cond-toggle-on">ON</span><span class="cond-block-title">발송 설정</span></div>
+          <div class="cond-row"><span class="cond-label">채널</span><span class="cond-value">💬 카카오 알림톡</span></div>
+          <div class="cond-row"><span class="cond-label">발송 시점</span><span class="cond-value">장바구니 담은 후 24시간 경과 시</span></div>
+        </div>
+        ${renderCouponSection(false)}
+        <div style="display:flex;justify-content:flex-end;margin-top:16px;"><button class="btn btn-primary" onclick="submitCampaign()">캠페인 저장</button></div>`;
+    }
+  },
+  repurchase: {
+    name: '구매 주기 도래 재구매 유도',
+    tip: '💡 재구매 주기가 도달한 고객에게 적시에 메시지를 보내고 싶을 때',
+    preview: '[ENTWIZ] {고객명}님, 지난번 구매하신\n상품 어떠셨나요? 😊\n재구매 시 10% 할인 쿠폰을 드립니다!',
+    cta: '재구매하기',
+    coupon: true,
+    renderCenter: function() {
+      return `
+        <div class="cond-block">
+          <div class="cond-block-header"><span class="cond-toggle-on">ON</span><span class="cond-block-title">고객 조건</span></div>
+          <div class="cond-row"><span class="cond-label">고객의 마지막 구매 후</span></div>
+          <div class="cond-tree">
+            <div class="cond-row">
+              <span class="cond-connector">and</span>
+              <span class="cond-label">발송일 기준 / 마지막 구매일로부터</span>
+              <input class="cond-input-inline" id="repurchaseDays" type="number" value="30" min="1" max="365" onchange="updateRepurchaseBar()">
+              <span class="cond-label">일 경과</span>
+            </div>
+            <div class="cond-bar-wrap" id="repurchaseBarWrap">
+              <div class="cond-bar-track"><div class="cond-bar-fill" style="width:0%;" id="repurchaseBarFill"></div><div class="cond-bar-dot" style="left:0;transform:translateY(-50%);" id="repurchaseBarDot"></div></div>
+              <div class="cond-bar-labels"><span class="cond-bar-label-active" id="repurchaseBarLabel">30일 경과 · 발송</span><span>이후</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="cond-block">
+          <div class="cond-block-header"><span class="cond-toggle-on">ON</span><span class="cond-block-title">발송 설정</span></div>
+          <div class="cond-row"><span class="cond-label">채널</span><span class="cond-value">💬 카카오 알림톡</span></div>
+          <div class="cond-row"><span class="cond-label">발송 시점</span><span class="cond-value">매일 09:00 자동 확인</span></div>
+        </div>
+        ${renderCouponSection(true)}
+        <div style="display:flex;justify-content:flex-end;margin-top:16px;"><button class="btn btn-primary" onclick="submitCampaign()">캠페인 저장</button></div>`;
+    }
+  },
+  coupon_expire: {
+    name: '만료 예정 쿠폰 알림톡',
+    tip: '💡 소멸 예정 혜택을 상기시켜 고객의 방문을 독려하고 싶을 때',
+    preview: '[ENTWIZ] {고객명}님! ⏰\n보유하신 쿠폰이 곧 만료됩니다.\n지금 바로 사용하고 혜택을 놓치지 마세요!',
+    cta: '쿠폰 사용하기',
+    coupon: false,
+    renderCenter: function() {
+      return `
+        <div class="cond-block">
+          <div class="cond-block-header"><span class="cond-toggle-on">ON</span><span class="cond-block-title">고객 조건</span></div>
+          <div class="cond-row"><span class="cond-label">고객의 보유 쿠폰이</span></div>
+          <div class="cond-tree">
+            <div class="cond-row"><span class="cond-value">1개 이상</span></div>
+            <div class="cond-row">
+              <span class="cond-connector">and</span>
+              <span class="cond-label">쿠폰 만료일까지</span>
+              <input class="cond-input-inline" id="couponExpireDays" type="number" value="3" min="1" max="30" onchange="updateCouponExpireBar()">
+              <span class="cond-label">일 이내</span>
+            </div>
+            <div class="cond-bar-wrap">
+              <div class="cond-bar-track"><div class="cond-bar-fill" style="width:90%;"></div><div class="cond-bar-dot" style="right:10%;transform:translateY(-50%);left:auto;" id="couponExpireDot"></div></div>
+              <div class="cond-bar-labels"><span>만료일 이전</span><span class="cond-bar-label-active" id="couponExpireLabel">만료 3일 전 · 발송</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="cond-block">
+          <div class="cond-block-header"><span class="cond-toggle-on">ON</span><span class="cond-block-title">발송 설정</span></div>
+          <div class="cond-row"><span class="cond-label">채널</span><span class="cond-value">💬 카카오 알림톡</span></div>
+          <div class="cond-row"><span class="cond-label">발송 시점</span><span class="cond-value">매일 10:00 자동 확인</span></div>
+        </div>
+        ${renderCouponSection(false)}
+        <div style="display:flex;justify-content:flex-end;margin-top:16px;"><button class="btn btn-primary" onclick="submitCampaign()">캠페인 저장</button></div>`;
+    }
+  },
+  birthday: {
+    name: '생일 쿠폰 자동 발송',
+    tip: '💡 생일인 고객에게 특별한 혜택으로 감동과 재구매를 잡고 싶을 때',
+    preview: '[ENTWIZ] {고객명}님, 생일을 진심으로 축하드립니다! 🎂🎉\n특별한 날을 위한 생일 쿠폰을 드립니다.\n유효기간: 생일 포함 7일',
+    cta: '생일 쿠폰 사용하기',
+    coupon: true,
+    renderCenter: function() {
+      return `
+        <div class="cond-block">
+          <div class="cond-block-header"><span class="cond-toggle-on">ON</span><span class="cond-block-title">고객 조건</span></div>
+          <div class="cond-row"><span class="cond-label">고객의 생일까지</span></div>
+          <div class="cond-tree">
+            <div class="cond-row">
+              <input class="cond-input-inline" id="birthdayDays" type="number" value="3" min="0" max="14" onchange="updateBirthdayBar()">
+              <span class="cond-label">일 이내</span>
+            </div>
+            <div class="cond-bar-wrap">
+              <div class="cond-bar-track"><div class="cond-bar-fill" style="width:85%;"></div><div class="cond-bar-dot" style="right:15%;transform:translateY(-50%);left:auto;" id="birthdayDot"></div></div>
+              <div class="cond-bar-labels"><span>생일 이전</span><span class="cond-bar-label-active" id="birthdayLabel">생일 3일 전 · 발송</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="cond-block">
+          <div class="cond-block-header"><span class="cond-toggle-on">ON</span><span class="cond-block-title">발송 설정</span></div>
+          <div class="cond-row"><span class="cond-label">채널</span><span class="cond-value">💬 카카오 알림톡</span></div>
+          <div class="cond-row"><span class="cond-label">발송 시점</span><span class="cond-value">매일 10:00 자동 확인</span></div>
+        </div>
+        ${renderCouponSection(true)}
+        <div style="display:flex;justify-content:flex-end;margin-top:16px;"><button class="btn btn-primary" onclick="submitCampaign()">캠페인 저장</button></div>`;
+    }
+  },
+  purchase_thanks: {
+    name: '구매 감사 + 리뷰 요청',
+    tip: '💡 구매 완료 고객에게 감사를 전하고 리뷰 작성을 유도하고 싶을 때',
+    preview: '[ENTWIZ] {고객명}님, 구매해주셔서 감사합니다! 🙏\n솔직한 리뷰를 남겨주시면\n적립금 500P를 드립니다.',
+    cta: '리뷰 작성하기',
+    coupon: false,
+    renderCenter: function() {
+      return `
+        <div class="cond-block">
+          <div class="cond-block-header"><span class="cond-toggle-on">ON</span><span class="cond-block-title">고객 조건</span></div>
+          <div class="cond-row"><span class="cond-label">주문 상태가</span></div>
+          <div class="cond-tree">
+            <div class="cond-row">
+              <select class="cond-select-inline" id="purchaseThanksStatus">
+                <option value="delivered">배송완료</option>
+                <option value="confirmed">구매확정</option>
+              </select>
+            </div>
+            <div class="cond-row">
+              <span class="cond-connector">and</span>
+              <span class="cond-label">상태 변경 후</span>
+              <input class="cond-input-inline" id="purchaseThanksDays" type="number" value="3" min="1" max="30" onchange="updatePurchaseThanksBar()">
+              <span class="cond-label">일 경과</span>
+            </div>
+            <div class="cond-bar-wrap">
+              <div class="cond-bar-track"><div class="cond-bar-fill" style="width:0%;"></div><div class="cond-bar-dot" style="left:0;transform:translateY(-50%);" id="purchaseThanksBarDot"></div></div>
+              <div class="cond-bar-labels"><span class="cond-bar-label-active" id="purchaseThanksLabel">배송완료 D+3 · 발송</span><span>이후</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="cond-block">
+          <div class="cond-block-header"><span class="cond-toggle-on">ON</span><span class="cond-block-title">발송 설정</span></div>
+          <div class="cond-row"><span class="cond-label">채널</span><span class="cond-value">💬 카카오 알림톡</span></div>
+          <div class="cond-row"><span class="cond-label">발송 시점</span><span class="cond-value">상태 변경 후 자동 발송</span></div>
+        </div>
+        ${renderCouponSection(false)}
+        <div style="display:flex;justify-content:flex-end;margin-top:16px;"><button class="btn btn-primary" onclick="submitCampaign()">캠페인 저장</button></div>`;
+    }
+  },
+  reactivate: {
+    name: '휴면 고객 재활성화',
+    tip: '💡 오랫동안 구매가 없는 고객을 특별 혜택으로 다시 불러오고 싶을 때',
+    preview: '[ENTWIZ] {고객명}님, 오랫동안 보지 못했어요 😢\n다시 찾아주신다면 특별 복귀 혜택을\n준비했습니다. 지금 확인해보세요!',
+    cta: '혜택 확인하기',
+    coupon: true,
+    renderCenter: function() {
+      return `
+        <div class="cond-block">
+          <div class="cond-block-header"><span class="cond-toggle-on">ON</span><span class="cond-block-title">고객 조건</span></div>
+          <div class="cond-row"><span class="cond-label">고객의 마지막 구매/방문이</span></div>
+          <div class="cond-tree">
+            <div class="cond-row"><span class="cond-value">90일 이상 경과</span></div>
+            <div class="cond-bar-wrap">
+              <div class="cond-bar-track"><div class="cond-bar-fill" style="width:0%;"></div><div class="cond-bar-dot" style="left:0;transform:translateY(-50%);"></div></div>
+              <div class="cond-bar-labels"><span class="cond-bar-label-active">90일 이상 경과 · 발송</span><span>이후</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="cond-block">
+          <div class="cond-block-header"><span class="cond-toggle-on">ON</span><span class="cond-block-title">발송 설정</span></div>
+          <div class="cond-row"><span class="cond-label">채널</span><span class="cond-value">💬 카카오 알림톡</span></div>
+          <div class="cond-row"><span class="cond-label">발송 시점</span><span class="cond-value">매주 월요일 10:00 자동 발송</span></div>
+        </div>
+        ${renderCouponSection(true)}
+        <div style="display:flex;justify-content:flex-end;margin-top:16px;"><button class="btn btn-primary" onclick="submitCampaign()">캠페인 저장</button></div>`;
+    }
+  }
+};
+
+function renderCouponSection(defaultOn) {
+  const checked = defaultOn ? 'checked' : '';
+  const display = defaultOn ? 'block' : 'none';
+  return `
+    <div class="cond-block">
+      <div class="cond-block-header">
+        <span class="cond-toggle-on" id="couponToggleDisplay" style="background:${defaultOn?'#10B981':'#CBD5E1'};">${defaultOn?'ON':'OFF'}</span>
+        <span class="cond-block-title">쿠폰 발급 설정</span>
+        <label class="toggle" style="margin-left:auto;">
+          <input type="checkbox" id="autoCouponCheck" ${checked} onchange="toggleCouponSection(this)">
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+      <div id="autoCouponBody" style="display:${display};">
+        <div class="cond-row"><span class="cond-label">발급 쿠폰</span>
+          <select class="cond-select-inline" style="min-width:180px;">
+            <option>신규고객 10% 할인 쿠폰</option>
+            <option>재구매 15% 할인 쿠폰</option>
+            <option>VIP 전용 20% 할인 쿠폰</option>
+            <option>생일 특별 쿠폰 5,000원</option>
+            <option>무료배송 쿠폰</option>
+          </select>
+        </div>
+      </div>
+    </div>`;
+}
+
+function toggleCouponSection(cb) {
+  document.getElementById('autoCouponBody').style.display = cb.checked ? 'block' : 'none';
+  const tog = document.getElementById('couponToggleDisplay');
+  if (tog) { tog.textContent = cb.checked?'ON':'OFF'; tog.style.background = cb.checked?'#10B981':'#CBD5E1'; }
+}
+
+function selectPreset(card, val) {
+  document.querySelectorAll('#autoPresetList .cpn-preset-card').forEach(c => {
+    c.classList.remove('selected');
+    const r = c.querySelector('input[type="radio"]');
+    if (r) r.checked = false;
+  });
+  card.classList.add('selected');
+  const radio = card.querySelector('input[type="radio"]');
+  if (radio) radio.checked = true;
+
+  const data = PRESET_DATA[val];
+  if (!data) return;
+
+  document.getElementById('autoCondCenter').innerHTML = `
+    <div style="background:var(--primary-light);border:1px solid #BFDBFE;border-radius:var(--radius);padding:14px 16px;margin-bottom:16px;">
+      <div style="font-size:15px;font-weight:700;color:var(--primary);margin-bottom:4px;">${data.name}</div>
+      <div style="font-size:12px;color:var(--text-sub);">${data.tip}</div>
+    </div>
+    ${data.renderCenter()}`;
+
+  const bubble = document.getElementById('autoPreviewBubble');
+  if (bubble) bubble.textContent = data.preview;
+}
+
+function updateRepurchaseBar() {
+  const days = parseInt(document.getElementById('repurchaseDays')?.value||30);
+  const label = document.getElementById('repurchaseBarLabel');
+  if (label) label.textContent = days+'일 경과 · 발송';
+}
+function updateCouponExpireBar() {
+  const days = parseInt(document.getElementById('couponExpireDays')?.value||3);
+  const label = document.getElementById('couponExpireLabel');
+  if (label) label.textContent = '만료 '+days+'일 전 · 발송';
+}
+function updateBirthdayBar() {
+  const days = parseInt(document.getElementById('birthdayDays')?.value||3);
+  const label = document.getElementById('birthdayLabel');
+  if (label) label.textContent = '생일 '+days+'일 전 · 발송';
+}
+function updatePurchaseThanksBar() {
+  const days = parseInt(document.getElementById('purchaseThanksDays')?.value||3);
+  const status = document.getElementById('purchaseThanksStatus')?.value==='confirmed'?'구매확정':'배송완료';
+  const label = document.getElementById('purchaseThanksLabel');
+  if (label) label.textContent = status+' D+'+days+' · 발송';
+}
+
+// 직접 생성형 관련
+function selectCpnAud(el, key, count) {
+  document.querySelectorAll('#cpnManualPanel .cpn-aud-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  const numEl = document.getElementById('cpnAudNum');
+  if (numEl) numEl.textContent = count.toLocaleString();
+}
+
+function selectCpnChannel(el, ch) {
+  document.querySelectorAll('.channel-select-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  const msgArea = document.getElementById('cpnMsgArea');
+  if (msgArea) msgArea.style.display = 'block';
+  ['cpnKakaoArea','cpnSmsArea','cpnEmailArea'].forEach(id => {
+    const d = document.getElementById(id);
+    if (d) d.style.display = 'none';
+  });
+  const areaMap = {kakao:'cpnKakaoArea', sms:'cpnSmsArea', email:'cpnEmailArea'};
+  const area = document.getElementById(areaMap[ch]);
+  if (area) area.style.display = 'block';
+  ['cpnKakaoPrev','cpnSmsPrev','cpnEmailPrev','cpnPrevEmpty'].forEach(id => {
+    const d = document.getElementById(id);
+    if (d) d.style.display = 'none';
+  });
+  const prevMap = {kakao:'cpnKakaoPrev', sms:'cpnSmsPrev', email:'cpnEmailPrev'};
+  const prev = document.getElementById(prevMap[ch]);
+  if (prev) prev.style.display = 'block';
+}
+
+function selectCpnSched(el, key) {
+  document.querySelectorAll('.cpn-sched-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  ['schedReserveDetail','schedRepeatDetail'].forEach(id => {
+    const d = document.getElementById(id);
+    if (d) d.style.display = 'none';
+  });
+  const detail = document.getElementById('sched'+key.charAt(0).toUpperCase()+key.slice(1)+'Detail');
+  if (detail) detail.style.display = 'block';
+  if (key==='repeat') updateSchedSummary();
+}
+
+function updateSchedSummary() {
+  const unit = document.getElementById('schedRepeatUnit')?.value||'매주';
+  const time = document.getElementById('schedRepeatTime')?.value||'10:00';
+  const box = document.getElementById('schedSummaryBox');
+  const txt = document.getElementById('schedSummaryText');
+  if (box && txt) {
+    txt.textContent = unit+' '+time+' 에 발송됩니다.';
+    box.style.display = 'block';
+  }
+}
+
+function scrollToStep(sectionId) {
+  const el = document.getElementById(sectionId);
+  if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function submitCampaign() {
+  if (typeof showToast === 'function') {
+    showToast('success','캠페인 저장','캠페인이 저장되었습니다.');
+  } else {
+    let t = document.getElementById('_toast');
+    if (!t) { t=document.createElement('div'); t.id='_toast'; t.style.cssText='position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1E293B;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;'; document.body.appendChild(t); }
+    t.textContent='캠페인이 저장되었습니다.';
+    t.style.opacity='1';
+    clearTimeout(t._to);
+    t._to = setTimeout(()=>{t.style.opacity='0';},2500);
+  }
+  setTimeout(()=>showScreen('list'),1000);
+}
+
+/* ═══ 직접 생성형 조건 빌더 ══════════════════════════════════════ */
+
+const MANUAL_COND_ATTRS = [
+  { v:'segment',     l:'세그먼트',       type:'select',  options:['전체','VIP','이탈위험','신규','휴면','기존'],           unit:'',    operators:null, bar:false },
+  { v:'grade',       l:'회원등급',       type:'select',  options:['전체','VIP','Gold','Silver','Bronze','일반'],          unit:'',    operators:null, bar:false },
+  { v:'last_purchase',l:'마지막 구매일', type:'number',  options:null, unit:'일',    operators:['이내','이상 경과'],  bar:true  },
+  { v:'signup',      l:'가입일',         type:'number',  options:null, unit:'일',    operators:['이내','이상 경과'],  bar:true  },
+  { v:'purchase_cnt',l:'구매 횟수',      type:'number',  options:null, unit:'회',    operators:['이상','이하','정확히'], bar:false },
+  { v:'purchase_amt',l:'누적 구매금액',  type:'number',  options:null, unit:'만원',  operators:['이상','이하'],       bar:false },
+  { v:'birthday',    l:'생일',           type:'number',  options:null, unit:'일 이내', operators:['N일 이내'],        bar:true  },
+  { v:'cart',        l:'장바구니 상태',  type:'select',  options:['담음 후 미결제','결제완료','담은 상품 없음'],           unit:'',    operators:null, bar:false },
+  { v:'auto_tag',    l:'자동 태그',      type:'select',  options:['충성고객','정기구매자','고빈도구매','챔피언','VIP후보','가격민감형','화장품 선호','탐색형','이탈직전','불만고객','신규유망'], unit:'', operators:null, bar:false },
+  { v:'manual_tag',  l:'수동 태그',      type:'select',  options:['VIP 관심','불만처리완료','오프라인 VIP','리뷰어 모집','이벤트당첨'], unit:'', operators:null, bar:false },
+  { v:'health',      l:'건강도 점수',    type:'number',  options:null, unit:'점',    operators:['이상','이하'],       bar:false },
+];
+
+function getAttr(v) { return MANUAL_COND_ATTRS.find(a => a.v === v) || MANUAL_COND_ATTRS[0]; }
+
+function buildCondRow(idx, isFirst) {
+  const attrOpts = MANUAL_COND_ATTRS.map(a =>
+    `<option value="${a.v}">${a.l}</option>`).join('');
+
+  const connectorHtml = isFirst ? '' : `
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 0 6px 8px;margin-bottom:0;">
+      <select class="cond-select-inline" style="width:60px;" onchange="">
+        <option>and</option><option>or</option>
+      </select>
+      <span style="font-size:12px;color:var(--text-muted);">발송일 기준</span>
+    </div>`;
+
+  return `<div class="manual-cond-row" data-idx="${idx}">
+    ${connectorHtml}
+    <div style="display:flex;align-items:center;gap:8px;padding:8px 0 8px 8px;border-left:2px solid var(--border);margin-left:${isFirst?'0':'16px'};">
+      <select class="cond-select-inline" style="min-width:120px;" onchange="onManualAttrChange(this,${idx})">
+        ${attrOpts}
+      </select>
+      <span style="font-size:12px;color:var(--text-muted);" id="manualCondLabel${idx}">이/가</span>
+      <div id="manualCondValueWrap${idx}" style="display:flex;align-items:center;gap:6px;"></div>
+      <button onclick="removeManualCond(this)" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:16px;padding:2px;margin-left:4px;" title="삭제">×</button>
+    </div>
+    <div id="manualCondBar${idx}" style="display:none;padding:8px 8px 0 24px;"></div>
+  </div>`;
+}
+
+function renderCondValue(idx, attr) {
+  const wrap = document.getElementById('manualCondValueWrap' + idx);
+  if (!wrap) return;
+
+  if (attr.type === 'select') {
+    const opts = (attr.options||[]).map(o => `<option>${o}</option>`).join('');
+    wrap.innerHTML = `<select class="cond-select-inline" style="min-width:100px;">${opts}</select>`;
+  } else {
+    const opOpts = (attr.operators||['이상']).map(o => `<option>${o}</option>`).join('');
+    wrap.innerHTML =
+      `<input class="cond-input-inline" type="number" value="30" min="0" style="width:64px;" oninput="updateManualBar(${idx});updateManualAudCount()">
+       <span class="cond-label" style="font-size:12px;">${attr.unit}</span>
+       ${attr.operators ? `<select class="cond-select-inline" onchange="updateManualBar(${idx});updateManualAudCount()">${opOpts}</select>` : ''}`;
+  }
+
+  // 바 렌더
+  const barWrap = document.getElementById('manualCondBar' + idx);
+  if (barWrap) {
+    if (attr.bar) {
+      barWrap.style.display = 'block';
+      barWrap.innerHTML = `
+        <div class="cond-bar-wrap">
+          <div class="cond-bar-track">
+            <div class="cond-bar-fill" style="width:30%;" id="manualBarFill${idx}"></div>
+            <div class="cond-bar-dot" style="left:30%;transform:translate(-50%,-50%);" id="manualBarDot${idx}"></div>
+          </div>
+          <div class="cond-bar-labels">
+            <span id="manualBarLabelL${idx}">이전</span>
+            <span class="cond-bar-label-active" id="manualBarLabelR${idx}">설정값 · 발송</span>
+          </div>
+        </div>`;
+      updateManualBar(idx);
+    } else {
+      barWrap.style.display = 'none';
+    }
+  }
+}
+
+function onManualAttrChange(sel, idx) {
+  const attr = getAttr(sel.value);
+  renderCondValue(idx, attr);
+}
+
+function updateManualBar(idx) {
+  const wrap = document.getElementById('manualCondValueWrap' + idx);
+  if (!wrap) return;
+  const numEl = wrap.querySelector('input[type="number"]');
+  const opEl  = wrap.querySelector('select');
+  const val   = numEl ? numEl.value : '';
+  const op    = opEl  ? opEl.value  : '';
+  const attrSel = document.querySelector(`[data-idx="${idx}"] select`);
+  const attr = attrSel ? getAttr(attrSel.value) : null;
+  const labelR = document.getElementById('manualBarLabelR' + idx);
+  if (labelR && val) labelR.textContent = val + (attr?.unit||'') + ' ' + op + ' · 발송';
+}
+
+/* ── 대상자 수 모의 계산 ─────────────────────────────────────── */
+const BASE_COUNT = 12847;
+const COND_SELECTIVITY = {
+  segment:      { '전체':1.0, 'VIP':0.069, '이탈위험':0.027, '신규':0.097, '휴면':0.168, '기존':0.655 },
+  grade:        { '전체':1.0, 'VIP':0.069, 'Gold':0.182, 'Silver':0.303, 'Bronze':0.374, '일반':0.071 },
+  cart:         { '담음 후 미결제':0.10, '결제완료':0.90, '담은 상품 없음':0.70 },
+  auto_tag:     { '충성고객':0.027, '정기구매자':0.017, '고빈도구매':0.038, '챔피언':0.007, 'VIP후보':0.012, '가격민감형':0.080, '화장품 선호':0.052, '탐색형':0.182, '이탈직전':0.030, '불만고객':0.011, '신규유망':0.016 },
+  manual_tag:   { 'VIP 관심':0.001, '불만처리완료':0.004, '오프라인 VIP':0.002, '리뷰어 모집':0.001, '이벤트당첨':0.0002 },
+};
+
+function calcSelectivity(attrV, valEl, opEl) {
+  if (COND_SELECTIVITY[attrV]) {
+    const sel = valEl?.querySelector ? valEl.querySelector('select') : valEl;
+    const chosen = sel?.value || sel?.options?.[0]?.value || '';
+    return COND_SELECTIVITY[attrV][chosen] ?? 1.0;
+  }
+  const num = parseFloat(valEl?.querySelector?.('input[type="number"]')?.value || 30);
+  if (attrV === 'last_purchase') return (opEl?.value||'이내') === '이내' ? Math.min(num/365*0.9, 1) : Math.max(1 - num/365*0.7, 0.01);
+  if (attrV === 'signup')        return (opEl?.value||'이내') === '이내' ? Math.min(num/365*0.6, 1) : Math.max(1 - num/365*0.5, 0.01);
+  if (attrV === 'purchase_cnt')  return (opEl?.value||'이상') === '이상' ? Math.max(1 - num/50, 0.01) : Math.min(num/50, 1);
+  if (attrV === 'purchase_amt')  return (opEl?.value||'이상') === '이상' ? Math.max(1 - num/500, 0.01) : Math.min(num/500, 1);
+  if (attrV === 'birthday')      return Math.min(num/365, 0.15);
+  if (attrV === 'health')        return (opEl?.value||'이상') === '이상' ? Math.max(1 - num/100, 0.01) : Math.min(num/100, 1);
+  return 1.0;
+}
+
+function updateManualAudCount() {
+  const rows = document.querySelectorAll('#manualCondList .manual-cond-row');
+  let ratio = 1.0;
+  rows.forEach(row => {
+    const idx = row.dataset.idx;
+    const attrSel = row.querySelector('select');
+    const valWrap = document.getElementById('manualCondValueWrap' + idx);
+    const opEl    = valWrap?.querySelector('select');
+    if (attrSel && valWrap) ratio *= calcSelectivity(attrSel.value, valWrap, opEl);
+  });
+  const count = Math.max(1, Math.round(BASE_COUNT * ratio));
+  const el = document.getElementById('manualAudCount');
+  if (el) el.textContent = count.toLocaleString() + '명';
+}
+
+let _condIdx = 0;
+function addManualCond() {
+  const list = document.getElementById('manualCondList');
+  if (!list) return;
+  const isFirst = list.children.length === 0;
+  const idx = _condIdx++;
+  const div = document.createElement('div');
+  div.innerHTML = buildCondRow(idx, isFirst);
+  list.appendChild(div.firstElementChild || div);
+  const attr = MANUAL_COND_ATTRS[0];
+  renderCondValue(idx, attr);
+  const attrSel = document.querySelector(`[data-idx="${idx}"] select`);
+  if (attrSel) attrSel.onchange = () => { onManualAttrChange(attrSel, idx); updateManualAudCount(); };
+  updateManualAudCount();
+}
+
+function removeManualCond(btn) {
+  btn.closest('.manual-cond-row')?.remove();
+  updateManualAudCount();
+}
+
+// 초기화: 첫 번째 프리셋 렌더 + 직접 생성형 초기 조건
+document.addEventListener('DOMContentLoaded', () => {
+  const firstCard = document.querySelector('#autoPresetList .cpn-preset-card.selected');
+  if (firstCard) selectPreset(firstCard, 'welcome');
+  addManualCond();
+});
+
 // ══════════════════════════════════════════════════════════════════
-// 캠페인 만들기 — 데이터 & 함수
+// 캠페인 만들기 — 기존 데이터 (상품/카카오/이메일/SMS 템플릿)
 // ══════════════════════════════════════════════════════════════════
 const PRODUCT_LIST = [
   { id:'p01', name:'봄봄 수분 크림 50ml',      price:28000, thumb:'🧴', visible:true,  sale:true  },
@@ -2105,61 +2754,6 @@ const SMS_TPL_DATA = [
 ];
 
 let _cpnChannel = null;
-
-// ── 초기화 ───────────────────────────────────────────────────────
-function initCpnCreate() {
-  // sessionStorage에서 캠페인 유형 읽기
-  const typeKey  = sessionStorage.getItem('cpn_typeKey')  || '';
-  const typeName = sessionStorage.getItem('cpn_typeName') || '';
-  if (typeName) {
-    const dispEl = document.getElementById('cpnTypeDisp');
-    if (dispEl) dispEl.value = typeName;
-    sessionStorage.removeItem('cpn_typeKey');
-    sessionStorage.removeItem('cpn_typeName');
-  }
-  // 템플릿 옵션 채우기
-  const kakaoSel = document.getElementById('cpnKakaoTpl');
-  if (kakaoSel) {
-    kakaoSel.innerHTML = '<option value="">-- 템플릿을 선택하세요 --</option>' +
-      KAKAO_TPL_DATA.map(t=>`<option value="${t.id}">${t.name}</option>`).join('');
-  }
-  const emailSel = document.getElementById('cpnEmailTpl');
-  if (emailSel) {
-    emailSel.innerHTML = '<option value="">직접 작성 (빈 템플릿)</option>' +
-      EMAIL_TPL_DATA.map(t=>`<option value="${t.id}">${t.name}</option>`).join('');
-  }
-  // SMS 템플릿 목록
-  const smsList = document.getElementById('cpnSmsTplList');
-  if (smsList) {
-    smsList.innerHTML = SMS_TPL_DATA.map(t=>`
-      <div style="padding:8px 14px;border-bottom:1px solid var(--border);cursor:pointer;font-size:12px;"
-           onclick="loadCpnSmsTpl('${t.id}')" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background=''">
-        <strong>${t.name}</strong><br><span style="color:var(--text-muted);">${t.content.substring(0,40)}…</span>
-      </div>`).join('');
-  }
-  _cpnChannel = null;
-}
-
-// ── 발송 대상 ────────────────────────────────────────────────────
-function selectCpnAud(el, key, count) {
-  document.querySelectorAll('.cpn-aud-card').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
-  document.getElementById('cpnAudNum').textContent = count.toLocaleString();
-}
-
-// ── 채널 선택 ────────────────────────────────────────────────────
-function selectCpnChannel(el, ch) {
-  document.querySelectorAll('[name=cpnChannel]').forEach(r => r.closest('.channel-select-card').classList.remove('selected'));
-  el.classList.add('selected');
-  _cpnChannel = ch;
-  ['Kakao','Sms','Email'].forEach(c => document.getElementById('cpn'+c+'Area').style.display = 'none');
-  document.getElementById('cpn' + ch.charAt(0).toUpperCase() + ch.slice(1) + 'Area').style.display = 'block';
-  ['cpnKakaoPrev','cpnSmsPrev','cpnEmailPrev'].forEach(id => document.getElementById(id).style.display = 'none');
-  document.getElementById('cpnEmptyPrev').style.display = 'none';
-  document.getElementById('cpn' + ch.charAt(0).toUpperCase() + ch.slice(1) + 'Prev').style.display = 'block';
-  document.getElementById('cpnMsgArea').style.display = 'block';
-  document.getElementById('cpnDeviceToggle').style.display = (ch !== 'sms') ? 'flex' : 'none';
-}
 
 // ── 변수 필드 렌더 ────────────────────────────────────────────────
 function renderCpnVarField(v, prefix, channel) {
@@ -2402,34 +2996,6 @@ function updateCpnEmailPreview() {
 function setCpnDevice(btn, device) {
   document.querySelectorAll('.cpn-device-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-}
-
-// ── 발송 일정 ────────────────────────────────────────────────────
-function selectCpnSched(el, key) {
-  document.querySelectorAll('.cpn-sched-card').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
-  ['schedReserveDetail','schedRepeatDetail'].forEach(id => {
-    const d = document.getElementById(id);
-    if (d) d.style.display = 'none';
-  });
-  const detail = document.getElementById('sched' + key.charAt(0).toUpperCase() + key.slice(1) + 'Detail');
-  if (detail) detail.style.display = 'block';
-}
-
-// ── 저장 ─────────────────────────────────────────────────────────
-function submitCampaign() {
-  const name = (document.getElementById('cpnName')||{}).value || '';
-  if (!name.trim()) { alert('캠페인 이름을 입력해주세요.'); return; }
-  if (!_cpnChannel)  { alert('발송 채널을 선택해주세요.'); return; }
-  if (typeof showScreen === 'function') showScreen('list');
-  if (typeof navWIP === 'function') {} // toast handled by crm-common
-  // simple toast
-  let t = document.getElementById('_toast');
-  if (!t) { t=document.createElement('div'); t.id='_toast'; t.style.cssText='position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1E293B;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;'; document.body.appendChild(t); }
-  t.textContent='캠페인이 저장되었습니다.';
-  t.style.opacity='1';
-  clearTimeout(t._to);
-  t._to = setTimeout(()=>{t.style.opacity='0';},2500);
 }
 </script>
 </body>
